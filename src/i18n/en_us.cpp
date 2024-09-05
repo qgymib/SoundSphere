@@ -7,6 +7,15 @@ soundsphere::i18n_t soundsphere::i18n_en_us = {
 .homepage =
 "HomePage",
 
+.file =
+"File",
+
+.open =
+"Open",
+
+.open_folder =
+"Open Folder",
+
 .settings =
 "Settings",
 

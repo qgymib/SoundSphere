@@ -40,6 +40,7 @@ typedef struct widget
 } widget_t;
 
 extern const widget_t menubar_about;
+extern const widget_t menubar_open;
 extern const widget_t menubar_preferences;
 extern const widget_t ui_cover;
 extern const widget_t ui_filter;

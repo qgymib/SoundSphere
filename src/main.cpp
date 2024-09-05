@@ -138,6 +138,7 @@ int main(int, char**)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
+        soundsphere::runtime_loop();
         soundsphere::widget_draw();
 
         // Rendering

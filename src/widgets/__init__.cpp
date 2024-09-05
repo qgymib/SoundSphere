@@ -6,8 +6,12 @@
 soundsphere::widget_layout_t soundsphere::_layout;
 
 static const soundsphere::widget_t* s_main_ui[] = {
+    /* Menu order does important. */
+    &soundsphere::menubar_open,
     &soundsphere::menubar_preferences,
     &soundsphere::menubar_about,
+
+    /* UI order does not matter. */
     &soundsphere::ui_cover,
     &soundsphere::ui_filter,
     &soundsphere::ui_lyric,

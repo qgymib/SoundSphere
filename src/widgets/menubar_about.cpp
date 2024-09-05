@@ -1,4 +1,5 @@
 #include <imgui.h>
+#include <ev.h>
 #include "version.hpp"
 #include "i18n/__init__.hpp"
 #include "utils/defines.hpp"
@@ -26,9 +27,10 @@ static void _widget_about_show_config_frame(void)
     static dep_info_t third_party_list[] = {
         { "imgui", IMGUI_VERSION, "https://github.com/ocornut/imgui" },
         { "IconFontCppHeaders", "", "https://github.com/juliettef/IconFontCppHeaders" },
+        { "libev", ev_version_str(), "https://github.com/qgymib/libev" },
     };
 
-    ImVec2 child_sz = ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 3);
+    ImVec2 child_sz = ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 4);
     if (ImGui::BeginChild("about_show_config_info", child_sz, ImGuiChildFlags_FrameStyle))
     {
         for (size_t i = 0; i < IM_ARRAYSIZE(third_party_list); i++)

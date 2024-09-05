@@ -7,6 +7,9 @@
 #define I18N_STRING_TABLE(xx)   \
     xx(lang)                    \
     xx(homepage)                \
+    xx(file)                    \
+    xx(open)                    \
+    xx(open_folder)             \
     xx(settings)                \
     xx(preferences)             \
     xx(localization)            \

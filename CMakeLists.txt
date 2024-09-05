@@ -25,8 +25,11 @@ set(soundsphere_sources
     "src/i18n/en_us.cpp"
     "src/i18n/zh_cn.cpp"
     "src/runtime/__init__.cpp"
+    "src/utils/explorer.cpp"
+    "src/utils/string.cpp"
     "src/widgets/__init__.cpp"
     "src/widgets/menubar_about.cpp"
+    "src/widgets/menubar_open.cpp"
     "src/widgets/menubar_preferences.cpp"
     "src/widgets/ui_cover.cpp"
     "src/widgets/ui_filter.cpp"
@@ -68,3 +71,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE imgui)
 
 include(third_party/IconFontCppHeaders.cmake)
 target_link_libraries(${PROJECT_NAME} PRIVATE IconFontCppHeaders)
+
+include(third_party/libev.cmake)
+target_link_libraries(${PROJECT_NAME} PRIVATE ev)

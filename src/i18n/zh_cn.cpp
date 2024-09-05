@@ -9,6 +9,15 @@ soundsphere::i18n_t soundsphere::i18n_zh_cn = {
 .homepage =
 "主页",
 
+.file =
+"文件",
+
+.open =
+"打开",
+
+.open_folder =
+"打开文件夹",
+
 .settings =
 "设置",
 
