@@ -43,9 +43,9 @@ soundsphere::StringVec soundsphere::string_split(const std::string& orig, const 
 
 bool soundsphere::string_wildcard(const std::string& str, const std::string& pattern)
 {
-    int sLen = str.length();
-    int pLen = pattern.length();
-    int sIdx = 0, pIdx = 0;
+    const size_t sLen = str.length();
+    const size_t pLen = pattern.length();
+    size_t sIdx = 0, pIdx = 0;
     int starIdx = -1, matchIdx = 0;
 
     while (sIdx < sLen) {
@@ -55,8 +55,8 @@ bool soundsphere::string_wildcard(const std::string& str, const std::string& pat
             pIdx++;
         } else if (pIdx < pLen && pattern[pIdx] == '*') {
             // Match '*' and remember its position
-            starIdx = pIdx;
-            matchIdx = sIdx;
+            starIdx = (int)pIdx;
+            matchIdx = (int)sIdx;
             pIdx++;
         } else if (starIdx != -1) {
             // Backtrack: if there's a previous '*', try to match more characters

@@ -37,13 +37,13 @@ static float _widget_get_cover_width(ImGuiIO& io)
     float cover_width_x = io.DisplaySize.x * 0.5f;
     float cover_width_y = io.DisplaySize.y * 0.5f;
     float cover_width = cover_width_x < cover_width_y ? cover_width_x : cover_width_y;
-    return cover_width > 256.0 ? 256.0 : cover_width;
+    return cover_width > 256.0f ? 256.0f : cover_width;
 }
 
 static float _widget_get_filter_width(ImGuiIO& io)
 {
     float filter_width = io.DisplaySize.x * 0.3f;
-    return filter_width > 256.0 ? 256.0 : filter_width;
+    return filter_width > 256.0f ? 256.0f : filter_width;
 }
 
 void soundsphere::widget_init(void)
@@ -69,8 +69,8 @@ static void _widget_draw_update_pos_size(void)
     ImGuiIO& io = ImGui::GetIO();
 
     const float main_menu_bar_height = _widget_get_main_menu_bar_height();
-    const float status_bar_height = ImGui::GetFrameHeight() * 1.5;
-    const float play_bar_height = ImGui::GetFrameHeight() * 1.7;
+    const float status_bar_height = ImGui::GetFrameHeight() * 1.5f;
+    const float play_bar_height = ImGui::GetFrameHeight() * 1.7f;
     const float filter_width = _widget_get_filter_width(io);
     const float cover_width = _widget_get_cover_width(io);
 

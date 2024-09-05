@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <filesystem>
+#include "utils/autoptr.hpp"
 #include "explorer.hpp"
 
 struct FilterPattern
@@ -9,6 +10,291 @@ struct FilterPattern
 };
 
 typedef std::vector<FilterPattern> FilterPatternVec;
+
+/**
+ * @brief Convert filter to structured pattern.
+ * @param[in] filter    Pattern string.
+ * @return Structured pattern.
+ */
+static FilterPattern _filter_to_pattern(const char* filter)
+{
+    FilterPattern pattern;
+    pattern.filters = soundsphere::string_split(filter, "\n");
+    pattern.name = pattern.filters[0];
+    pattern.filters.erase(pattern.filters.begin());
+
+    return pattern;
+}
+
+/**
+ * @brief Convert list of filters to list of structured pattern.
+ * @param[in] filters   List of filters.
+ * @param[in] filter_sz The number of filters.
+ * @return  List of structured pattern.
+ */
+static FilterPatternVec _filters_to_patterns(const char* filters[], size_t filter_sz)
+{
+    FilterPatternVec pattern_vec;
+    for (size_t i = 0; i < filter_sz; i++)
+    {
+        FilterPattern pattern = _filter_to_pattern(filters[i]);
+        pattern_vec.push_back(pattern);
+    }
+
+    return pattern_vec;
+}
+
+#if defined(_WIN32)
+
+#include <windows.h>
+#include <shobjidl.h>
+#include <assert.h>
+
+static std::string _wide_to_utf8(WCHAR* src)
+{
+    std::string ret;
+
+    int target_len = WideCharToMultiByte(CP_UTF8, 0, src, -1, NULL, 0, NULL, NULL);
+    if (target_len == 0)
+    {
+        return ret;
+    }
+
+    char* buf = (char*)malloc(target_len);
+    if (buf == NULL)
+    {
+        return ret;
+    }
+
+    int r = WideCharToMultiByte(CP_UTF8, 0, src, -1, buf, target_len, NULL, NULL);
+    assert(r == target_len); (void)r;
+
+    ret = buf;
+    free(buf);
+
+    return ret;
+}
+
+static WCHAR* _utf8_to_wide(const char* src)
+{
+    int pathw_len = MultiByteToWideChar(CP_UTF8, 0, src, -1, NULL, 0);
+    if (pathw_len == 0)
+    {
+        return NULL;
+    }
+
+    size_t buf_sz = pathw_len * sizeof(WCHAR);
+    WCHAR* buf = (WCHAR*)malloc(buf_sz);
+    if (buf == NULL)
+    {
+        return NULL;
+    }
+
+    int r = MultiByteToWideChar(CP_UTF8, 0, src, -1, buf, pathw_len);
+    assert(r == pathw_len); (void)r;
+
+    return buf;
+}
+
+class comdlg_filterspec
+{
+public:
+    comdlg_filterspec()
+    {
+        m_save_types = NULL;
+        m_save_type_sz = 0;
+    }
+
+    virtual ~comdlg_filterspec()
+    {
+        for (size_t i = 0; i < m_save_type_sz; i++)
+        {
+            free((void*)m_save_types[i].pszName);
+            free((void*)m_save_types[i].pszSpec);
+        }
+        free(m_save_types);
+    }
+
+public:
+    void append(const std::string& name, const soundsphere::StringVec& filters)
+    {
+        std::string filter;
+        for (size_t i = 0; i < filters.size(); i++)
+        {
+            const std::string& item = filters[i];
+            if (i != 0)
+            {
+                filter.append(";");
+            }
+            filter.append(item);
+        }
+
+        size_t new_sz = sizeof(COMDLG_FILTERSPEC) * (m_save_type_sz + 1);
+        m_save_types = (COMDLG_FILTERSPEC*)realloc(m_save_types, new_sz);
+
+        m_save_types[m_save_type_sz].pszName = _utf8_to_wide(name.c_str());
+        m_save_types[m_save_type_sz].pszSpec = _utf8_to_wide(filter.c_str());
+        m_save_type_sz++;
+    }
+
+public:
+    COMDLG_FILTERSPEC*  m_save_types;
+    size_t              m_save_type_sz;
+};
+
+static std::shared_ptr<comdlg_filterspec> _pattern_vec_to_filterspec(const FilterPatternVec& pattern_vec)
+{
+    std::shared_ptr<comdlg_filterspec> spec = std::make_shared<comdlg_filterspec>();
+
+    for (size_t i = 0; i < pattern_vec.size(); i++)
+    {
+        const FilterPattern& pattern = pattern_vec[i];
+        spec->append(pattern.name, pattern.filters);
+    }
+
+    return spec;
+}
+
+bool soundsphere::explorer_open_files(soundsphere::StringVec& paths,
+    const char* filter[], size_t filter_sz)
+{
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+    soundsphere::defer _1([]() { CoUninitialize(); });
+
+    soundsphere::auto_ptr<IFileOpenDialog> pfd([](IFileDialog* p) { p->Release(); });
+    hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pfd));
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    DWORD dwFlags;
+    hr = pfd->GetOptions(&dwFlags);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    hr = pfd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM | FOS_ALLOWMULTISELECT);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    // Set the file types to display only. Notice that, this is a 1-based array.
+    FilterPatternVec pattern_vec = _filters_to_patterns(filter, filter_sz);
+    std::shared_ptr<comdlg_filterspec> spec = _pattern_vec_to_filterspec(pattern_vec);
+    hr = pfd->SetFileTypes((UINT)spec->m_save_type_sz, spec->m_save_types);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    hr = pfd->SetFileTypeIndex(1);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    // Show the dialog
+    hr = pfd->Show(NULL);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    soundsphere::auto_ptr<IShellItemArray> psiaResults([](IShellItemArray* p) { p->Release(); });
+    hr = pfd->GetResults(&psiaResults);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    DWORD dwNumItems = 0;
+    hr = psiaResults->GetCount(&dwNumItems);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    paths.clear();
+    for (DWORD i = 0; i < dwNumItems; i++)
+    {
+        soundsphere::auto_ptr<IShellItem> psiResult([](IShellItem* p) { p->Release(); });
+        hr = psiaResults->GetItemAt(i, &psiResult);
+        if (!SUCCEEDED(hr))
+        {
+            return false;
+        }
+
+        PWSTR pszFilePath = NULL;
+        hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+        if (!SUCCEEDED(hr))
+        {
+            return false;
+        }
+
+        std::string path = _wide_to_utf8(pszFilePath);
+        CoTaskMemFree(pszFilePath);
+
+        paths.push_back(path);
+    }
+
+    return true;
+}
+
+bool soundsphere::explorer_open_folder(std::string& path)
+{
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+    soundsphere::defer _1([]() { CoUninitialize(); });
+
+    soundsphere::auto_ptr<IFileDialog> pFileDialog([](IFileDialog* p) { p->Release(); });
+    hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pFileDialog));
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    DWORD dwOptions;
+    pFileDialog->GetOptions(&dwOptions);
+    pFileDialog->SetOptions(dwOptions | FOS_PICKFOLDERS);
+
+    // Show the Open dialog box
+    hr = pFileDialog->Show(NULL);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    soundsphere::auto_ptr<IShellItem> pItem([](IShellItem* p) { p->Release(); });
+    hr = pFileDialog->GetResult(&pItem);
+    if (!SUCCEEDED(hr))
+    {
+        return false;
+    }
+
+    PWSTR pszFilePath;
+    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+    // Display the folder path
+    if (SUCCEEDED(hr))
+    {
+        path = _wide_to_utf8(pszFilePath);
+        CoTaskMemFree(pszFilePath);
+    }
+
+    return true;
+}
+
+#else
 
 static bool _popen_r(const std::string& cmd, std::string& out)
 {
@@ -75,28 +361,6 @@ static bool _explorer_open_folder_by_zenity(std::string& path)
     return true;
 }
 
-static FilterPattern _filter_to_pattern(const char* filter)
-{
-    FilterPattern pattern;
-    pattern.filters = soundsphere::string_split(filter, "\n");
-    pattern.name = pattern.filters[0];
-    pattern.filters.erase(pattern.filters.begin());
-
-    return pattern;
-}
-
-static FilterPatternVec _filters_to_patterns(const char* filters[], size_t filter_sz)
-{
-    FilterPatternVec pattern_vec;
-    for (size_t i = 0; i < filter_sz; i++)
-    {
-        FilterPattern pattern = _filter_to_pattern(filters[i]);
-        pattern_vec.push_back(pattern);
-    }
-
-    return pattern_vec;
-}
-
 bool soundsphere::explorer_open_files(soundsphere::StringVec& paths,
     const char* filter[], size_t filter_sz)
 {
@@ -109,21 +373,7 @@ bool soundsphere::explorer_open_folder(std::string& path)
     return _explorer_open_folder_by_zenity(path);
 }
 
-soundsphere::FileItemVec soundsphere::explorer_folder_items(const std::string& path)
-{
-    FileItemVec items;
-
-    for (const auto& entry : std::filesystem::directory_iterator(path))
-    {
-        FileItem item;
-        item.path = entry.path().string();
-        item.name = entry.path().filename().string();
-        item.isfile = entry.is_regular_file();
-        items.push_back(item);
-    }
-
-    return items;
-}
+#endif
 
 static bool _is_file_name_match(const std::string& name, const FilterPatternVec& patterns)
 {
@@ -140,6 +390,22 @@ static bool _is_file_name_match(const std::string& name, const FilterPatternVec&
         }
     }
     return false;
+}
+
+soundsphere::FileItemVec soundsphere::explorer_folder_items(const std::string& path)
+{
+    FileItemVec items;
+
+    for (const auto& entry : std::filesystem::directory_iterator(path))
+    {
+        FileItem item;
+        item.path = entry.path().string();
+        item.name = entry.path().filename().string();
+        item.isfile = entry.is_regular_file();
+        items.push_back(item);
+    }
+
+    return items;
 }
 
 soundsphere::StringVec soundsphere::explorer_scan_folder(const std::string& path,

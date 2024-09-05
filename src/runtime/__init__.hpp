@@ -83,6 +83,8 @@ void runtime_submit_job(JobDataBase::JobPtr job);
 
 /**
  * @brief Submit a job to be called in UI loop.
+ * @warning Do not do any blocking operations in UI thread.
+ * @note It is recommend to only update resources in UI thread.
  * @param[in] fn    Job callback.
  * @param[in] obj   Job parameter.
  */
