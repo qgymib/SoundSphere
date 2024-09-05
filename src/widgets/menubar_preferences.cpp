@@ -1,0 +1,68 @@
+#include <imgui.h>
+#include "i18n/__init__.hpp"
+#include "__init__.hpp"
+
+static bool s_show_preferences_window = false;
+
+static void _widget_preferences_init(void)
+{
+}
+
+static void _widget_preferences_exit(void)
+{
+}
+
+static void _widget_preferences_draw_select_lang(void)
+{
+    const char* item_locals[] = {
+#define I18N_EXPAND_LOCALE_AS_STRING(a, b)   soundsphere::b.lang,
+    I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_STRING)
+#undef I18N_EXPAND_LOCALE_AS_STRING
+    };
+    static int item_type = 0;
+    if (ImGui::Combo(soundsphere::_i18n->localization, &item_type, item_locals, IM_ARRAYSIZE(item_locals)))
+    {
+        soundsphere::i18n_set_locale((soundsphere::i18n_locale_t)item_type);
+    }
+}
+
+static void _widget_preferences_show_window(void)
+{
+    const char* window_name = soundsphere::_i18n->preferences;
+    if (!ImGui::Begin(window_name, &s_show_preferences_window, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        goto finish;
+    }
+
+    _widget_preferences_draw_select_lang();
+
+finish:
+    ImGui::End();
+}
+
+static void _widget_preferences_draw(void)
+{
+    /* Register to MainMenu. */
+    if (ImGui::BeginMainMenuBar())
+    {
+        if (ImGui::BeginMenu(soundsphere::_i18n->settings))
+        {
+            ImGui::MenuItem(soundsphere::_i18n->preferences, nullptr, &s_show_preferences_window);
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMainMenuBar();
+    }
+
+    /* Show window. */
+    if (s_show_preferences_window)
+    {
+        _widget_preferences_show_window();
+    }
+}
+
+const soundsphere::widget_t soundsphere::menubar_preferences = {
+_widget_preferences_init,
+_widget_preferences_exit,
+_widget_preferences_draw,
+};

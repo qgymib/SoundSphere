@@ -19,7 +19,23 @@ endfunction()
 ###############################################################################
 
 set(soundsphere_sources
+    "src/fonts/fa_solid_900.c"
+    "src/fonts/NotoSansSC.c"
+    "src/i18n/__init__.cpp"
+    "src/i18n/en_us.cpp"
+    "src/i18n/zh_cn.cpp"
+    "src/runtime/__init__.cpp"
+    "src/widgets/__init__.cpp"
+    "src/widgets/menubar_about.cpp"
+    "src/widgets/menubar_preferences.cpp"
+    "src/widgets/ui_cover.cpp"
+    "src/widgets/ui_filter.cpp"
+    "src/widgets/ui_lyric.cpp"
+    "src/widgets/ui_playbar.cpp"
+    "src/widgets/ui_playlist.cpp"
+    "src/widgets/ui_statusbar.cpp"
     "src/main.cpp"
+    "src/version.cpp"
 )
 
 if (WIN32)
@@ -27,6 +43,7 @@ if (WIN32)
     target_compile_options(${PROJECT_NAME}
         PRIVATE
             /utf-8
+            /std:c++20
     )
     target_link_options(${PROJECT_NAME}
         PRIVATE
@@ -48,3 +65,6 @@ setup_target_wall(${PROJECT_NAME})
 ###############################################################################
 include(third_party/imgui.cmake)
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui)
+
+include(third_party/IconFontCppHeaders.cmake)
+target_link_libraries(${PROJECT_NAME} PRIVATE IconFontCppHeaders)
