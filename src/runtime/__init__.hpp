@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include "playitem.hpp"
 
 namespace soundsphere {
 
@@ -11,7 +12,7 @@ namespace soundsphere {
  */
 typedef struct runtime
 {
-    int useless;
+    PlayItem::PtrVecPtr playlist;
 } runtime_t;
 
 class JobDataBase

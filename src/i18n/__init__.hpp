@@ -5,17 +5,19 @@
  * @brief i18n strings.
  */
 #define I18N_STRING_TABLE(xx)   \
-    xx(lang)                    \
-    xx(homepage)                \
+    xx(about)                   \
+    xx(about_show_config_info)  \
+    xx(artist)                  \
     xx(file)                    \
+    xx(help)                    \
+    xx(homepage)                \
+    xx(lang)                    \
+    xx(localization)            \
     xx(open)                    \
     xx(open_folder)             \
-    xx(settings)                \
+    xx(title)                   \
     xx(preferences)             \
-    xx(localization)            \
-    xx(help)                    \
-    xx(about)                   \
-    xx(about_show_config_info)
+    xx(settings)
 
 /**
  * @brief i18n locals.

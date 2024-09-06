@@ -1,14 +1,29 @@
 #include "__init__.hpp"
 
 soundsphere::i18n_t soundsphere::i18n_en_us = {
-.lang =
-"English (US)",
+.about =
+"About",
+
+.about_show_config_info =
+"Show Config/Build Information",
+
+.artist =
+"Artist",
+
+.file =
+"File",
+
+.help =
+"Help",
 
 .homepage =
 "HomePage",
 
-.file =
-"File",
+.lang =
+"English (US)",
+
+.localization =
+"Localization",
 
 .open =
 "Open",
@@ -16,21 +31,13 @@ soundsphere::i18n_t soundsphere::i18n_en_us = {
 .open_folder =
 "Open Folder",
 
-.settings =
-"Settings",
+.title =
+"Title",
 
 .preferences =
 "Preferences",
 
-.localization =
-"Localization",
+.settings =
+"Settings",
 
-.help =
-"Help",
-
-.about =
-"About",
-
-.about_show_config_info =
-"Show Config/Build Information",
 };

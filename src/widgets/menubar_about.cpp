@@ -1,5 +1,6 @@
 #include <imgui.h>
 #include <ev.h>
+#include <taglib/taglib.h>
 #include "version.hpp"
 #include "i18n/__init__.hpp"
 #include "utils/defines.hpp"
@@ -13,6 +14,9 @@ typedef struct dep_info
 } dep_info_t;
 
 static bool s_menu_about_show = false;
+
+#define TAGLIB_VERSION  \
+    STRINGIFY(TAGLIB_MAJOR_VERSION) "." STRINGIFY(TAGLIB_MINOR_VERSION) "." STRINGIFY(TAGLIB_PATCH_VERSION)
 
 static void _widget_about_init(void)
 {
@@ -28,6 +32,7 @@ static void _widget_about_show_config_frame(void)
         { "imgui", IMGUI_VERSION, "https://github.com/ocornut/imgui" },
         { "IconFontCppHeaders", "", "https://github.com/juliettef/IconFontCppHeaders" },
         { "libev", ev_version_str(), "https://github.com/qgymib/libev" },
+        { "TagLib", TAGLIB_VERSION, "https://taglib.org/" },
     };
 
     ImVec2 child_sz = ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 4);
