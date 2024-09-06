@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <SDL.h>
 #include <IconsFontAwesome6.h>
+#include <spdlog/spdlog.h>
 #include "fonts/fa_solid_900.h"
 #include "fonts/NotoSansSC.h"
 #include "i18n/__init__.hpp"
@@ -31,10 +32,10 @@
 int main(int, char**)
 {
     // Setup SDL
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
     {
-        printf("Error: %s\n", SDL_GetError());
-        return -1;
+        spdlog::error("Error: {}", SDL_GetError());
+        return EXIT_FAILURE;
     }
 
     // From 2.0.18: Enable native IME.
@@ -47,14 +48,14 @@ int main(int, char**)
     SDL_Window* window = SDL_CreateWindow(PROG_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
     if (window == nullptr)
     {
-        printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
-        return -1;
+        spdlog::error("Error: SDL_CreateWindow(): {}", SDL_GetError());
+        return EXIT_FAILURE;
     }
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     if (renderer == nullptr)
     {
         SDL_Log("Error creating SDL_Renderer!");
-        return -1;
+        return EXIT_FAILURE;
     }
     //SDL_RendererInfo info;
     //SDL_GetRendererInfo(renderer, &info);

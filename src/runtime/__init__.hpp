@@ -12,7 +12,35 @@ namespace soundsphere {
  */
 typedef struct runtime
 {
+    /**
+     * @brief Current playlist.
+     */
     PlayItem::PtrVecPtr playlist;
+
+    /**
+     * @brief Which item selected.
+     */
+    int playlist_select_idx;
+
+    /**
+     * @brief The current play index.
+     */
+    int playlist_play_idx;
+
+    /**
+     * @brief Volume.
+     */
+    int volume;
+
+    /**
+     * @brief Music duration, in seconds.
+     */
+    double music_duration;
+
+    /**
+     * @brief Music position, in seconds.
+     */
+    double music_position;
 } runtime_t;
 
 class JobDataBase

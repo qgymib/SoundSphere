@@ -1,3 +1,4 @@
+#include <spdlog/spdlog.h>
 #include "i18n/__init__.hpp"
 #include "runtime/__init__.hpp"
 #include "__init__.hpp"
@@ -45,7 +46,16 @@ static void _ui_playlist_draw2(void)
                     ImGui::TableNextRow();
 
                     ImGui::TableSetColumnIndex(0);
-                    ImGui::Text("%s", obj->title.c_str());
+
+                    bool is_selected = soundsphere::_G.playlist_select_idx == row_n;
+                    if (ImGui::Selectable(obj->title.c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
+                    {
+                        soundsphere::_G.playlist_select_idx = row_n;
+                    }
+                    if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+                    {
+                        soundsphere::_G.playlist_play_idx = row_n;
+                    }
 
                     ImGui::TableSetColumnIndex(1);
                     ImGui::Text("%s", obj->artist.c_str());

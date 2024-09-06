@@ -79,3 +79,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ev)
 
 include(third_party/taglib.cmake)
 target_link_libraries(${PROJECT_NAME} PRIVATE TagLib)
+
+include(third_party/spdlog.cmake)
+target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
+
+include(third_party/SDL_mixer.cmake)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL_mixer)

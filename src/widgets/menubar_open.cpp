@@ -7,7 +7,7 @@
 #include "__init__.hpp"
 
 static const char* s_filters[] = {
-    "Music\n*.mp3\n*.wav\n*.aac",
+    "Music\n*.flac\n*.mp3\n*.ogg\n*.voc\n*.wav",
 };
 
 static ev_os_thread_t s_open_thread = EV_OS_THREAD_INVALID;
@@ -29,6 +29,8 @@ static void _handle_files_on_ui(soundsphere::PlayItem::PtrVecPtr vec)
 {
     /* Update playlist. */
     soundsphere::_G.playlist = vec;
+    /* Clear selected item. */
+    soundsphere::_G.playlist_select_idx = -1;
 }
 
 static void _handle_files(const soundsphere::StringVec& paths)
