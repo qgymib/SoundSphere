@@ -33,7 +33,7 @@ static void _ui_playlist_draw2(void)
         if (vec.get() != nullptr)
         {
             ImGuiListClipper clipper;
-            clipper.Begin(vec->size());
+            clipper.Begin((int)vec->size());
 
             while (clipper.Step())
             {

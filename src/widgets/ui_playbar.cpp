@@ -112,7 +112,7 @@ static void _widget_playbar_draw(void)
         ImGui::SetNextItemWidth(-256);
         {
             float position_percentage = (soundsphere::_G.music_duration == 0.0) ?
-                0.0f : (soundsphere::_G.music_position / soundsphere::_G.music_duration);
+                0.0f : (float)(soundsphere::_G.music_position / soundsphere::_G.music_duration);
             if (ImGui::SliderFloat("##playbar_slider", &position_percentage, 0, 1, "", ImGuiSliderFlags_NoInput))
             {
                 double target_position = soundsphere::_G.music_duration * position_percentage;
