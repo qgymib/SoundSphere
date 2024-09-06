@@ -42,6 +42,21 @@ public:
      * @brief Artist of this music.
      */
     std::string artist;
+
+    /**
+     * @brief Bitrate in kb/s.
+     */
+    int bitrate;
+
+    /**
+     * @brief Sample rate in Hz.
+     */
+    int samplerate;
+
+    /**
+     * @brief The number of audio channels.
+     */
+    int channels;
 };
 
 }

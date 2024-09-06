@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <SDL2/SDL_mixer.h>
 #include "playitem.hpp"
 
 namespace soundsphere {
@@ -31,6 +32,11 @@ typedef struct runtime
      * @brief Volume.
      */
     int volume;
+
+    /**
+     * @brief Music type.
+     */
+    Mix_MusicType music_type;
 
     /**
      * @brief Music duration, in seconds.

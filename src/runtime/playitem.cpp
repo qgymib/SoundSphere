@@ -22,6 +22,9 @@ bool soundsphere::PlayItem::make(soundsphere::PlayItem::Ptr& obj,const std::stri
     obj->path = path;
     obj->title = f.tag()->title().to8Bit(true);
     obj->artist = f.tag()->artist().to8Bit(true);
+    obj->bitrate = f.audioProperties()->bitrate();
+    obj->samplerate = f.audioProperties()->sampleRate();
+    obj->channels = f.audioProperties()->channels();
 
     /*
      * Fixup

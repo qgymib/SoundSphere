@@ -15,6 +15,7 @@ void soundsphere::runtime_init(void)
     soundsphere::_G.playlist_select_idx = -1;
     soundsphere::_G.playlist_play_idx = -1;
     soundsphere::_G.volume = 0;
+    soundsphere::_G.music_type = MUS_NONE;
     soundsphere::_G.music_duration = 0.0;
     soundsphere::_G.music_position = 0.0;
 

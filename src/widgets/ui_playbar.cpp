@@ -3,6 +3,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <spdlog/spdlog.h>
 #include "runtime/__init__.hpp"
+#include "utils/time.hpp"
 #include "__init__.hpp"
 
 /**
@@ -33,20 +34,16 @@ static void _stop_play(void)
         s_music = nullptr;
     }
     s_playing_idx = -1;
+
+    soundsphere::_G.music_type = MUS_NONE;
+    soundsphere::_G.music_position = 0.0;
+    soundsphere::_G.music_duration = 0.0;
 }
 
 static void _widget_playbar_exit(void)
 {
     _stop_play();
     Mix_CloseAudio();
-}
-
-static void _seconds_to_string(char* buff, size_t size, double seconds)
-{
-    int hours = static_cast<int>(seconds) / 3600;
-    int minutes = (static_cast<int>(seconds) % 3600) / 60;
-    int secs = static_cast<int>(seconds) % 60;
-    snprintf(buff, size, "%02d:%02d:%02d", hours, minutes, secs);
 }
 
 static void _widget_playbar_draw(void)
@@ -70,6 +67,7 @@ static void _widget_playbar_draw(void)
             s_music = Mix_LoadMUS(obj->path.c_str());
             spdlog::info("music object: {}", (void*)s_music);
 
+            soundsphere::_G.music_type = Mix_GetMusicType(s_music);
             soundsphere::_G.music_duration = Mix_MusicDuration(s_music);
             soundsphere::_G.music_position = 0.0;
             spdlog::info("duration: {}", soundsphere::_G.music_duration);
@@ -105,7 +103,8 @@ static void _widget_playbar_draw(void)
 
         {
             static char buf[12];
-            _seconds_to_string(buf, sizeof(buf), soundsphere::_G.music_position);
+            soundsphere::time_seconds_to_string(buf, sizeof(buf),
+                soundsphere::_G.music_position);
             ImGui::Text("%s", buf);
         }
         ImGui::SameLine();
@@ -124,7 +123,8 @@ static void _widget_playbar_draw(void)
 
         {
             static char buf[12];
-            _seconds_to_string(buf, sizeof(buf), soundsphere::_G.music_duration);
+            soundsphere::time_seconds_to_string(buf, sizeof(buf),
+                soundsphere::_G.music_duration);
             ImGui::Text("%s", buf);
         }
         ImGui::SameLine();
