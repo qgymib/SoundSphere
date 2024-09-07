@@ -41,9 +41,10 @@ static void _widget_about_show_config_frame(void)
     static dep_info_t third_party_list[] = {
         { "imgui", IMGUI_VERSION, "https://github.com/ocornut/imgui" },
         { "libev", ev_version_str(), "https://github.com/qgymib/libev" },
-        { "SDL_mixer", SDL_MIXER_VERSION, "https://github.com/libsdl-org/SDL_mixer" },
         { "spdlog", SPDLOG_VERSION, "https://github.com/gabime/spdlog" },
+        { "stb", "", "https://github.com/nothings/stb" },
         { "IconFontCppHeaders", "", "https://github.com/juliettef/IconFontCppHeaders" },
+        { "SDL_mixer", SDL_MIXER_VERSION, "https://github.com/libsdl-org/SDL_mixer" },
         { "TagLib", TAGLIB_VERSION, "https://taglib.org/" },
     };
 

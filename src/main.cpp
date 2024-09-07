@@ -105,6 +105,8 @@ int main(int, char**)
 
     soundsphere::i18n_init();
     soundsphere::runtime_init();
+    soundsphere::_G.renderer = renderer;
+
     soundsphere::widget_init();
 
     // Our state

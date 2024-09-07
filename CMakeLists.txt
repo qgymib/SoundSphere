@@ -19,6 +19,7 @@ endfunction()
 ###############################################################################
 
 set(soundsphere_sources
+	"src/assets/icon.c"
     "src/fonts/fa_solid_900.c"
     "src/fonts/NotoSansSC.c"
     "src/i18n/__init__.cpp"
@@ -86,3 +87,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
 
 include(third_party/SDL_mixer.cmake)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL_mixer)
+
+include(third_party/stb.cmake)
+target_link_libraries(${PROJECT_NAME} PRIVATE stb)

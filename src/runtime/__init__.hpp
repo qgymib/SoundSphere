@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <SDL_render.h>
 #include <SDL2/SDL_mixer.h>
 #include "playitem.hpp"
 
@@ -47,6 +48,8 @@ typedef struct runtime
      * @brief Music position, in seconds.
      */
     double music_position;
+
+    SDL_Renderer* renderer;
 } runtime_t;
 
 class JobDataBase
