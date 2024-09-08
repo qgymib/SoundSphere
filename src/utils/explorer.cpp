@@ -382,7 +382,7 @@ static bool _is_file_name_match(const std::string& name, const FilterPatternVec&
         const FilterPattern& pattern = patterns[i];
         for (size_t j = 0; j < pattern.filters.size(); j++)
         {
-            const std::string& filter = pattern.filters[i];
+            const std::string& filter = pattern.filters[j];
             if (soundsphere::string_wildcard(name, filter))
             {
                 return true;
