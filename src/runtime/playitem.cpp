@@ -1,5 +1,6 @@
 #include <taglib/fileref.h>
 #include "utils/path.hpp"
+#include "utils/win32.hpp"
 #include "playitem.hpp"
 
 soundsphere::PlayItem::PlayItem()
@@ -12,7 +13,17 @@ soundsphere::PlayItem::~PlayItem()
 
 bool soundsphere::PlayItem::make(soundsphere::PlayItem::Ptr& obj,const std::string& path)
 {
+    /*
+     * In windows, TagLib except the path is encoding in local page.
+     * Due to \p path is always in UTF-8, we convert to wchar_t* to make this working.
+     */
+#if defined(_WIN32)
+    soundsphere::wstring path_w = soundsphere::utf8_to_wide(path.c_str());
+    TagLib::FileRef f(path_w.get());
+#else
     TagLib::FileRef f(path.c_str());
+#endif
+
     if (f.isNull())
     {
         return false;

@@ -57,6 +57,10 @@ if (WIN32)
         PRIVATE
             /subsystem:windows /entry:mainCRTStartup
     )
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+            "src/utils/win32.cpp"
+    )
 else()
     add_executable(${PROJECT_NAME} ${soundsphere_sources})
 endif()

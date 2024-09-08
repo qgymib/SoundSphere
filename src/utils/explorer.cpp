@@ -1,7 +1,14 @@
+#include <ev.h>
 #include <stdio.h>
-#include <filesystem>
 #include "utils/autoptr.hpp"
+#include "utils/win32.hpp"
 #include "explorer.hpp"
+
+#if defined(_WIN32)
+#define NATIVE_PATH_SPLIT "\\"
+#else
+#define NATIVE_PATH_SPLIT "/"
+#endif
 
 struct FilterPattern
 {
@@ -50,52 +57,6 @@ static FilterPatternVec _filters_to_patterns(const char* filters[], size_t filte
 #include <shobjidl.h>
 #include <assert.h>
 
-static std::string _wide_to_utf8(WCHAR* src)
-{
-    std::string ret;
-
-    int target_len = WideCharToMultiByte(CP_UTF8, 0, src, -1, NULL, 0, NULL, NULL);
-    if (target_len == 0)
-    {
-        return ret;
-    }
-
-    char* buf = (char*)malloc(target_len);
-    if (buf == NULL)
-    {
-        return ret;
-    }
-
-    int r = WideCharToMultiByte(CP_UTF8, 0, src, -1, buf, target_len, NULL, NULL);
-    assert(r == target_len); (void)r;
-
-    ret = buf;
-    free(buf);
-
-    return ret;
-}
-
-static WCHAR* _utf8_to_wide(const char* src)
-{
-    int pathw_len = MultiByteToWideChar(CP_UTF8, 0, src, -1, NULL, 0);
-    if (pathw_len == 0)
-    {
-        return NULL;
-    }
-
-    size_t buf_sz = pathw_len * sizeof(WCHAR);
-    WCHAR* buf = (WCHAR*)malloc(buf_sz);
-    if (buf == NULL)
-    {
-        return NULL;
-    }
-
-    int r = MultiByteToWideChar(CP_UTF8, 0, src, -1, buf, pathw_len);
-    assert(r == pathw_len); (void)r;
-
-    return buf;
-}
-
 class comdlg_filterspec
 {
 public:
@@ -132,8 +93,8 @@ public:
         size_t new_sz = sizeof(COMDLG_FILTERSPEC) * (m_save_type_sz + 1);
         m_save_types = (COMDLG_FILTERSPEC*)realloc(m_save_types, new_sz);
 
-        m_save_types[m_save_type_sz].pszName = _utf8_to_wide(name.c_str());
-        m_save_types[m_save_type_sz].pszSpec = _utf8_to_wide(filter.c_str());
+        m_save_types[m_save_type_sz].pszName = _wcsdup(soundsphere::utf8_to_wide(name.c_str()).get());
+        m_save_types[m_save_type_sz].pszSpec = _wcsdup(soundsphere::utf8_to_wide(filter.c_str()).get());
         m_save_type_sz++;
     }
 
@@ -238,7 +199,7 @@ bool soundsphere::explorer_open_files(soundsphere::StringVec& paths,
             return false;
         }
 
-        std::string path = _wide_to_utf8(pszFilePath);
+        std::string path = soundsphere::wide_to_utf8(pszFilePath);
         CoTaskMemFree(pszFilePath);
 
         paths.push_back(path);
@@ -287,7 +248,7 @@ bool soundsphere::explorer_open_folder(std::string& path)
     // Display the folder path
     if (SUCCEEDED(hr))
     {
-        path = _wide_to_utf8(pszFilePath);
+        path = soundsphere::wide_to_utf8(pszFilePath);
         CoTaskMemFree(pszFilePath);
     }
 
@@ -396,14 +357,19 @@ soundsphere::FileItemVec soundsphere::explorer_folder_items(const std::string& p
 {
     FileItemVec items;
 
-    for (const auto& entry : std::filesystem::directory_iterator(path))
+    ev_fs_req_t req;
+    ev_fs_readdir(NULL, &req, path.c_str(), NULL);
+
+    ev_dirent_t* d = ev_fs_get_first_dirent(&req);
+    for (; d != NULL; d = ev_fs_get_next_dirent(d))
     {
         FileItem item;
-        item.path = entry.path().string();
-        item.name = entry.path().filename().string();
-        item.isfile = entry.is_regular_file();
+        item.isfile = d->type == EV_DIRENT_FILE;
+        item.name = d->name;
+        item.path = path + NATIVE_PATH_SPLIT + item.name;
         items.push_back(item);
     }
+    ev_fs_req_cleanup(&req);
 
     return items;
 }
