@@ -12,12 +12,16 @@ static std::mutex* s_job_mutex = nullptr;
 
 void soundsphere::runtime_init(void)
 {
-    soundsphere::_G.playlist_select_idx = -1;
-    soundsphere::_G.playlist_play_idx = -1;
-    soundsphere::_G.volume = 0;
-    soundsphere::_G.music_type = MUS_NONE;
-    soundsphere::_G.music_duration = 0.0;
-    soundsphere::_G.music_position = 0.0;
+    soundsphere::_G.playlist.selected_idx = -1;
+
+    soundsphere::_G.playbar.volume = 0;
+    soundsphere::_G.playbar.music_duration = 0.0;
+    soundsphere::_G.playbar.music_position = 0.0;
+
+    soundsphere::_G.statusbar.music_type = MUS_NONE;
+    soundsphere::_G.statusbar.bitrate = 0;
+    soundsphere::_G.statusbar.samplerate = 0;
+    soundsphere::_G.statusbar.channels = 0;
 
     s_job_queue = new JobQueue;
     s_job_mutex = new std::mutex;

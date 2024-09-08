@@ -27,11 +27,16 @@ public:
 
     virtual ~auto_ptr()
     {
-        if (m_obj != nullptr)
-        {
-            m_deleter(m_obj);
-            m_obj = nullptr;
-        }
+        reset();
+    }
+
+    void reset()
+    {
+		if (m_obj != nullptr)
+		{
+			m_deleter(m_obj);
+			m_obj = nullptr;
+		}
     }
 
 public:

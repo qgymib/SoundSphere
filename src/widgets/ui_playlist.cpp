@@ -2,6 +2,7 @@
 #include "i18n/__init__.hpp"
 #include "runtime/__init__.hpp"
 #include "__init__.hpp"
+#include "dummy_player.hpp"
 
 static void _ui_playlist_init(void)
 {
@@ -13,7 +14,7 @@ static void _ui_playlist_exit(void)
 
 static void _ui_playlist_draw2(void)
 {
-    soundsphere::PlayItem::PtrVecPtr vec = soundsphere::_G.playlist;
+    soundsphere::PlayItem::PtrVecPtr vec = soundsphere::_G.media_list;
 
     const int table_flags = ImGuiTableFlags_Resizable;
     const char* table_colums[] = {
@@ -47,14 +48,14 @@ static void _ui_playlist_draw2(void)
 
                     ImGui::TableSetColumnIndex(0);
 
-                    bool is_selected = soundsphere::_G.playlist_select_idx == row_n;
+                    bool is_selected = soundsphere::_G.playlist.selected_idx == row_n;
                     if (ImGui::Selectable(obj->title.c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
                     {
-                        soundsphere::_G.playlist_select_idx = row_n;
+                        soundsphere::_G.playlist.selected_idx = row_n;
                     }
                     if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
                     {
-                        soundsphere::_G.playlist_play_idx = row_n;
+                        soundsphere::dummy_player_resume_or_play();
                     }
 
                     ImGui::TableSetColumnIndex(1);

@@ -32,6 +32,7 @@ set(soundsphere_sources
     "src/utils/string.cpp"
     "src/utils/time.cpp"
     "src/widgets/__init__.cpp"
+    "src/widgets/dummy_player.cpp"
     "src/widgets/menubar_about.cpp"
     "src/widgets/menubar_open.cpp"
     "src/widgets/menubar_preferences.cpp"

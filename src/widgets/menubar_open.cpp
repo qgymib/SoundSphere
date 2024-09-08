@@ -28,9 +28,9 @@ static void _menubar_open_exit(void)
 static void _handle_files_on_ui(soundsphere::PlayItem::PtrVecPtr vec)
 {
     /* Update playlist. */
-    soundsphere::_G.playlist = vec;
+    soundsphere::_G.media_list = vec;
     /* Clear selected item. */
-    soundsphere::_G.playlist_select_idx = -1;
+    soundsphere::_G.playlist.selected_idx = -1;
 }
 
 static void _handle_files(const soundsphere::StringVec& paths)

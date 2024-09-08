@@ -30,24 +30,6 @@ static const char* _music_type_to_str(Mix_MusicType type)
     return "UNKNOWN";
 }
 
-static void _get_properties(int* bitrate, int* samplerate, int* channels)
-{
-    *bitrate = 0;
-    *samplerate = 0;
-    *channels = 0;
-
-    if (soundsphere::_G.playlist_play_idx < 0)
-    {
-        return;
-    }
-
-    soundsphere::PlayItem::Ptr obj = soundsphere::_G.playlist->at(soundsphere::_G.playlist_play_idx);
-
-    *bitrate = obj->bitrate;
-    *samplerate = obj->samplerate;
-    *channels = obj->channels;
-}
-
 static void _widget_statusbar_draw(void)
 {
     ImGui::SetNextWindowSize(soundsphere::_layout.statusbar.size);
@@ -62,19 +44,15 @@ static void _widget_statusbar_draw(void)
         | ImGuiWindowFlags_NoBringToFrontOnFocus;
     if (ImGui::Begin("StatusBar", nullptr, status_bar_flags))
     {
-        int bitrate = 0;
-        int samplerate = 0;
-        int channels = 0;
-        _get_properties(&bitrate, &samplerate, &channels);
-
-        const char* type = _music_type_to_str(soundsphere::_G.music_type);
+        const char* type = _music_type_to_str(soundsphere::_G.statusbar.music_type);
         soundsphere::time_seconds_to_string(timebuf_pos, sizeof(timebuf_pos),
-            soundsphere::_G.music_position);
+            soundsphere::_G.playbar.music_position);
         soundsphere::time_seconds_to_string(timebuf_len, sizeof(timebuf_len),
-            soundsphere::_G.music_duration);
+            soundsphere::_G.playbar.music_duration);
 
         ImGui::Text("%s | %d kbps | %d Hz | %d Channel | %s / %s",
-            type, bitrate, samplerate, channels, timebuf_pos, timebuf_len);
+            type, soundsphere::_G.statusbar.bitrate, soundsphere::_G.statusbar.samplerate,
+            soundsphere::_G.statusbar.channels, timebuf_pos, timebuf_len);
     }
     ImGui::End();
 }

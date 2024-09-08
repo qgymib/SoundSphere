@@ -6,18 +6,21 @@
 soundsphere::widget_layout_t soundsphere::_layout;
 
 static const soundsphere::widget_t* s_main_ui[] = {
-    /* Menu order does important. */
+    /* Menu items. Order is important. */
     &soundsphere::menubar_open,
     &soundsphere::menubar_preferences,
     &soundsphere::menubar_about,
 
-    /* UI order does not matter. */
+    /* UI widgets. */
     &soundsphere::ui_cover,
     &soundsphere::ui_filter,
     &soundsphere::ui_lyric,
     &soundsphere::ui_playbar,
     &soundsphere::ui_playlist,
     &soundsphere::ui_statusbar,
+
+    /* Dummy items. */
+    & soundsphere::dummy_player,
 };
 
 static float _widget_get_main_menu_bar_height(void)

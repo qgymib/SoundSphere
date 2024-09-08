@@ -17,37 +17,58 @@ typedef struct runtime
     /**
      * @brief Current playlist.
      */
-    PlayItem::PtrVecPtr playlist;
+    PlayItem::PtrVecPtr media_list;
 
-    /**
-     * @brief Which item selected.
-     */
-    int playlist_select_idx;
+    struct
+    {
+        /**
+         * @brief Which item selected.
+         */
+        int selected_idx;
+    } playlist;
 
-    /**
-     * @brief The current play index.
-     */
-    int playlist_play_idx;
+    struct
+    {
+        int is_playing;
 
-    /**
-     * @brief Volume.
-     */
-    int volume;
+        /**
+         * @brief Volume.
+         */
+        int volume;
 
-    /**
-     * @brief Music type.
-     */
-    Mix_MusicType music_type;
+        /**
+         * @brief Music duration, in seconds.
+         */
+        double music_duration;
 
-    /**
-     * @brief Music duration, in seconds.
-     */
-    double music_duration;
+        /**
+         * @brief Music position, in seconds.
+         */
+        double music_position;
+    } playbar;
 
-    /**
-     * @brief Music position, in seconds.
-     */
-    double music_position;
+    struct
+    {
+        /**
+         * @brief Music type.
+         */
+        Mix_MusicType music_type;
+
+        /**
+         * @brief Bitrate in kb/s.
+         */
+        int bitrate;
+
+        /**
+         * @brief Sample rate in Hz.
+         */
+        int samplerate;
+
+        /**
+         * @brief The number of audio channels.
+         */
+        int channels;
+    } statusbar;
 
     SDL_Renderer* renderer;
 } runtime_t;

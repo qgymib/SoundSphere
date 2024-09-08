@@ -39,6 +39,7 @@ typedef struct widget
     void (*draw)(void);
 } widget_t;
 
+extern const widget_t dummy_player;
 extern const widget_t menubar_about;
 extern const widget_t menubar_open;
 extern const widget_t menubar_preferences;
