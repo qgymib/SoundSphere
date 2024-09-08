@@ -28,6 +28,9 @@ soundsphere::i18n_t soundsphere::i18n_zh_cn = {
 .localization =
 "语言",
 
+.name =
+"名称",
+
 .open =
 "打开",
 
@@ -42,6 +45,9 @@ soundsphere::i18n_t soundsphere::i18n_zh_cn = {
 
 .settings =
 "设置",
+
+.version =
+"版本",
 
 };
 

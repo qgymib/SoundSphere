@@ -25,6 +25,9 @@ soundsphere::i18n_t soundsphere::i18n_en_us = {
 .localization =
 "Localization",
 
+.name =
+"Name",
+
 .open =
 "Open",
 
@@ -39,5 +42,8 @@ soundsphere::i18n_t soundsphere::i18n_en_us = {
 
 .settings =
 "Settings",
+
+.version =
+"Version",
 
 };

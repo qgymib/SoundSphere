@@ -13,11 +13,13 @@
     xx(homepage)                \
     xx(lang)                    \
     xx(localization)            \
+    xx(name)                    \
     xx(open)                    \
     xx(open_folder)             \
     xx(title)                   \
     xx(preferences)             \
-    xx(settings)
+    xx(settings)                \
+    xx(version)
 
 /**
  * @brief i18n locals.

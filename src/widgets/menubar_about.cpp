@@ -36,7 +36,7 @@ static void _widget_about_exit(void)
 {
 }
 
-static void _widget_about_show_config_frame(void)
+static void _widget_about_3rd(void)
 {
     static dep_info_t third_party_list[] = {
         { "imgui", IMGUI_VERSION, "https://github.com/ocornut/imgui" },
@@ -48,16 +48,50 @@ static void _widget_about_show_config_frame(void)
         { "TagLib", TAGLIB_VERSION, "https://taglib.org/" },
     };
 
-    ImVec2 child_sz = ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 8);
+    ImGui::SeparatorText("3rd");
+
+    const int table_flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit;
+    if (ImGui::BeginTable("about_3rd", 3, table_flags))
+    {
+        ImGui::TableSetupColumn(soundsphere::_i18n->name);
+        ImGui::TableSetupColumn(soundsphere::_i18n->version);
+        ImGui::TableSetupColumn(soundsphere::_i18n->homepage);
+        ImGui::TableHeadersRow();
+
+        ImGuiListClipper clipper;
+        clipper.Begin(IM_ARRAYSIZE(third_party_list));
+
+        while (clipper.Step())
+        {
+            for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++)
+            {
+                dep_info_t* info = &third_party_list[row_n];
+                ImGui::PushID((void*)info);
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text(info->name);
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::Text(info->version);
+
+                ImGui::TableSetColumnIndex(2);
+                ImGui::TextLinkOpenURL(soundsphere::_i18n->homepage, info->url);
+
+                ImGui::PopID();
+            }
+        }
+
+        ImGui::EndTable();
+    }
+}
+
+static void _widget_about_show_config_frame(void)
+{
+    ImVec2 child_sz = ImVec2(320, ImGui::GetTextLineHeightWithSpacing() * 8);
     if (ImGui::BeginChild("about_show_config_info", child_sz, ImGuiChildFlags_FrameStyle))
     {
-        for (size_t i = 0; i < IM_ARRAYSIZE(third_party_list); i++)
-        {
-            dep_info_t* info = &third_party_list[i];
-            ImGui::Text("%s: %s", info->name, info->version);
-            ImGui::SameLine();
-            ImGui::TextLinkOpenURL(soundsphere::_i18n->homepage, info->url);
-        }
+        _widget_about_3rd();
     }
     ImGui::EndChild();
 }
