@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <memory>
-#include <SDL_render.h>
 #include <SDL2/SDL_mixer.h>
 #include "playitem.hpp"
 
