@@ -1,7 +1,6 @@
 #include <ev.h>
 #include <stdio.h>
 #include "utils/autoptr.hpp"
-#include "utils/win32.hpp"
 #include "explorer.hpp"
 
 #if defined(_WIN32)

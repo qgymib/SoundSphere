@@ -124,7 +124,7 @@ soundsphere::Texture soundsphere::backend_load_image(const void* data, size_t si
     int img_width = 0;
     int img_height = 0;
 
-    unsigned char* img_data = stbi_load_from_memory((stbi_uc*)data, size,
+    unsigned char* img_data = stbi_load_from_memory((stbi_uc*)data, (int)size,
         &img_width, &img_height, &channels, 0);
     if (img_data == nullptr)
     {

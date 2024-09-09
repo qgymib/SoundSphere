@@ -4,9 +4,42 @@
 #include <string>
 #include <vector>
 
+#if defined(_WIN32)
+#include <Esent.h>
+#endif
+
 namespace soundsphere {
 
+/**
+ * @brief String vector.
+ */
 typedef std::vector<std::string> StringVec;
+
+#if defined(_WIN32)
+
+/**
+ * @brief Wide string.
+ * @note Windows only.
+ */
+typedef std::shared_ptr<WCHAR> wstring;
+
+/**
+ * @brief Convert wide string to UTF-8 string.
+ * @note Windows only.
+ * @param[in] src   Wide string.
+ * @return UTF-8 string.
+ */
+std::string wide_to_utf8(WCHAR* src);
+
+/**
+ * @brief Convert UTF-8 string into wide string.
+ * @note Windows only.
+ * @param[in] src   UTF-8 string.
+ * @return Wide string.
+ */
+wstring utf8_to_wide(const char* src);
+
+#endif
 
 /**
  * @brief Split string into tokens.
