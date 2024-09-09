@@ -102,6 +102,7 @@ void soundsphere::dummy_player_resume_or_play(void)
         if (Mix_PausedMusic())
         {
             Mix_ResumeMusic();
+            soundsphere::_G.playbar.is_playing = true;
             return;
         }
     }
