@@ -10,19 +10,23 @@ soundsphere::runtime_t soundsphere::_G;
 static JobQueue* s_job_queue = nullptr;
 static std::mutex* s_job_mutex = nullptr;
 
+soundsphere::runtime::runtime()
+{
+    playlist.selected_id = (uint64_t)-1;
+
+    playbar.is_playing = false;
+    playbar.volume = 50;
+    playbar.music_duration = 0.0;
+    playbar.music_position = 0.0;
+
+    statusbar.music_type = MUS_NONE;
+    statusbar.bitrate = 0;
+    statusbar.samplerate = 0;
+    statusbar.channels = 0;
+}
+
 void soundsphere::runtime_init(void)
 {
-    soundsphere::_G.playlist.selected_id = (uint64_t)-1;
-
-    soundsphere::_G.playbar.volume = 0;
-    soundsphere::_G.playbar.music_duration = 0.0;
-    soundsphere::_G.playbar.music_position = 0.0;
-
-    soundsphere::_G.statusbar.music_type = MUS_NONE;
-    soundsphere::_G.statusbar.bitrate = 0;
-    soundsphere::_G.statusbar.samplerate = 0;
-    soundsphere::_G.statusbar.channels = 0;
-
     s_job_queue = new JobQueue;
     s_job_mutex = new std::mutex;
 }

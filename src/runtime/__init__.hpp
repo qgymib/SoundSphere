@@ -13,6 +13,8 @@ namespace soundsphere {
  */
 typedef struct runtime
 {
+    runtime();
+
     /**
      * @brief Current playlist.
      */
