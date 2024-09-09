@@ -4,8 +4,8 @@
 extern "C" {
 #endif
 
-extern unsigned int NotoSansSC_compressed_size;
-extern unsigned int NotoSansSC_compressed_data[];
+extern const unsigned int NotoSansSC_compressed_size;
+extern const unsigned int NotoSansSC_compressed_data[];
 
 #ifdef __cplusplus
 }

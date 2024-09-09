@@ -15,6 +15,8 @@
 #include <IconsFontAwesome6.h>
 #include "backends/__init__.hpp"
 #include "fonts/fa_solid_900.h"
+#include "fonts/NotoSans.h"
+#include "fonts/NotoSansKR.h"
 #include "fonts/NotoSansSC.h"
 #include "i18n/__init__.hpp"
 #include "runtime/__init__.hpp"
@@ -48,9 +50,20 @@ int main(int, char**)
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
-    ImFont* font = io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansSC_compressed_data, NotoSansSC_compressed_size,
-        18.0f, nullptr, io.Fonts->GetGlyphRangesChineseFull());
-    IM_ASSERT(font != nullptr); (void)font;
+    io.Fonts->AddFontFromMemoryCompressedTTF(NotoSans_compressed_data, NotoSans_compressed_size,
+        18.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
+    {
+        ImFontConfig config;
+        config.MergeMode = true;
+        io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansSC_compressed_data, NotoSansSC_compressed_size,
+            18.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
+    }
+    {
+        ImFontConfig config;
+        config.MergeMode = true;
+        io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansKR_compressed_data, NotoSansKR_compressed_size,
+            18.0f, &config, io.Fonts->GetGlyphRangesKorean());
+    }
     {
         ImFontConfig config;
         config.MergeMode = true;
@@ -59,6 +72,7 @@ int main(int, char**)
         io.Fonts->AddFontFromMemoryCompressedTTF(fa_solid_900_compressed_data, fa_solid_900_compressed_size,
             config.GlyphMinAdvanceX, &config, icon_ranges);
     }
+    io.Fonts->Build();
 
     soundsphere::i18n_init();
     soundsphere::runtime_init();

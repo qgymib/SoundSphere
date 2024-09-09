@@ -22,6 +22,8 @@ set(soundsphere_sources
 	"src/assets/icon.c"
     "src/backends/sdl2_sdlrenderer2.cpp"
     "src/fonts/fa_solid_900.c"
+    "src/fonts/NotoSans.c"
+    "src/fonts/NotoSansKR.c"
     "src/fonts/NotoSansSC.c"
     "src/i18n/__init__.cpp"
     "src/i18n/en_us.cpp"
