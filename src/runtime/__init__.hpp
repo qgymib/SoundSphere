@@ -33,6 +33,11 @@ typedef struct runtime
 
     struct
     {
+        std::string text;
+    } lyric;
+
+    struct
+    {
         int is_playing;
 
         /**

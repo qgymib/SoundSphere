@@ -58,6 +58,7 @@ static void _stop_play(void)
     }
 
     soundsphere::_G.cover.img.reset();
+    soundsphere::_G.lyric.text.clear();
 
     soundsphere::_G.playbar.is_playing = false;
     soundsphere::_G.playbar.music_position = 0.0;
@@ -119,6 +120,8 @@ void soundsphere::dummy_player_resume_or_play(void)
 
     s_player->music_item->compile_cover();
     soundsphere::_G.cover.img = s_player->music_item->cover_texture;
+
+    soundsphere::_G.lyric.text = s_player->music_item->lyric;
 
     soundsphere::_G.playbar.is_playing = true;
     soundsphere::_G.playbar.music_duration = Mix_MusicDuration(s_player->music_mix);

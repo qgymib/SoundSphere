@@ -58,6 +58,11 @@ public:
     std::string artist;
 
     /**
+     * @brief Lyric.
+     */
+    std::string lyric;
+
+    /**
      * @brief Cover data, which is a image.
      */
     TagLib::ByteVector cover_data;

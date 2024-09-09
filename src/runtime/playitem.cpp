@@ -5,6 +5,8 @@
 #include <taglib/id3v2frame.h>
 #include <taglib/id3v2header.h>
 #include <taglib/attachedpictureframe.h>
+#include <taglib/unsynchronizedlyricsframe.h>
+#include <taglib/xiphcomment.h>
 #include "utils/path.hpp"
 #include "utils/string.hpp"
 #include "playitem.hpp"
@@ -46,26 +48,6 @@ static void _playitem_get_properties_common(soundsphere::PlayItem* obj,
     obj->channels = file->audioProperties()->channels();
 }
 
-static bool _playitem_get_properties_flac(soundsphere::PlayItem* obj)
-{
-    std::shared_ptr<TagLib::FLAC::File> file = _access_file<TagLib::FLAC::File>(obj->path.c_str());
-    if (!file->isValid())
-    {
-        return false;
-    }
-
-    _playitem_get_properties_common(obj, file);
-
-    auto pict_list = file->pictureList();
-    if (pict_list.size() != 0)
-    {
-        TagLib::FLAC::Picture* p = pict_list[0];
-        obj->cover_data = p->data();
-    }
-
-    return true;
-}
-
 template<typename T>
 static bool _playitem_load_cover_from_id3v2(soundsphere::PlayItem* obj,
     std::shared_ptr<T> file)
@@ -89,6 +71,69 @@ static bool _playitem_load_cover_from_id3v2(soundsphere::PlayItem* obj,
     return true;
 }
 
+template<typename T>
+static bool _playitem_load_lyric_from_id3v2(soundsphere::PlayItem* obj,
+    std::shared_ptr<T> file)
+{
+    TagLib::ID3v2::Tag* tag = file->ID3v2Tag();
+    if (tag == nullptr)
+    {
+        return false;
+    }
+
+    TagLib::ID3v2::FrameList frames = tag->frameListMap()["USLT"];
+    if (frames.isEmpty())
+    {
+        return false;
+    }
+
+    TagLib::ID3v2::UnsynchronizedLyricsFrame* lyricsFrame =
+        static_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame*>(frames.front());
+    obj->lyric = lyricsFrame->text().to8Bit(true);
+
+    return true;
+}
+
+static bool _playitem_get_lyric_flac(soundsphere::PlayItem* obj,
+    std::shared_ptr<TagLib::FLAC::File> file)
+{
+    TagLib::Ogg::XiphComment* tag = file->xiphComment();
+    if (tag == nullptr)
+    {
+        return false;
+    }
+
+    TagLib::String lyric = tag->fieldListMap()["LYRICS"].toString();
+    if (lyric.isEmpty())
+    {
+        return false;
+    }
+
+    obj->lyric = lyric.to8Bit(true);
+    return true;
+}
+
+static bool _playitem_get_properties_flac(soundsphere::PlayItem* obj)
+{
+    std::shared_ptr<TagLib::FLAC::File> file = _access_file<TagLib::FLAC::File>(obj->path.c_str());
+    if (!file->isValid())
+    {
+        return false;
+    }
+
+    _playitem_get_properties_common(obj, file);
+    _playitem_get_lyric_flac(obj, file);
+
+    auto pict_list = file->pictureList();
+    if (pict_list.size() != 0)
+    {
+        TagLib::FLAC::Picture* p = pict_list[0];
+        obj->cover_data = p->data();
+    }
+
+    return true;
+}
+
 static bool _playitem_get_properties_mp3(soundsphere::PlayItem* obj)
 {
     std::shared_ptr<TagLib::MPEG::File> file = _access_file<TagLib::MPEG::File>(obj->path.c_str());
@@ -98,6 +143,7 @@ static bool _playitem_get_properties_mp3(soundsphere::PlayItem* obj)
     }
 
     _playitem_get_properties_common(obj, file);
+    _playitem_load_lyric_from_id3v2(obj, file);
 
     return _playitem_load_cover_from_id3v2(obj, file);
 }

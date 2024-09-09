@@ -21,7 +21,7 @@ static void _ui_lyric_draw(void)
         | ImGuiWindowFlags_NoBringToFrontOnFocus;
     if (ImGui::Begin("Lyric", nullptr, lyric_flags))
     {
-        ImGui::Text("Lyric");
+        ImGui::Text("%s", soundsphere::_G.lyric.text.c_str());
     }
     ImGui::End();
 }
