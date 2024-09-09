@@ -21,6 +21,11 @@ typedef struct runtime
     struct
     {
         /**
+         * @brief List shown in ui.
+         */
+        PlayItem::PtrVecPtr show_vec;
+
+        /**
          * @brief Which item selected.
          */
         int selected_idx;
@@ -28,16 +33,25 @@ typedef struct runtime
 
     struct
     {
+        /**
+         * @brief Cover image texture.
+         */
         soundsphere::Texture img;
     } cover;
 
     struct
     {
+        /**
+         * @brief The raw lyric.
+         */
         std::string text;
     } lyric;
 
     struct
     {
+        /**
+         * @brief Is the audio is playing.
+         */
         int is_playing;
 
         /**

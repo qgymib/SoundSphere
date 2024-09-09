@@ -40,6 +40,9 @@ soundsphere::i18n_t soundsphere::i18n_en_us = {
 .preferences =
 "Preferences",
 
+.search_in_playlist =
+"Search in playlist",
+
 .settings =
 "Settings",
 

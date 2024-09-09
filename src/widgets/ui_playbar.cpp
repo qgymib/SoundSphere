@@ -7,7 +7,6 @@
 
 static void _widget_playbar_init(void)
 {
-
 }
 
 static void _widget_playbar_exit(void)

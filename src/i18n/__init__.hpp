@@ -18,6 +18,7 @@
     xx(open_folder)             \
     xx(original_text)           \
     xx(preferences)             \
+    xx(search_in_playlist)      \
     xx(settings)                \
     xx(title)                   \
     xx(translated_text)         \

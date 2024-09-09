@@ -14,7 +14,7 @@ static void _ui_playlist_exit(void)
 
 static void _ui_playlist_draw2(void)
 {
-    soundsphere::PlayItem::PtrVecPtr vec = soundsphere::_G.media_list;
+    soundsphere::PlayItem::PtrVecPtr vec = soundsphere::_G.playlist.show_vec;
 
     const int table_flags = ImGuiTableFlags_Resizable;
     const char* table_colums[] = {
@@ -43,7 +43,6 @@ static void _ui_playlist_draw2(void)
                     soundsphere::PlayItem::Ptr obj = vec->at(row_n);
 
                     ImGui::PushID(obj->path.c_str());
-
                     ImGui::TableNextRow();
 
                     ImGui::TableSetColumnIndex(0);

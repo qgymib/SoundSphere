@@ -43,6 +43,9 @@ soundsphere::i18n_t soundsphere::i18n_zh_cn = {
 .preferences =
 "首选项",
 
+.search_in_playlist =
+"搜索当前播放列表",
+
 .settings =
 "设置",
 

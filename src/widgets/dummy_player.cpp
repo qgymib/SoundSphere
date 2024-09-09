@@ -113,7 +113,7 @@ void soundsphere::dummy_player_resume_or_play(void)
 
     _stop_play();
 
-    s_player->music_item = soundsphere::_G.media_list->at(soundsphere::_G.playlist.selected_idx);
+    s_player->music_item = soundsphere::_G.playlist.show_vec->at(soundsphere::_G.playlist.selected_idx);
     s_player->music_mix = Mix_LoadMUS(s_player->music_item->path.c_str());
 
     Mix_PlayMusic(s_player->music_mix, 1);

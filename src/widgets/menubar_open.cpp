@@ -5,6 +5,7 @@
 #include "utils/explorer.hpp"
 #include "utils/string.hpp"
 #include "__init__.hpp"
+#include "ui_filter.hpp"
 
 static const char* s_filters[] = {
     "Music\n*.flac\n*.mp3\n*.ogg\n*.voc\n*.wav",
@@ -31,6 +32,8 @@ static void _handle_files_on_ui(soundsphere::PlayItem::PtrVecPtr vec)
     soundsphere::_G.media_list = vec;
     /* Clear selected item. */
     soundsphere::_G.playlist.selected_idx = -1;
+
+    soundsphere::ui_filter_reset();
 }
 
 static void _handle_files(const soundsphere::StringVec& paths)
