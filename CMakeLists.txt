@@ -38,6 +38,7 @@ set(soundsphere_sources
     "src/widgets/menubar_about.cpp"
     "src/widgets/menubar_open.cpp"
     "src/widgets/menubar_preferences.cpp"
+    "src/widgets/menubar_translations.cpp"
     "src/widgets/ui_cover.cpp"
     "src/widgets/ui_filter.cpp"
     "src/widgets/ui_lyric.cpp"

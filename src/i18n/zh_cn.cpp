@@ -37,14 +37,23 @@ soundsphere::i18n_t soundsphere::i18n_zh_cn = {
 .open_folder =
 "打开文件夹",
 
-.title =
-"标题",
+.original_text =
+"原文",
 
 .preferences =
 "首选项",
 
 .settings =
 "设置",
+
+.title =
+"标题",
+
+.translated_text =
+"译文",
+
+.translations =
+"翻译",
 
 .version =
 "版本",

@@ -38,10 +38,10 @@ void soundsphere::i18n_exit(void)
 {
 }
 
-const char* soundsphere::i18n_locale_string(soundsphere::i18n_string_t s)
+const char* soundsphere::i18n_locale_string(i18n_t* locale, soundsphere::i18n_string_t s)
 {
 #define I18N_EXPAND_AS_CHOOSE(a) \
-    case soundsphere::i18n_string_t::a: return soundsphere::_i18n->a;
+    case soundsphere::i18n_string_t::a: return locale->a;
 
     switch(s)
     {
@@ -55,5 +55,10 @@ const char* soundsphere::i18n_locale_string(soundsphere::i18n_string_t s)
 
 void soundsphere::i18n_set_locale(soundsphere::i18n_locale_t locale)
 {
-    soundsphere::_i18n = s_i18n[(int)locale];
+    soundsphere::_i18n = i18n_get_locale(locale);
+}
+
+soundsphere::i18n_t* soundsphere::i18n_get_locale(soundsphere::i18n_locale_t locale)
+{
+    return s_i18n[(int)locale];
 }

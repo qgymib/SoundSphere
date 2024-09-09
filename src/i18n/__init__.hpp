@@ -16,9 +16,12 @@
     xx(name)                    \
     xx(open)                    \
     xx(open_folder)             \
-    xx(title)                   \
+    xx(original_text)           \
     xx(preferences)             \
     xx(settings)                \
+    xx(title)                   \
+    xx(translated_text)         \
+    xx(translations)            \
     xx(version)
 
 /**
@@ -74,6 +77,8 @@ typedef enum class i18n_string_e
 #define I18N_EXPAND_AS_ENUM(a)   a,
     I18N_STRING_TABLE(I18N_EXPAND_AS_ENUM)
 #undef I18N_EXPAND_AS_ENUM
+
+    I18N_STRING__MAX,
 } i18n_string_t;
 
 /**
@@ -113,7 +118,14 @@ void i18n_set_locale(i18n_locale_t locale);
  * @param[in] s The string id.
  * @return      The local string.
  */
-const char* i18n_locale_string(i18n_string_t s);
+const char* i18n_locale_string(i18n_t* locale, i18n_string_t s);
+
+/**
+ * @brief Get locale translations.
+ * @param[in] locale    Locale.
+ * @return Translated strings.
+ */
+i18n_t* i18n_get_locale(i18n_locale_t locale);
 
 }
 

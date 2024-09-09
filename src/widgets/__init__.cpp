@@ -9,6 +9,7 @@ static const soundsphere::widget_t* s_main_ui[] = {
     /* Menu items. Order is important. */
     &soundsphere::menubar_open,
     &soundsphere::menubar_preferences,
+    &soundsphere::menubar_translations,
     &soundsphere::menubar_about,
 
     /* UI widgets. */

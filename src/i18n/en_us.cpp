@@ -34,14 +34,23 @@ soundsphere::i18n_t soundsphere::i18n_en_us = {
 .open_folder =
 "Open Folder",
 
-.title =
-"Title",
+.original_text =
+"Original Text",
 
 .preferences =
 "Preferences",
 
 .settings =
 "Settings",
+
+.title =
+"Title",
+
+.translated_text =
+"Translated Text",
+
+.translations =
+"Translations",
 
 .version =
 "Version",

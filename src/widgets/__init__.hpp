@@ -43,6 +43,7 @@ extern const widget_t dummy_player;
 extern const widget_t menubar_about;
 extern const widget_t menubar_open;
 extern const widget_t menubar_preferences;
+extern const widget_t menubar_translations;
 extern const widget_t ui_cover;
 extern const widget_t ui_filter;
 extern const widget_t ui_lyric;
