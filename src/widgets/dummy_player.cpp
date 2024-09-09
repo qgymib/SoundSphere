@@ -67,6 +67,8 @@ static void _stop_play(void)
     soundsphere::_G.statusbar.samplerate = 0;
     soundsphere::_G.statusbar.channels = 0;
     soundsphere::_G.statusbar.music_type = MUS_NONE;
+
+    soundsphere::dummy_player_set_position(0);
 }
 
 static void _dummy_player_exit(void)
@@ -84,6 +86,7 @@ static void _dummy_player_exit(void)
 
 static void _dummy_player_draw(void)
 {
+    /* Update music position. */
     soundsphere::_G.playbar.music_position = (s_player->music_mix != NULL) ?
         Mix_GetMusicPosition(s_player->music_mix) : 0.0;
 }
