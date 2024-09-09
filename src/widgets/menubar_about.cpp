@@ -70,10 +70,10 @@ static void _widget_about_3rd(void)
                 ImGui::TableNextRow();
 
                 ImGui::TableSetColumnIndex(0);
-                ImGui::Text(info->name);
+                ImGui::Text("%s", info->name);
 
                 ImGui::TableSetColumnIndex(1);
-                ImGui::Text(info->version);
+                ImGui::Text("%s", info->version);
 
                 ImGui::TableSetColumnIndex(2);
                 ImGui::TextLinkOpenURL(soundsphere::_i18n->homepage, info->url);

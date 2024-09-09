@@ -5,12 +5,6 @@
 #include "__init__.hpp"
 #include "dummy_player.hpp"
 
-/**
- * @brief The music we are playing.
- */
-static Mix_Music* s_music = nullptr;
-static int s_playing_idx = -1;
-
 static void _widget_playbar_init(void)
 {
 

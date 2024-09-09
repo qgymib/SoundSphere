@@ -1,4 +1,4 @@
-#ifndef SOUND_SPHERE_UTILS_WIN32_HPP
+#if defined(_WIN32) && !defined(SOUND_SPHERE_UTILS_WIN32_HPP)
 #define SOUND_SPHERE_UTILS_WIN32_HPP
 
 #include <string>
