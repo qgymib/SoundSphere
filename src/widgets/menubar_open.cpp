@@ -31,7 +31,7 @@ static void _handle_files_on_ui(soundsphere::PlayItem::PtrVecPtr vec)
     /* Update playlist. */
     soundsphere::_G.media_list = vec;
     /* Clear selected item. */
-    soundsphere::_G.playlist.selected_idx = -1;
+    soundsphere::_G.playlist.selected_id = (uint64_t)-1;
 
     soundsphere::ui_filter_reset();
 }

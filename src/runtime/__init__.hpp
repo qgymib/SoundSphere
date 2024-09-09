@@ -28,7 +28,7 @@ typedef struct runtime
         /**
          * @brief Which item selected.
          */
-        int selected_idx;
+        uint64_t selected_id;
     } playlist;
 
     struct

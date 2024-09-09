@@ -38,6 +38,11 @@ public:
 
 public:
     /**
+     * @brief Unique id.
+     */
+    uint64_t uid;
+
+    /**
      * @brief Path to music file.
      */
     std::string path;

@@ -155,6 +155,9 @@ static file_prop_record_t s_format_map[] = {
 
 soundsphere::PlayItem::PlayItem()
 {
+    static uint64_t s_uid = 0;
+
+    uid = s_uid++;
     bitrate = 0;
     samplerate = 0;
     channels = 0;

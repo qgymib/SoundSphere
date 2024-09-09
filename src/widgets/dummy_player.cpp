@@ -98,6 +98,22 @@ _dummy_player_exit,
 _dummy_player_draw,
 };
 
+static soundsphere::PlayItem::Ptr _find_audio(uint64_t id)
+{
+    soundsphere::PlayItem::PtrVecPtr vec = soundsphere::_G.media_list;
+
+    for (size_t i = 0; i < vec->size(); i++)
+    {
+        soundsphere::PlayItem::Ptr obj = vec->at(i);
+        if (obj->uid == id)
+        {
+            return obj;
+        }
+    }
+
+    return soundsphere::PlayItem::Ptr();
+}
+
 void soundsphere::dummy_player_resume_or_play(void)
 {
     /* If we have music paused, we resume the music. */
@@ -113,7 +129,7 @@ void soundsphere::dummy_player_resume_or_play(void)
 
     _stop_play();
 
-    s_player->music_item = soundsphere::_G.playlist.show_vec->at(soundsphere::_G.playlist.selected_idx);
+    s_player->music_item = _find_audio(soundsphere::_G.playlist.selected_id);
     s_player->music_mix = Mix_LoadMUS(s_player->music_item->path.c_str());
 
     Mix_PlayMusic(s_player->music_mix, 1);

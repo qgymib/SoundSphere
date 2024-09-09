@@ -47,10 +47,10 @@ static void _ui_playlist_draw2(void)
 
                     ImGui::TableSetColumnIndex(0);
 
-                    bool is_selected = soundsphere::_G.playlist.selected_idx == row_n;
+                    bool is_selected = soundsphere::_G.playlist.selected_id == obj->uid;
                     if (ImGui::Selectable(obj->title.c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
                     {
-                        soundsphere::_G.playlist.selected_idx = row_n;
+                        soundsphere::_G.playlist.selected_id = obj->uid;
                     }
                     if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
                     {

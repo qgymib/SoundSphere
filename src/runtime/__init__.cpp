@@ -12,7 +12,7 @@ static std::mutex* s_job_mutex = nullptr;
 
 void soundsphere::runtime_init(void)
 {
-    soundsphere::_G.playlist.selected_idx = -1;
+    soundsphere::_G.playlist.selected_id = (uint64_t)-1;
 
     soundsphere::_G.playbar.volume = 0;
     soundsphere::_G.playbar.music_duration = 0.0;
