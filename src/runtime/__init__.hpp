@@ -23,6 +23,14 @@ typedef struct runtime
     struct
     {
         /**
+         * @brief The current playing music;
+         */
+        uint64_t playing_id;
+    } dummy_player;
+
+    struct
+    {
+        /**
          * @brief List shown in ui.
          */
         PlayItem::PtrVecPtr show_vec;

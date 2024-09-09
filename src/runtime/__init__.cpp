@@ -12,6 +12,7 @@ static std::mutex* s_job_mutex = nullptr;
 
 soundsphere::runtime::runtime()
 {
+    dummy_player.playing_id = (uint64_t)-1;
     playlist.selected_id = (uint64_t)-1;
 
     playbar.is_playing = false;
