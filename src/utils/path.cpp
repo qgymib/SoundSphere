@@ -22,3 +22,14 @@ std::string soundsphere::basename(const std::string& path, bool with_ext)
 
     return fileName;
 }
+
+std::string soundsphere::extname(const std::string& path)
+{
+    std::string name = soundsphere::basename(path, true);
+    size_t first_dot = name.find_first_of('.');
+    if (first_dot == std::string::npos)
+    {
+        return "";
+    }
+    return name.substr(first_dot);
+}

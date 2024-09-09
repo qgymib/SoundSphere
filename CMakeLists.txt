@@ -20,6 +20,7 @@ endfunction()
 
 set(soundsphere_sources
 	"src/assets/icon.c"
+    "src/backends/sdl2_sdlrenderer2.cpp"
     "src/fonts/fa_solid_900.c"
     "src/fonts/NotoSansSC.c"
     "src/i18n/__init__.cpp"
@@ -27,6 +28,7 @@ set(soundsphere_sources
     "src/i18n/zh_cn.cpp"
     "src/runtime/__init__.cpp"
     "src/runtime/playitem.cpp"
+    "src/utils/dump.cpp"
     "src/utils/explorer.cpp"
     "src/utils/path.cpp"
     "src/utils/string.cpp"

@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <taglib/tbytevector.h>
+#include "backends/__init__.hpp"
 
 namespace soundsphere {
 
@@ -29,9 +31,21 @@ public:
 
 public:
     /**
+     * @brief Load cover.
+     * @note Must call this function in UI thread.
+     */
+    void compile_cover(void);
+
+public:
+    /**
      * @brief Path to music file.
      */
     std::string path;
+
+    /**
+     * @brief Extension name.
+     */
+    std::string ext;
 
     /**
      * @brief Title of this music.
@@ -42,6 +56,16 @@ public:
      * @brief Artist of this music.
      */
     std::string artist;
+
+    /**
+     * @brief Cover data, which is a image.
+     */
+    TagLib::ByteVector cover_data;
+
+    /**
+     * @brief Compiled cover texture.
+     */
+    soundsphere::Texture cover_texture;
 
     /**
      * @brief Bitrate in kb/s.

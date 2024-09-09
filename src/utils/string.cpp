@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <cctype>
+#include <locale>
+#include <codecvt>
 #include "string.hpp"
 
 soundsphere::StringVec soundsphere::string_split(const std::string& orig, const std::string& delimiter)

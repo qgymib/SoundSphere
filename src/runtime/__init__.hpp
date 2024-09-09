@@ -29,6 +29,11 @@ typedef struct runtime
 
     struct
     {
+        soundsphere::Texture img;
+    } cover;
+
+    struct
+    {
         int is_playing;
 
         /**
@@ -69,8 +74,6 @@ typedef struct runtime
          */
         int channels;
     } statusbar;
-
-    SDL_Renderer* renderer;
 } runtime_t;
 
 class JobDataBase

@@ -57,14 +57,16 @@ static void _stop_play(void)
         s_player->music_mix = NULL;
     }
 
+    soundsphere::_G.cover.img.reset();
+
     soundsphere::_G.playbar.is_playing = false;
+    soundsphere::_G.playbar.music_position = 0.0;
+    soundsphere::_G.playbar.music_duration = 0.0;
+
     soundsphere::_G.statusbar.bitrate = 0;
     soundsphere::_G.statusbar.samplerate = 0;
     soundsphere::_G.statusbar.channels = 0;
-
     soundsphere::_G.statusbar.music_type = MUS_NONE;
-    soundsphere::_G.playbar.music_position = 0.0;
-    soundsphere::_G.playbar.music_duration = 0.0;
 }
 
 static void _dummy_player_exit(void)
@@ -109,13 +111,16 @@ void soundsphere::dummy_player_resume_or_play(void)
     s_player->music_item = soundsphere::_G.media_list->at(soundsphere::_G.playlist.selected_idx);
     s_player->music_mix = Mix_LoadMUS(s_player->music_item->path.c_str());
 
-    soundsphere::_G.statusbar.music_type = Mix_GetMusicType(s_player->music_mix);
+    Mix_PlayMusic(s_player->music_mix, 1);
+
+    s_player->music_item->compile_cover();
+    soundsphere::_G.cover.img = s_player->music_item->cover_texture;
+
+    soundsphere::_G.playbar.is_playing = true;
     soundsphere::_G.playbar.music_duration = Mix_MusicDuration(s_player->music_mix);
     soundsphere::_G.playbar.music_position = 0.0;
 
-    Mix_PlayMusic(s_player->music_mix, 1);
-
-    soundsphere::_G.playbar.is_playing = true;
+    soundsphere::_G.statusbar.music_type = Mix_GetMusicType(s_player->music_mix);
     soundsphere::_G.statusbar.bitrate = s_player->music_item->bitrate;
     soundsphere::_G.statusbar.samplerate = s_player->music_item->samplerate;
     soundsphere::_G.statusbar.channels = s_player->music_item->channels;

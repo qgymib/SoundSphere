@@ -13,6 +13,13 @@ namespace soundsphere {
  */
 std::string basename(const std::string& path, bool with_ext = false);
 
+/**
+ * @brief Get extension name.
+ * @param[in] path  File path.
+ * @return Extension name (with the leading dot).
+ */
+std::string extname(const std::string& path);
+
 }
 
 #endif
