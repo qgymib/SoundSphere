@@ -1,5 +1,8 @@
-#ifndef SOUND_SPHERE_I18N_INIT_HPP
-#define SOUND_SPHERE_I18N_INIT_HPP
+#ifndef SOUND_SPHERE_I18N_INIT_H
+#define SOUND_SPHERE_I18N_INIT_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief i18n strings.
@@ -32,9 +35,9 @@
  * @note To implement a new local, use #I18N_LOCALE_BEG and #I18N_LOCALE_END
  *   to disable struct initialize warning.
  */
-#define I18N_LOCALE_TABLE(xx)           \
-    xx(I18N_EN_US,  i18n_en_us)         \
-    xx(I18N_ZH_CN,  i18n_zh_cn)
+#define I18N_LOCALE_TABLE(xx)                       \
+    xx(I18N_LOCALE_EN_US,  soundsphere_i18n_en_us)  \
+    xx(I18N_LOCALE_ZH_CN,  soundsphere_i18n_zh_cn)
 
 /**
  * @brief Setup before localization.
@@ -57,79 +60,81 @@
 #   define I18N_LOCALE_END
 #endif
 
-namespace soundsphere {
-
 /**
  * @brief The locale list.
  */
-typedef enum class i18n_locale_e
+typedef enum soundsphere_i18n_locale_e
 {
 #define I18N_EXPAND_LOCALE_AS_ENUM(a, b) a,
     I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_ENUM)
 #undef I18N_EXPAND_LOCALE_AS_ENUM
 
-    I18N__MAX,
-    I18N__MIN = 0,
-} i18n_locale_t;
+    I18N_LOCALE__MAX,
+    I18N_LOCALE__MIN = 0,
+} soundsphere_i18n_locale_t;
 
 /**
  * @brief String ID that has locales.
  */
-typedef enum class i18n_string_e
+typedef enum soundsphere_i18n_string_e
 {
-#define I18N_EXPAND_AS_ENUM(a)   a,
+#define I18N_EXPAND_AS_ENUM(a)   I18N_STRING_##a,
     I18N_STRING_TABLE(I18N_EXPAND_AS_ENUM)
 #undef I18N_EXPAND_AS_ENUM
 
     I18N_STRING__MAX,
-} i18n_string_t;
+} soundsphere_i18n_string_t;
 
 /**
  * @brief Strings that has locales.
  */
-typedef struct i18n_s
+typedef struct soundsphere_i18n_s
 {
 #define I18N_EXPAND_STRING_AS_FIELD(a)  const char* a;
     I18N_STRING_TABLE(I18N_EXPAND_STRING_AS_FIELD)
 #undef I18N_EXPAND_STRING_AS_FIELD
-} i18n_t;
+} soundsphere_i18n_t;
 
-extern i18n_t* _i18n;
-
-#define I18N_EXPAND_LOCALE_AS_EXTERN(a, b) extern i18n_t b;
+#define I18N_EXPAND_LOCALE_AS_EXTERN(a, b) extern soundsphere_i18n_t b;
 I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_EXTERN)
 #undef I18N_EXPAND_LOCALE_AS_EXTERN
 
 /**
+ * @brief Global i18n.
+ */
+extern soundsphere_i18n_t* soundsphere_i18n;
+
+/**
  * @brief Initialize i18n.
  */
-void i18n_init(void);
+void soundsphere_i18n_init(void);
 
 /**
  * @brief Cleanup i18n.
  */
-void i18n_exit(void);
+void soundsphere_i18n_exit(void);
 
 /**
  * @brief Set current locale.
  * @param[in] locale    Current locale.
  */
-void i18n_set_locale(i18n_locale_t locale);
-
-/**
- * @brief Get local string for id \p s.
- * @param[in] s The string id.
- * @return      The local string.
- */
-const char* i18n_locale_string(i18n_t* locale, i18n_string_t s);
+void soundsphere_i18n_set_locale(soundsphere_i18n_locale_t locale);
 
 /**
  * @brief Get locale translations.
  * @param[in] locale    Locale.
  * @return Translated strings.
  */
-i18n_t* i18n_get_locale(i18n_locale_t locale);
+soundsphere_i18n_t* soundsphere_i18n_get_locale(soundsphere_i18n_locale_t locale);
 
+/**
+ * @brief Get local string for id \p s.
+ * @param[in] s The string id.
+ * @return      The local string.
+ */
+const char* soundsphere_i18n_locale_string(soundsphere_i18n_t* locale, soundsphere_i18n_string_t s);
+
+#ifdef __cplusplus
 }
-
+#endif
 #endif

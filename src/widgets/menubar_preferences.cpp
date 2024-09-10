@@ -1,5 +1,5 @@
 #include <imgui.h>
-#include "i18n/__init__.hpp"
+#include "i18n/__init__.h"
 #include "__init__.hpp"
 
 static bool s_show_preferences_window = false;
@@ -15,20 +15,20 @@ static void _widget_preferences_exit(void)
 static void _widget_preferences_draw_select_lang(void)
 {
     const char* item_locals[] = {
-#define I18N_EXPAND_LOCALE_AS_STRING(a, b)   soundsphere::b.lang,
+#define I18N_EXPAND_LOCALE_AS_STRING(a, b)   b.lang,
     I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_STRING)
 #undef I18N_EXPAND_LOCALE_AS_STRING
     };
     static int item_type = 0;
-    if (ImGui::Combo(soundsphere::_i18n->localization, &item_type, item_locals, IM_ARRAYSIZE(item_locals)))
+    if (ImGui::Combo(soundsphere_i18n->localization, &item_type, item_locals, IM_ARRAYSIZE(item_locals)))
     {
-        soundsphere::i18n_set_locale((soundsphere::i18n_locale_t)item_type);
+        soundsphere_i18n_set_locale((soundsphere_i18n_locale_t)item_type);
     }
 }
 
 static void _widget_preferences_show_window(void)
 {
-    const char* window_name = soundsphere::_i18n->preferences;
+    const char* window_name = soundsphere_i18n->preferences;
     if (!ImGui::Begin(window_name, &s_show_preferences_window, ImGuiWindowFlags_AlwaysAutoResize))
     {
         goto finish;
@@ -45,9 +45,9 @@ static void _widget_preferences_draw(void)
     /* Register to MainMenu. */
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu(soundsphere::_i18n->settings))
+        if (ImGui::BeginMenu(soundsphere_i18n->settings))
         {
-            ImGui::MenuItem(soundsphere::_i18n->preferences, nullptr, &s_show_preferences_window);
+            ImGui::MenuItem(soundsphere_i18n->preferences, nullptr, &s_show_preferences_window);
             ImGui::EndMenu();
         }
 

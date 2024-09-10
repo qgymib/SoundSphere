@@ -18,7 +18,7 @@
 #include "fonts/NotoSans.h"
 #include "fonts/NotoSansKR.h"
 #include "fonts/NotoSansSC.h"
-#include "i18n/__init__.hpp"
+#include "i18n/__init__.h"
 #include "runtime/__init__.hpp"
 #include "widgets/__init__.hpp"
 
@@ -74,7 +74,7 @@ int main(int, char**)
     }
     io.Fonts->Build();
 
-    soundsphere::i18n_init();
+    soundsphere_i18n_init();
     soundsphere::runtime_init();
     soundsphere::widget_init();
 
@@ -86,7 +86,7 @@ int main(int, char**)
 
     soundsphere::widget_exit();
     soundsphere::runtime_exit();
-    soundsphere::i18n_exit();
+    soundsphere_i18n_exit();
 
     soundsphere::backend_exit();
 

@@ -1,8 +1,8 @@
-#include "__init__.hpp"
+#include "__init__.h"
 
 I18N_LOCALE_BEG
 
-soundsphere::i18n_t soundsphere::i18n_zh_cn = {
+soundsphere_i18n_t soundsphere_i18n_zh_cn = {
 
 .about =
 "关于",

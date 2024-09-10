@@ -1,7 +1,7 @@
 #include <ev.h>
 #include <map>
 #include <spdlog/spdlog.h>
-#include "i18n/__init__.hpp"
+#include "i18n/__init__.h"
 #include "runtime/__init__.hpp"
 #include "__init__.hpp"
 #include "dummy_player.hpp"

@@ -25,9 +25,9 @@ set(soundsphere_sources
     "src/fonts/NotoSans.c"
     "src/fonts/NotoSansKR.c"
     "src/fonts/NotoSansSC.c"
-    "src/i18n/__init__.cpp"
-    "src/i18n/en_us.cpp"
-    "src/i18n/zh_cn.cpp"
+    "src/i18n/__init__.c"
+    "src/i18n/en_us.c"
+    "src/i18n/zh_cn.c"
     "src/runtime/__init__.cpp"
     "src/runtime/playitem.cpp"
     "src/utils/dump.cpp"
@@ -56,7 +56,6 @@ if (WIN32)
     target_compile_options(${PROJECT_NAME}
         PRIVATE
             /utf-8
-            /std:c++20
     )
     target_link_options(${PROJECT_NAME}
         PRIVATE

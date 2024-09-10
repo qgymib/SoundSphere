@@ -1,6 +1,6 @@
-#include "__init__.hpp"
+#include "__init__.h"
 
-soundsphere::i18n_t soundsphere::i18n_en_us = {
+soundsphere_i18n_t soundsphere_i18n_en_us = {
 .about =
 "About",
 
