@@ -43,8 +43,14 @@ soundsphere::i18n_t soundsphere::i18n_zh_cn = {
 .preferences =
 "首选项",
 
-.search_in_playlist =
-"搜索当前播放列表",
+.search_artist =
+"搜索艺术家",
+
+.search_playlist =
+"搜索播放列表",
+
+.search_title =
+"搜索标题",
 
 .settings =
 "设置",

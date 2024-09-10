@@ -18,7 +18,9 @@
     xx(open_folder)             \
     xx(original_text)           \
     xx(preferences)             \
-    xx(search_in_playlist)      \
+    xx(search_artist)           \
+    xx(search_playlist)         \
+    xx(search_title)            \
     xx(settings)                \
     xx(title)                   \
     xx(translated_text)         \

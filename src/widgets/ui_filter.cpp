@@ -7,15 +7,36 @@
 
 typedef struct ui_filter_ctx
 {
+    ui_filter_ctx();
+
+    /**
+     * @brief Filter buffer.
+     */
     char filter[4096];
+
+    /**
+     * @brief Search title.
+     */
+    bool search_title;
+
+    /**
+     * @brief Search in artist.
+     */
+    bool search_artist;
 } ui_filter_ctx_t;
 
 static ui_filter_ctx_t* s_filter = nullptr;
 
+ui_filter_ctx::ui_filter_ctx()
+{
+    filter[0] = '\0';
+    search_title = true;
+    search_artist = true;
+}
+
 static void _ui_filter_init(void)
 {
     s_filter = new ui_filter_ctx_t;
-    s_filter->filter[0] = '\0';
 }
 
 static void _ui_filter_exit(void)
@@ -24,9 +45,29 @@ static void _ui_filter_exit(void)
     s_filter = nullptr;
 }
 
-static soundsphere::PlayItem::PtrVecPtr _filter(soundsphere::PlayItem::PtrVecPtr vec, const char* filter)
+static std::string toLower(const std::string& str)
 {
-    if (strlen(filter) == 0)
+    std::string lowerStr;
+    std::transform(str.begin(), str.end(), std::back_inserter(lowerStr), [](unsigned char c) {
+        return std::tolower(c);
+    });
+    return lowerStr;
+}
+
+static bool _search_string(const std::string& str, const std::string& pat)
+{
+    // Convert both strings to lowercase
+    std::string lower_pat = toLower(pat);
+    std::string lower_str = toLower(str);
+
+    // Search for the lowercase s1 in lowercase s2
+    return lower_str.find(lower_pat) != std::string::npos;
+}
+
+static soundsphere::PlayItem::PtrVecPtr _filter(soundsphere::PlayItem::PtrVecPtr vec,
+    const std::string& filter)
+{
+    if (filter.empty())
     {
         return vec;
     }
@@ -37,7 +78,13 @@ static soundsphere::PlayItem::PtrVecPtr _filter(soundsphere::PlayItem::PtrVecPtr
     for (; it != vec->end(); it++)
     {
         soundsphere::PlayItem::Ptr obj = *it;
-        if (obj->title.find(filter) != std::string::npos)
+
+        if (s_filter->search_title && _search_string(obj->title, filter))
+        {
+            ret->push_back(obj);
+        }
+
+        if (s_filter->search_artist && _search_string(obj->artist, filter))
         {
             ret->push_back(obj);
         }
@@ -48,7 +95,8 @@ static soundsphere::PlayItem::PtrVecPtr _filter(soundsphere::PlayItem::PtrVecPtr
 
 static void _do_filter(void)
 {
-    soundsphere::_G.playlist.show_vec = _filter(soundsphere::_G.media_list, s_filter->filter);
+    std::string filter = s_filter->filter;
+    soundsphere::_G.playlist.show_vec = _filter(soundsphere::_G.media_list, filter);
 }
 
 static void _ui_filter_draw(void)
@@ -62,7 +110,7 @@ static void _ui_filter_draw(void)
     if (ImGui::Begin("Filter", nullptr, play_list_flags))
     {
         ImGui::SetNextItemWidth(soundsphere::_layout.filter.size.x - 50);
-        if (ImGui::InputTextWithHint("##filter_search", soundsphere::_i18n->search_in_playlist, s_filter->filter, sizeof(s_filter->filter)))
+        if (ImGui::InputTextWithHint("##filter_search", soundsphere::_i18n->search_playlist, s_filter->filter, sizeof(s_filter->filter)))
         {
             _do_filter();
         }
@@ -70,6 +118,15 @@ static void _ui_filter_draw(void)
         if (ImGui::Button(ICON_FA_XMARK))
         {
             soundsphere::ui_filter_reset();
+        }
+
+        if (ImGui::Checkbox(soundsphere::_i18n->search_title, &s_filter->search_title))
+        {
+            _do_filter();
+        }
+        if (ImGui::Checkbox(soundsphere::_i18n->search_artist, &s_filter->search_artist))
+        {
+            _do_filter();
         }
     }
     ImGui::End();

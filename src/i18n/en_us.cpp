@@ -40,8 +40,14 @@ soundsphere::i18n_t soundsphere::i18n_en_us = {
 .preferences =
 "Preferences",
 
-.search_in_playlist =
-"Search in playlist",
+.search_artist =
+"Search Artist",
+
+.search_playlist =
+"Search Playlist",
+
+.search_title =
+"Search Title",
 
 .settings =
 "Settings",
