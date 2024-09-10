@@ -1,5 +1,7 @@
 #include <imgui.h>
 #include <IconsFontAwesome6.h>
+#include <algorithm>
+#include <iterator>
 #include "i18n/__init__.h"
 #include "runtime/__init__.hpp"
 #include "__init__.hpp"

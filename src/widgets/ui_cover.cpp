@@ -1,4 +1,3 @@
-
 #include <SDL_surface.h>
 #include <spdlog/spdlog.h>
 #include "assets/icon.h"

@@ -56,6 +56,7 @@ if (WIN32)
     target_compile_options(${PROJECT_NAME}
         PRIVATE
             /utf-8
+            /std:c++17
     )
     target_link_options(${PROJECT_NAME}
         PRIVATE
