@@ -13,6 +13,77 @@ static void _widget_playbar_exit(void)
 {
 }
 
+static void _widget_playbar_draw_backward_btn(void)
+{
+    if (ImGui::Button(ICON_FA_BACKWARD))
+    {
+    }
+    ImGui::SameLine();
+}
+
+static void _widget_playbar_draw_play_btn(void)
+{
+    if (soundsphere::_G.playbar.is_playing)
+    {
+        if (ImGui::Button(ICON_FA_PAUSE))
+        {
+            soundsphere::dummy_player_pause();
+        }
+    }
+    else
+    {
+        if (ImGui::Button(ICON_FA_PLAY))
+        {
+            soundsphere::dummy_player_resume_or_play();
+        }
+    }
+    ImGui::SameLine();
+}
+
+static void _widget_playbar_draw_forward_btn(void)
+{
+    if (ImGui::Button(ICON_FA_FORWARD))
+    {
+        soundsphere::dummy_player_next();
+    }
+    ImGui::SameLine();
+}
+
+static void _widget_playbar_draw_shuffle_btn(void)
+{
+    soundsphere::shuffle_mode_t mode = soundsphere::dummy_player_get_shuffle_mode();
+
+    if (mode == soundsphere::SHUFFLE_ORDER)
+    {
+        if (ImGui::Button(ICON_FA_RIGHT_LEFT))
+        {
+            soundsphere::dummy_player_set_shuffle(soundsphere::SHUFFLE_RANDOM);
+        }
+        goto finish;
+    }
+
+    if (mode == soundsphere::SHUFFLE_RANDOM)
+    {
+        if (ImGui::Button(ICON_FA_SHUFFLE))
+        {
+            soundsphere::dummy_player_set_shuffle(soundsphere::SHUFFLE_REPEAT);
+        }
+        goto finish;
+    }
+
+    if (mode == soundsphere::SHUFFLE_REPEAT)
+    {
+        if (ImGui::Button(ICON_FA_ROTATE_RIGHT))
+        {
+            soundsphere::dummy_player_set_shuffle(soundsphere::SHUFFLE_ORDER);
+        }
+        goto finish;
+    }
+
+finish:
+    ImGui::SameLine();
+}
+
 static void _widget_playbar_draw(void)
 {
     ImGui::SetNextWindowSize(soundsphere::_layout.playbar.size);
@@ -24,28 +95,9 @@ static void _widget_playbar_draw(void)
         | ImGuiWindowFlags_NoBringToFrontOnFocus;
     if (ImGui::Begin("PlayBar", nullptr, play_bar_flags))
     {
-        ImGui::Button(ICON_FA_BACKWARD);
-        ImGui::SameLine();
-
-        if (soundsphere::_G.playbar.is_playing)
-        {
-			if (ImGui::Button(ICON_FA_PAUSE))
-			{
-                soundsphere::dummy_player_pause();
-			}
-        }
-        else
-        {
-			if (ImGui::Button(ICON_FA_PLAY))
-			{
-                soundsphere::dummy_player_resume_or_play();
-			}
-        }
-
-        ImGui::SameLine();
-
-        ImGui::Button(ICON_FA_FORWARD);
-        ImGui::SameLine();
+        _widget_playbar_draw_backward_btn();
+        _widget_playbar_draw_play_btn();
+        _widget_playbar_draw_forward_btn();
 
         {
             static char buf[12];
@@ -75,8 +127,7 @@ static void _widget_playbar_draw(void)
         }
         ImGui::SameLine();
 
-        ImGui::Button(ICON_FA_SHUFFLE);
-        ImGui::SameLine();
+        _widget_playbar_draw_shuffle_btn();
 
         ImGui::Text(ICON_FA_VOLUME_HIGH);
         ImGui::SameLine();

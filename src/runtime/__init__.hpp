@@ -26,11 +26,6 @@ typedef struct runtime
          * @brief The current playing music.
          */
         PlayItem::Ptr   current_music;
-
-        /**
-         * @brief The current playing music;
-         */
-        uint64_t playing_id;
     } dummy_player;
 
     struct

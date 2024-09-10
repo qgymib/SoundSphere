@@ -6,6 +6,7 @@
 #include "utils/string.hpp"
 #include "__init__.hpp"
 #include "ui_filter.hpp"
+#include "dummy_player.hpp"
 
 static const char* s_filters[] = {
     "Music\n*.flac\n*.mp3\n*.ogg\n*.voc\n*.wav",
@@ -34,6 +35,7 @@ static void _handle_files_on_ui(soundsphere::PlayItem::PtrVecPtr vec)
     soundsphere::_G.playlist.selected_id = (uint64_t)-1;
 
     soundsphere::ui_filter_reset();
+    soundsphere::dummy_player_reload();
 }
 
 static void _handle_files(const soundsphere::StringVec& paths)

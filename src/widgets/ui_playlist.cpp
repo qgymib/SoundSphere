@@ -152,7 +152,7 @@ static void _ui_playlist_draw_table_item(soundsphere::PlayItem* obj, uint64_t ts
         ImGui::Image(texture, img_sz);
         ImGui::SameLine();
 
-        bool is_playing = soundsphere::_G.dummy_player.playing_id == obj->uid;
+        bool is_playing = soundsphere::_G.dummy_player.current_music.get() == obj;
         bool is_selected = soundsphere::_G.playlist.selected_id == obj->uid;
 
         if (is_playing)
