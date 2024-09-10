@@ -9,11 +9,6 @@ typedef struct dummy_player
     dummy_player();
 
     /**
-     * @brief The music we are playing.
-     */
-    soundsphere::PlayItem::Ptr  music_item;
-
-    /**
      * @brief SDL music instance.
      */
     Mix_Music*                  music_mix;
@@ -57,7 +52,6 @@ static void _stop_play(void)
         s_player->music_mix = NULL;
     }
 
-    soundsphere::_G.cover.img.reset();
     soundsphere::_G.lyric.text.clear();
 
     soundsphere::_G.playbar.is_playing = false;
@@ -130,24 +124,24 @@ void soundsphere::dummy_player_resume_or_play(void)
     _stop_play();
     soundsphere::_G.dummy_player.playing_id = soundsphere::_G.playlist.selected_id;
 
-    s_player->music_item = _find_audio(soundsphere::_G.dummy_player.playing_id);
-    s_player->music_mix = Mix_LoadMUS(s_player->music_item->path.c_str());
+    /* Find the song need to play. s*/
+    soundsphere::PlayItem::Ptr obj = _find_audio(soundsphere::_G.dummy_player.playing_id);
+    soundsphere::_G.dummy_player.current_music = obj;
+
+    s_player->music_mix = Mix_LoadMUS(obj->path.c_str());
 
     Mix_PlayMusic(s_player->music_mix, 1);
 
-    s_player->music_item->compile_cover();
-    soundsphere::_G.cover.img = s_player->music_item->cover_texture;
-
-    soundsphere::_G.lyric.text = s_player->music_item->lyric;
+    soundsphere::_G.lyric.text = obj->lyric;
 
     soundsphere::_G.playbar.is_playing = true;
     soundsphere::_G.playbar.music_duration = Mix_MusicDuration(s_player->music_mix);
     soundsphere::_G.playbar.music_position = 0.0;
 
     soundsphere::_G.statusbar.music_type = Mix_GetMusicType(s_player->music_mix);
-    soundsphere::_G.statusbar.bitrate = s_player->music_item->bitrate;
-    soundsphere::_G.statusbar.samplerate = s_player->music_item->samplerate;
-    soundsphere::_G.statusbar.channels = s_player->music_item->channels;
+    soundsphere::_G.statusbar.bitrate = obj->bitrate;
+    soundsphere::_G.statusbar.samplerate = obj->samplerate;
+    soundsphere::_G.statusbar.channels = obj->channels;
 }
 
 void soundsphere::dummy_player_pause(void)

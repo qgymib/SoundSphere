@@ -199,13 +199,3 @@ bool soundsphere::PlayItem::make(soundsphere::PlayItem::Ptr& obj,
 
     return true;
 }
-
-void soundsphere::PlayItem::compile_cover(void)
-{
-    if (cover_texture.get() != nullptr)
-    {
-        return;
-    }
-
-    cover_texture = soundsphere::backend_load_image(cover_data.data(), cover_data.size());
-}

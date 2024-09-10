@@ -6,16 +6,33 @@
 #include "runtime/__init__.hpp"
 #include "__init__.hpp"
 
-static soundsphere::Texture s_default_cover;
+typedef struct cover_ctx
+{
+    cover_ctx();
+
+    soundsphere::Texture    default_cover;
+    soundsphere::Texture    last_cover;
+
+    uint64_t                last_show_item_id;
+} cover_ctx_t;
+
+static cover_ctx_t* s_cover_ctx = nullptr;
+
+cover_ctx::cover_ctx()
+{
+    last_show_item_id = (uint64_t)-1;
+}
 
 static void _ui_cover_init(void)
 {
-    s_default_cover = soundsphere::backend_load_image(__icon_png, __icon_png_len);
+    s_cover_ctx = new cover_ctx_t;
+    s_cover_ctx->default_cover = soundsphere::backend_load_image(__icon_png, __icon_png_len);
 }
 
 static void _ui_cover_exit(void)
 {
-    s_default_cover.reset();
+    delete s_cover_ctx;
+    s_cover_ctx = nullptr;
 }
 
 static void _ui_cover_draw(void)
@@ -33,10 +50,21 @@ static void _ui_cover_draw(void)
         display_sz.x -= 16;
         display_sz.y -= 16;
 
-        soundsphere::Texture texture = (soundsphere::_G.cover.img.get() != nullptr) ?
-            soundsphere::_G.cover.img : s_default_cover;
+        if (soundsphere::_G.dummy_player.current_music.get() == nullptr)
+        {
+            ImGui::Image(s_cover_ctx->default_cover.get(), display_sz);
+        }
+        else
+        {
+            if (s_cover_ctx->last_show_item_id != soundsphere::_G.dummy_player.current_music->uid)
+            {
+                s_cover_ctx->last_show_item_id = soundsphere::_G.dummy_player.current_music->uid;
 
-        ImGui::Image(texture.get(), display_sz);
+                TagLib::ByteVector* cover_data = &soundsphere::_G.dummy_player.current_music->cover_data;
+                s_cover_ctx->last_cover = soundsphere::backend_load_image(cover_data->data(), cover_data->size());
+            }
+            ImGui::Image(s_cover_ctx->last_cover.get(), display_sz);
+        }
     }
     ImGui::End();
 }

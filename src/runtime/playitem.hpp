@@ -31,13 +31,6 @@ public:
 
 public:
     /**
-     * @brief Load cover.
-     * @note Must call this function in UI thread.
-     */
-    void compile_cover(void);
-
-public:
-    /**
      * @brief Unique id.
      */
     uint64_t uid;
@@ -71,11 +64,6 @@ public:
      * @brief Cover data, which is a image.
      */
     TagLib::ByteVector cover_data;
-
-    /**
-     * @brief Compiled cover texture.
-     */
-    soundsphere::Texture cover_texture;
 
     /**
      * @brief Bitrate in kb/s.

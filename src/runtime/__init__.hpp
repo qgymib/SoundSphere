@@ -23,6 +23,11 @@ typedef struct runtime
     struct
     {
         /**
+         * @brief The current playing music.
+         */
+        PlayItem::Ptr   current_music;
+
+        /**
          * @brief The current playing music;
          */
         uint64_t playing_id;
@@ -40,14 +45,6 @@ typedef struct runtime
          */
         uint64_t selected_id;
     } playlist;
-
-    struct
-    {
-        /**
-         * @brief Cover image texture.
-         */
-        soundsphere::Texture img;
-    } cover;
 
     struct
     {
