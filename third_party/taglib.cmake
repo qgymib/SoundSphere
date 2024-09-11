@@ -1,9 +1,10 @@
 set(TAGLIB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/third_party/taglib)
 set(TAGLIB_BUILD_DIR ${CMAKE_BINARY_DIR}/TagLib-build)
 set(TAGLIB_INSTALL_DIR ${CMAKE_BINARY_DIR}/TagLib-install)
-set(TAGLIB_INCLUDE_DIR ${TAGLIB_INSTALL_DIR}/include)
 
-set(TAGLIB_LIBRARY_FILE ${TAGLIB_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}tag${CMAKE_STATIC_LIBRARY_SUFFIX})
+set(TAGLIB_INCLUDE_DIRS ${TAGLIB_INSTALL_DIR}/include)
+set(TAGLIB_LIBRARIES ${TAGLIB_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}tag${CMAKE_STATIC_LIBRARY_SUFFIX})
+set(TAGLIB_COMPILE_OPTIONS -DTAGLIB_STATIC)
 
 include(ExternalProject)
 
@@ -16,23 +17,7 @@ ExternalProject_Add(3rd_TagLib
         -DWITH_ZLIB:BOOL=OFF
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     BUILD_BYPRODUCTS
-        ${TAGLIB_LIBRARY_FILE}
+        ${TAGLIB_LIBRARIES}
 )
 
-file(MAKE_DIRECTORY ${TAGLIB_INCLUDE_DIR})
-
-add_library(TagLib IMPORTED STATIC)
-target_include_directories(TagLib
-    INTERFACE
-        ${TAGLIB_INCLUDE_DIR}
-)
-set_target_properties(TagLib PROPERTIES
-    IMPORTED_LOCATION
-        ${TAGLIB_LIBRARY_FILE}
-)
-target_compile_options(TagLib
-    INTERFACE
-        -DTAGLIB_STATIC
-)
-
-add_dependencies(TagLib 3rd_TagLib)
+add_dependencies(${PROJECT_NAME} 3rd_TagLib)

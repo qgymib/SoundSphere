@@ -1,7 +1,7 @@
 #include <ev.h>
 #include <random>
 #include <algorithm>
-#include <SDL2/SDL_mixer.h>
+#include <SDL_mixer.h>
 #include <spdlog/spdlog.h>
 #include "runtime/__init__.hpp"
 #include "dummy_player.hpp"

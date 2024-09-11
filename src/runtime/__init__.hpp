@@ -3,7 +3,7 @@
 
 #include <functional>
 #include <memory>
-#include <SDL2/SDL_mixer.h>
+#include <SDL_mixer.h>
 #include "playitem.hpp"
 
 namespace soundsphere {

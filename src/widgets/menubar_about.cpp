@@ -2,7 +2,7 @@
 #include <ev.h>
 #include <taglib/taglib.h>
 #include <spdlog/spdlog.h>
-#include <SDL2/SDL_mixer.h>
+#include <SDL_mixer.h>
 #include "version.hpp"
 #include "i18n/__init__.h"
 #include "utils/defines.hpp"

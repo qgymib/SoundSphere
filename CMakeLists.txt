@@ -80,19 +80,25 @@ include(third_party/imgui.cmake)
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui)
 
 include(third_party/IconFontCppHeaders.cmake)
-target_link_libraries(${PROJECT_NAME} PRIVATE IconFontCppHeaders)
+target_include_directories(${PROJECT_NAME} PRIVATE ${ICON_FONT_CPP_INCLUDE_DIRS})
 
 include(third_party/libev.cmake)
 target_link_libraries(${PROJECT_NAME} PRIVATE ev)
 
 include(third_party/taglib.cmake)
-target_link_libraries(${PROJECT_NAME} PRIVATE TagLib)
+target_include_directories(${PROJECT_NAME} PRIVATE ${TAGLIB_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${TAGLIB_LIBRARIES})
+target_compile_options(${PROJECT_NAME} PRIVATE ${TAGLIB_COMPILE_OPTIONS})
 
 include(third_party/spdlog.cmake)
-target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
+target_include_directories(${PROJECT_NAME} PRIVATE ${SPDLOG_INCLUDE_DIRS})
 
-include(third_party/SDL_mixer.cmake)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL_mixer)
+find_package(SDL2_mixer REQUIRED)
+if (TARGET SDL2_mixer::SDL2_mixer-static)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_mixer::SDL2_mixer-static)
+else ()
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_mixer::SDL2_mixer)
+endif ()
 
 include(third_party/stb.cmake)
 target_link_libraries(${PROJECT_NAME} PRIVATE stb)
