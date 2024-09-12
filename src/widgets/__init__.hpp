@@ -1,7 +1,7 @@
 #ifndef SOUND_SPHERE_WIDGETS_INIT_HPP
 #define SOUND_SPHERE_WIDGETS_INIT_HPP
 
-#include <imgui.h>
+#include "utils/imgui.hpp"
 
 namespace soundsphere {
 

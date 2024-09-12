@@ -1,13 +1,189 @@
+#include <ev.h>
 #include <imgui.h>
+#include <map>
 #include "runtime/__init__.hpp"
+#include "utils/string.hpp"
 #include "__init__.hpp"
+
+/**
+ * @brief Lyric.
+ * The key is the lyric sentence time position in seconds.
+ * The value is the lyric sentence;
+ */
+typedef std::map<double, std::string> Lyric;
+
+typedef struct lyric_ctx
+{
+    lyric_ctx();
+
+    /**
+     * @brief Music ID.
+     */
+    uint64_t    music_id;
+
+    /**
+     * @brief Lyric.
+     */
+    Lyric       lyric;
+
+    /**
+     * @brief The lyric scroll position
+     */
+    float       lyric_scroll_y;
+
+    /**
+     * @brief Last scroll position.
+     */
+    float       last_scroll_y;
+
+    /**
+     * @brief The last user manually scroll time.
+     */
+    uint64_t    last_user_scroll_time;
+} lyric_ctx_t;
+
+static lyric_ctx_t* s_lyric = nullptr;
+
+lyric_ctx::lyric_ctx()
+{
+    music_id = (uint64_t)-1;
+    lyric_scroll_y = 0.0f;
+    last_scroll_y = 0.0f;
+    last_user_scroll_time = 0;
+}
 
 static void _ui_lyric_init(void)
 {
+    s_lyric = new lyric_ctx_t;
 }
 
 static void _ui_lyric_exit(void)
 {
+    delete s_lyric;
+    s_lyric = nullptr;
+}
+
+/**
+ * + [12:45.78]
+ * + [12:45.789]
+ */
+static double _split_lyric(std::string& dst, const std::string& str)
+{
+    if (!(str[0] == '[' &&
+        isdigit(str[1]) &&
+        isdigit(str[2]) &&
+        str[3] == ':' &&
+        isdigit(str[4]) &&
+        isdigit(str[5]) &&
+        str[6] == '.' &&
+        isdigit(str[7]) &&
+        isdigit(str[8])))
+    {
+        dst = str;
+        return 0;
+    }
+
+    double minute = std::stod(str.substr(1, 2));
+    double seconds = std::stod(str.substr(4, 2));
+    double millisecond = 0;
+
+    if (str[9] == ']')
+    {
+        millisecond = std::stod(str.substr(7, 2));
+        dst = str.substr(10);
+        return minute * 60 + seconds + millisecond / 1000;
+    }
+
+    if (!isdigit(str[9]) || str[10] != ']')
+    {
+        dst = str;
+        return false;
+    }
+
+    millisecond = std::stod(str.substr(7, 3));
+    dst = str.substr(11);
+    return minute * 60 + seconds + millisecond / 1000;
+}
+
+static Lyric _compile_lyric(const std::string& src)
+{
+    Lyric lyric;
+    soundsphere::StringVec raw_lines = soundsphere::string_split(src, "\n");
+    soundsphere::StringVec lines = soundsphere::string_trim_vec(raw_lines);
+
+    soundsphere::StringVec::iterator it = lines.begin();
+    for (; it != lines.end(); it++)
+    {
+        std::string sentence;
+        double position = _split_lyric(sentence, *it);
+
+        lyric.insert(Lyric::value_type(position, sentence));
+    }
+
+    return lyric;
+}
+
+static void _scroll_here(void)
+{
+    ImGui::SetScrollHereY();
+    s_lyric->lyric_scroll_y = ImGui::GetScrollY();
+    s_lyric->last_scroll_y = s_lyric->lyric_scroll_y;
+    s_lyric->last_user_scroll_time = 0;
+}
+
+static void _auto_scroll(void)
+{
+    float scroll_y = ImGui::GetScrollY();
+    if (scroll_y == s_lyric->lyric_scroll_y)
+    {
+        _scroll_here();
+        return;
+    }
+
+    uint64_t current_time = ev_hrtime();
+    if (s_lyric->last_user_scroll_time == 0 || scroll_y != s_lyric->last_scroll_y)
+    {
+        s_lyric->last_scroll_y = scroll_y;
+        s_lyric->last_user_scroll_time = current_time;
+        return;
+    }
+
+    uint64_t diff_time = current_time - s_lyric->last_user_scroll_time;
+    if (diff_time < soundsphere::_G.lyric.auto_center_time)
+    {
+        return;
+    }
+
+    _scroll_here();
+}
+
+static void _show_lyric(const Lyric& lyric, double position)
+{
+    int ge_cnt = 0;
+    Lyric::const_iterator it = lyric.begin();
+    for (; it != lyric.end(); it++)
+    {
+        double time = it->first;
+        const std::string& sentence = it->second;
+
+        if (time < position)
+        {
+            ImGui::Text("%s", sentence.c_str());
+            continue;
+        }
+
+        ge_cnt++;
+        if (ge_cnt == 1)
+        {
+            static ImVec4 color(255, 0, 0, 255);
+            ImGui::TextColored(color, "%s", sentence.c_str());
+            _auto_scroll();
+
+            continue;
+        }
+
+        ImGui::Text("%s", sentence.c_str());
+    }
 }
 
 static void _ui_lyric_draw(void)
@@ -21,8 +197,21 @@ static void _ui_lyric_draw(void)
         | ImGuiWindowFlags_NoBringToFrontOnFocus;
     if (ImGui::Begin("Lyric", nullptr, lyric_flags))
     {
-        ImGui::Text("%s", soundsphere::_G.lyric.text.c_str());
+        if (soundsphere::_G.dummy_player.current_music.get() == nullptr)
+        {
+            goto finish;
+        }
+
+        if (s_lyric->music_id != soundsphere::_G.dummy_player.current_music->uid)
+        {
+            s_lyric->music_id = soundsphere::_G.dummy_player.current_music->uid;
+            s_lyric->lyric = _compile_lyric(soundsphere::_G.dummy_player.current_music->lyric);
+        }
+
+        _show_lyric(s_lyric->lyric, soundsphere::_G.playbar.music_position);
     }
+
+finish:
     ImGui::End();
 }
 

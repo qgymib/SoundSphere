@@ -64,6 +64,13 @@ bool string_wildcard(const std::string& str, const std::string& pattern);
  */
 std::string string_trim(const std::string& str);
 
+/**
+ * @brief Like #string_trim(), but take vector as argument.
+ * @param[in] vec   String vector.
+ * @return          The vector.
+ */
+StringVec string_trim_vec(const StringVec& vec);
+
 }
 
 #endif

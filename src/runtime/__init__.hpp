@@ -43,10 +43,7 @@ typedef struct runtime
 
     struct
     {
-        /**
-         * @brief The raw lyric.
-         */
-        std::string text;
+        uint64_t auto_center_time;
     } lyric;
 
     struct

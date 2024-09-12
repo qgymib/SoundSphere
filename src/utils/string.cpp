@@ -147,3 +147,18 @@ std::string soundsphere::string_trim(const std::string& str)
 
     return std::string(start, end + 1);
 }
+
+soundsphere::StringVec soundsphere::string_trim_vec(const soundsphere::StringVec& vec)
+{
+    soundsphere::StringVec ret;
+
+    soundsphere::StringVec::const_iterator it = vec.begin();
+    for (; it != vec.end(); it++)
+    {
+        const std::string& src = *it;
+        std::string dst = soundsphere::string_trim(src);
+        ret.push_back(dst);
+    }
+
+    return ret;
+}

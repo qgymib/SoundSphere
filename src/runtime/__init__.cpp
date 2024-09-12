@@ -13,6 +13,7 @@ static std::mutex* s_job_mutex = nullptr;
 soundsphere::runtime::runtime()
 {
     playlist.selected_id = (uint64_t)-1;
+    lyric.auto_center_time = 3ULL * 1000 * 1000 * 1000;
 
     playbar.is_playing = false;
     playbar.volume = 50;

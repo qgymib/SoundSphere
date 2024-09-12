@@ -66,8 +66,6 @@ static void _stop_play(void)
         s_player->music_mix = NULL;
     }
 
-    soundsphere::_G.lyric.text.clear();
-
     soundsphere::_G.playbar.is_playing = false;
     soundsphere::_G.playbar.music_position = 0.0;
     soundsphere::_G.playbar.music_duration = 0.0;
@@ -133,8 +131,6 @@ static void _play(soundsphere::PlayItem::Ptr obj)
 
     s_player->music_mix = Mix_LoadMUS(obj->path.c_str());
     Mix_PlayMusic(s_player->music_mix, 1);
-
-    soundsphere::_G.lyric.text = obj->lyric;
 
     soundsphere::_G.playbar.is_playing = true;
     soundsphere::_G.playbar.music_duration = Mix_MusicDuration(s_player->music_mix);

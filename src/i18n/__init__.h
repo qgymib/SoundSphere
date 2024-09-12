@@ -7,27 +7,29 @@ extern "C" {
 /**
  * @brief i18n strings.
  */
-#define I18N_STRING_TABLE(xx)   \
-    xx(about)                   \
-    xx(about_show_config_info)  \
-    xx(artist)                  \
-    xx(file)                    \
-    xx(help)                    \
-    xx(homepage)                \
-    xx(lang)                    \
-    xx(localization)            \
-    xx(name)                    \
-    xx(open)                    \
-    xx(open_folder)             \
-    xx(original_text)           \
-    xx(preferences)             \
-    xx(search_artist)           \
-    xx(search_playlist)         \
-    xx(search_title)            \
-    xx(settings)                \
-    xx(title)                   \
-    xx(translated_text)         \
-    xx(translations)            \
+#define I18N_STRING_TABLE(xx)       \
+    xx(about)                       \
+    xx(about_show_config_info)      \
+    xx(artist)                      \
+    xx(file)                        \
+    xx(help)                        \
+    xx(homepage)                    \
+    xx(lang)                        \
+    xx(localization)                \
+    xx(lyric_auto_center_time)      \
+    xx(name)                        \
+    xx(open)                        \
+    xx(open_folder)                 \
+    xx(original_text)               \
+    xx(preferences)                 \
+    xx(search_artist)               \
+    xx(search_playlist)             \
+    xx(search_title)                \
+    xx(settings)                    \
+    xx(tip_lyric_auto_center_time)  \
+    xx(title)                       \
+    xx(translated_text)             \
+    xx(translations)                \
     xx(version)
 
 /**

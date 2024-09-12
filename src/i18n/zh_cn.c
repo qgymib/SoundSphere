@@ -28,6 +28,9 @@ soundsphere_i18n_t soundsphere_i18n_zh_cn = {
 .localization =
 "语言",
 
+.lyric_auto_center_time =
+"歌词自动居中时间",
+
 .name =
 "名称",
 
@@ -54,6 +57,9 @@ soundsphere_i18n_t soundsphere_i18n_zh_cn = {
 
 .settings =
 "设置",
+
+.tip_lyric_auto_center_time =
+"手动滚动歌词后的自动回正时间。单位：秒。",
 
 .title =
 "标题",

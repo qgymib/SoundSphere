@@ -76,21 +76,6 @@ static void _menubar_translations_exit(void)
 {
 }
 
-/**
- * @brief Show tip
- */
-static void _menubar_translations_tip(const char* str)
-{
-    if (ImGui::BeginItemTooltip())
-    {
-        ImGui::PushTextWrapPos(::ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(str);
-        ImGui::PopTextWrapPos();
-
-        ImGui::EndTooltip();
-    }
-}
-
 static void _menubar_translations_show(void)
 {
     const char* window_title = soundsphere_i18n->translations;
@@ -133,18 +118,18 @@ static void _menubar_translations_show(void)
                 ImGui::TableSetColumnIndex(0);
                 const char* key = s_translation_key[row_n];
                 ImGui::Text("%s", key);
-                _menubar_translations_tip(key);
+                ImGui::Tip(key);
 
                 ImGui::TableSetColumnIndex(1);
                 const char* original_text = soundsphere_i18n_locale_string(&soundsphere_i18n_en_us, (soundsphere_i18n_string_t)row_n);
                 ImGui::Text("%s", original_text);
-                _menubar_translations_tip(original_text);
+                ImGui::Tip(original_text);
 
                 ImGui::TableSetColumnIndex(2);
                 const char* translated_text = soundsphere_i18n_locale_string(s_selected_locale, (soundsphere_i18n_string_t)row_n);
                 translated_text = (translated_text == original_text) ? "" : translated_text;
                 ImGui::Text("%s", translated_text);
-                _menubar_translations_tip(translated_text);
+                ImGui::Tip(translated_text);
 
                 ImGui::PopID();
             }

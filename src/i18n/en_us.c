@@ -25,6 +25,9 @@ soundsphere_i18n_t soundsphere_i18n_en_us = {
 .localization =
 "Localization",
 
+.lyric_auto_center_time =
+"Lyric auto center time",
+
 .name =
 "Name",
 
@@ -51,6 +54,9 @@ soundsphere_i18n_t soundsphere_i18n_en_us = {
 
 .settings =
 "Settings",
+
+.tip_lyric_auto_center_time =
+"Time for auto-centering after manual scrolling of lyrics. Unit: seconds.",
 
 .title =
 "Title",

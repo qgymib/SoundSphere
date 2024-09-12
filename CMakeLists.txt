@@ -32,6 +32,7 @@ set(soundsphere_sources
     "src/runtime/playitem.cpp"
     "src/utils/dump.cpp"
     "src/utils/explorer.cpp"
+    "src/utils/imgui.cpp"
     "src/utils/path.cpp"
     "src/utils/string.cpp"
     "src/utils/time.cpp"
