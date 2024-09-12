@@ -12,6 +12,10 @@
  */
 typedef std::map<uint64_t, soundsphere::Texture> TextureMap;
 
+/**
+ * @brief Texture record.
+ * This must be a POD-struct.
+ */
 typedef struct texture_ts_record
 {
     ev_map_node_t   node_ts;
@@ -22,6 +26,11 @@ typedef struct texture_ts_record
 
     ImTextureID     texture;    /* Raw pointer to texture. */
 } texture_ts_record_t;
+
+/*
+ * Ensure #texture_ts_record_t is POD.
+ */
+static_assert(std::is_pod<texture_ts_record_t>::value);
 
 typedef struct playlist_ctx
 {
