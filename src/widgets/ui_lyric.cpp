@@ -160,6 +160,18 @@ static void _auto_scroll(void)
 static void _show_lyric(const Lyric& lyric, double position)
 {
     int ge_cnt = 0;
+
+    ImVec4 fore_color(
+        soundsphere::_G.lyric.fore_lyric_color[0],
+        soundsphere::_G.lyric.fore_lyric_color[1],
+        soundsphere::_G.lyric.fore_lyric_color[2],
+        soundsphere::_G.lyric.fore_lyric_color[3]);
+    ImVec4 back_color(
+        soundsphere::_G.lyric.back_lyric_color[0],
+        soundsphere::_G.lyric.back_lyric_color[1],
+        soundsphere::_G.lyric.back_lyric_color[2],
+        soundsphere::_G.lyric.back_lyric_color[3]);
+
     Lyric::const_iterator it = lyric.begin();
     for (; it != lyric.end(); it++)
     {
@@ -168,21 +180,21 @@ static void _show_lyric(const Lyric& lyric, double position)
 
         if (time < position)
         {
-            ImGui::TextCenter("%s", sentence.c_str());
+            ImGui::TextColoredCenter(back_color, "%s", sentence.c_str());
             continue;
         }
 
         ge_cnt++;
         if (ge_cnt == 1)
         {
-            static ImVec4 color(255, 0, 0, 255);
-            ImGui::TextColoredCenter(color, "%s", sentence.c_str());
+
+            ImGui::TextColoredCenter(fore_color, "%s", sentence.c_str());
             _auto_scroll();
 
             continue;
         }
 
-        ImGui::TextCenter("%s", sentence.c_str());
+        ImGui::TextColoredCenter(back_color, "%s", sentence.c_str());
     }
 }
 

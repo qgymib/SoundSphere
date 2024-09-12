@@ -28,6 +28,12 @@ soundsphere_i18n_t soundsphere_i18n_en_us = {
 .lyric_auto_center_time =
 "Lyric auto center time",
 
+.lyric_back_color =
+"Background color of lyric",
+
+.lyric_fore_color =
+"Foreground color of lyric",
+
 .name =
 "Name",
 

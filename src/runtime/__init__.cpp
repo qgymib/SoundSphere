@@ -13,7 +13,16 @@ static std::mutex* s_job_mutex = nullptr;
 soundsphere::runtime::runtime()
 {
     playlist.selected_id = (uint64_t)-1;
+
     lyric.auto_center_time = 3ULL * 1000 * 1000 * 1000;
+    lyric.fore_lyric_color[0] = 1.0f;
+    lyric.fore_lyric_color[1] = 0.0f;
+    lyric.fore_lyric_color[2] = 0.0f;
+    lyric.fore_lyric_color[3] = 1.0f;
+    lyric.back_lyric_color[0] = 1.0f;
+    lyric.back_lyric_color[1] = 1.0f;
+    lyric.back_lyric_color[2] = 1.0f;
+    lyric.back_lyric_color[3] = 1.0f;
 
     playbar.is_playing = false;
     playbar.volume = 50;

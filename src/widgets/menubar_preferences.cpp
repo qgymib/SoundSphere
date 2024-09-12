@@ -41,6 +41,13 @@ static void _widget_preferences_draw_lyric_auto_center_time(void)
     ImGui::TipMark(soundsphere_i18n->tip_lyric_auto_center_time);
 }
 
+static void _widget_preferences_draw_lyric_color(void)
+{
+    int flags = 0;
+    ImGui::ColorPicker4(soundsphere_i18n->lyric_fore_color, soundsphere::_G.lyric.fore_lyric_color, flags);
+    ImGui::ColorPicker4(soundsphere_i18n->lyric_back_color, soundsphere::_G.lyric.back_lyric_color, flags);
+}
+
 static void _widget_preferences_draw(void)
 {
     /* Register to MainMenu. */
@@ -63,6 +70,7 @@ static void _widget_preferences_draw(void)
         {
             _widget_preferences_draw_select_lang();
             _widget_preferences_draw_lyric_auto_center_time();
+            _widget_preferences_draw_lyric_color();
         }
         ImGui::End();
     }
