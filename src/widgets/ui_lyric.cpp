@@ -157,10 +157,8 @@ static void _auto_scroll(void)
     _scroll_here();
 }
 
-static void _show_lyric(const Lyric& lyric, double position)
+static void _show_lyric(const Lyric& lyric, double playing_position)
 {
-    int ge_cnt = 0;
-
     ImVec4 fore_color(
         soundsphere::_G.lyric.fore_lyric_color[0],
         soundsphere::_G.lyric.fore_lyric_color[1],
@@ -175,22 +173,32 @@ static void _show_lyric(const Lyric& lyric, double position)
     Lyric::const_iterator it = lyric.begin();
     for (; it != lyric.end(); it++)
     {
-        double time = it->first;
+        double music_position = it->first;
         const std::string& sentence = it->second;
 
-        if (time < position)
+        /* Lyric not played. */
+        if (music_position > playing_position)
         {
             ImGui::TextColoredCenter(back_color, "%s", sentence.c_str());
             continue;
         }
 
-        ge_cnt++;
-        if (ge_cnt == 1)
+         /* If it is the last lyric, just highlight it. */
+        if (it == std::prev(lyric.end()))
         {
-
             ImGui::TextColoredCenter(fore_color, "%s", sentence.c_str());
             _auto_scroll();
+            continue;
+        }
+        
+        /* Get next lyric position */
+        double next_position = std::next(it)->first;
 
+        /* If current playing position is in range, highlight this lyric. */
+        if (music_position < playing_position && playing_position < next_position)
+        {
+            ImGui::TextColoredCenter(fore_color, "%s", sentence.c_str());
+            _auto_scroll();
             continue;
         }
 
