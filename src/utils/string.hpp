@@ -6,6 +6,7 @@
 #include <cstdarg>
 
 #if defined(_WIN32)
+#include <memory>
 #include <Esent.h>
 #endif
 
