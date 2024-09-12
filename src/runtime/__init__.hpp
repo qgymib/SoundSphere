@@ -57,7 +57,7 @@ typedef struct runtime
         int is_playing;
 
         /**
-         * @brief Volume.
+         * @brief Volume. [0, 100].
          */
         int volume;
 

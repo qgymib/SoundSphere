@@ -55,7 +55,7 @@ static void _dummy_player_init(void)
         exit(EXIT_FAILURE);
     }
 
-    Mix_VolumeMusic(soundsphere::_G.playbar.volume);
+    soundsphere::dummy_player_set_volume(soundsphere::_G.playbar.volume);
 }
 
 static void _stop_play(void)
@@ -184,7 +184,8 @@ void soundsphere::dummy_player_pause(void)
 
 void soundsphere::dummy_player_set_volume(int volume)
 {
-    Mix_VolumeMusic(volume);
+    int real_volume = (int)(((float)volume / 100.0f) * MIX_MAX_VOLUME);
+    Mix_VolumeMusic(real_volume);
 }
 
 void soundsphere::dummy_player_set_position(double position)

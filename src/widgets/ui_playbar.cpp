@@ -133,9 +133,8 @@ static void _widget_playbar_draw(void)
         ImGui::SameLine();
 
         ImGui::SetNextItemWidth(128);
-        if (ImGui::SliderInt("##PlayerBarVolume", &soundsphere::_G.playbar.volume, 0, MIX_MAX_VOLUME, "", ImGuiSliderFlags_NoInput))
+        if (ImGui::SliderInt("##PlayerBarVolume", &soundsphere::_G.playbar.volume, 0, 100, "", ImGuiSliderFlags_NoInput))
         {
-            spdlog::info("volume {}", soundsphere::_G.playbar.volume);
             soundsphere::dummy_player_set_volume(soundsphere::_G.playbar.volume);
         }
     }
