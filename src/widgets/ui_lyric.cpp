@@ -168,7 +168,7 @@ static void _show_lyric(const Lyric& lyric, double position)
 
         if (time < position)
         {
-            ImGui::Text("%s", sentence.c_str());
+            ImGui::TextCenter("%s", sentence.c_str());
             continue;
         }
 
@@ -176,13 +176,13 @@ static void _show_lyric(const Lyric& lyric, double position)
         if (ge_cnt == 1)
         {
             static ImVec4 color(255, 0, 0, 255);
-            ImGui::TextColored(color, "%s", sentence.c_str());
+            ImGui::TextColoredCenter(color, "%s", sentence.c_str());
             _auto_scroll();
 
             continue;
         }
 
-        ImGui::Text("%s", sentence.c_str());
+        ImGui::TextCenter("%s", sentence.c_str());
     }
 }
 

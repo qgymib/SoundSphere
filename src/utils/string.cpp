@@ -2,6 +2,7 @@
 #include <cctype>
 #include <locale>
 #include <codecvt>
+
 #include "string.hpp"
 
 #if defined(_WIN32)
@@ -161,4 +162,31 @@ soundsphere::StringVec soundsphere::string_trim_vec(const soundsphere::StringVec
     }
 
     return ret;
+}
+
+std::string soundsphere::string_format(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    std::string ret = soundsphere::string_format_v(fmt, args);
+    va_end(args);
+
+    return ret;
+}
+
+std::string soundsphere::string_format_v(const char* fmt, va_list ap)
+{
+    va_list args_copy;
+    va_copy(args_copy, ap);
+    int size = std::vsnprintf(nullptr, 0, fmt, args_copy) + 1; // +1 for null terminator
+    va_end(args_copy);
+
+    // Create a vector with the required size
+    std::vector<char> buf(size);
+    va_copy(args_copy, ap);
+    std::vsnprintf(buf.data(), size, fmt, args_copy);
+    va_end(args_copy);
+
+    // Return as a std::string
+    return std::string(buf.data(), buf.size() - 1); // Exclude the null terminator
 }

@@ -21,6 +21,19 @@ void Tip(const char* str, float width = 35.0f);
  */
 void TipMark(const char* str, float width = 35.0f);
 
+/**
+ * @brief Place a color text in center.
+ * @param[in] color Color.
+ * @param[in] fmt   Format string.
+ */
+void TextColoredCenter(const ImVec4& color, const char* fmt, ...);
+
+/**
+ * @brief Place a text in center.
+ * @param[in] fmt   Format string.
+ */
+void TextCenter(const char* fmt, ...);
+
 }
 
 #endif

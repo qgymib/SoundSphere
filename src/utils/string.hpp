@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdarg>
 
 #if defined(_WIN32)
 #include <Esent.h>
@@ -70,6 +71,21 @@ std::string string_trim(const std::string& str);
  * @return          The vector.
  */
 StringVec string_trim_vec(const StringVec& vec);
+
+/**
+ * @brief Convert format into string.
+ * @param[in] fmt   Format string.
+ * @return Formated string.
+ */
+std::string string_format(const char* fmt, ...);
+
+/**
+ * @brief Format string.
+ * @param[in] fmt   Format string.
+ * @param[in] ap    Variable parameters.
+ * @return  Formated string.
+ */
+std::string string_format_v(const char* fmt, va_list ap);
 
 }
 
