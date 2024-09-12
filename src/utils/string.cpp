@@ -5,6 +5,16 @@
 
 #include "string.hpp"
 
+/**
+ * @brief Checks if the given character is whitespace.
+ * We cannot use std::isspace because on Win32 \c must between [0, 255], however
+ * we use UTF-8 encoding so it may out of range.
+ */
+static int _isspace(int c)
+{
+    return c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v';
+}
+
 #if defined(_WIN32)
 
 #include <Windows.h>
@@ -136,7 +146,7 @@ bool soundsphere::string_wildcard(const std::string& str, const std::string& pat
 std::string soundsphere::string_trim(const std::string& str)
 {
     std::string::const_iterator start = str.begin();
-    while (start != str.end() && std::isspace(*start))
+    while (start != str.end() && _isspace(*start))
     {
         start++;
     }
@@ -144,7 +154,7 @@ std::string soundsphere::string_trim(const std::string& str)
     std::string::const_iterator end = str.end();
     do {
         end--;
-    } while (end != start && std::isspace(*end));
+    } while (end != start && _isspace(*end));
 
     return std::string(start, end + 1);
 }
