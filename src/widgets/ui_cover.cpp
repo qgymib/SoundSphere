@@ -9,9 +9,19 @@ typedef struct cover_ctx
 {
     cover_ctx();
 
+    /**
+     * @brief The default cover.
+     */
     soundsphere::Texture    default_cover;
+
+    /**
+     * @brief The shown cover.
+     */
     soundsphere::Texture    last_cover;
 
+    /**
+     * @brief The id of playing music.
+     */
     uint64_t                last_show_item_id;
 } cover_ctx_t;
 
@@ -34,6 +44,34 @@ static void _ui_cover_exit(void)
     s_cover_ctx = nullptr;
 }
 
+static void _ui_cover_draw_cover(const ImVec2& display_sz)
+{
+    /* If no music is playing, show default cover. */
+    if (soundsphere::_G.dummy_player.current_music.get() == nullptr)
+    {
+        ImGui::Image(s_cover_ctx->default_cover.get(), display_sz);
+        return;
+    }
+
+    /* If current playing music is changed, refresh cover. */
+    if (s_cover_ctx->last_show_item_id != soundsphere::_G.dummy_player.current_music->uid)
+    {
+        s_cover_ctx->last_show_item_id = soundsphere::_G.dummy_player.current_music->uid;
+
+        TagLib::ByteVector* cover_data = &soundsphere::_G.dummy_player.current_music->cover_data;
+        if (cover_data->size() != 0)
+        {
+            s_cover_ctx->last_cover = soundsphere::backend_load_image(cover_data->data(), cover_data->size());
+        }
+        else
+        {
+            s_cover_ctx->last_cover = s_cover_ctx->default_cover;
+        }
+    }
+
+    ImGui::Image(s_cover_ctx->last_cover.get(), display_sz);
+}
+
 static void _ui_cover_draw(void)
 {
     ImGui::SetNextWindowPos(soundsphere::_layout.cover.pos);
@@ -49,21 +87,7 @@ static void _ui_cover_draw(void)
         display_sz.x -= 16;
         display_sz.y -= 16;
 
-        if (soundsphere::_G.dummy_player.current_music.get() == nullptr)
-        {
-            ImGui::Image(s_cover_ctx->default_cover.get(), display_sz);
-        }
-        else
-        {
-            if (s_cover_ctx->last_show_item_id != soundsphere::_G.dummy_player.current_music->uid)
-            {
-                s_cover_ctx->last_show_item_id = soundsphere::_G.dummy_player.current_music->uid;
-
-                TagLib::ByteVector* cover_data = &soundsphere::_G.dummy_player.current_music->cover_data;
-                s_cover_ctx->last_cover = soundsphere::backend_load_image(cover_data->data(), cover_data->size());
-            }
-            ImGui::Image(s_cover_ctx->last_cover.get(), display_sz);
-        }
+        _ui_cover_draw_cover(display_sz);
     }
     ImGui::End();
 }
