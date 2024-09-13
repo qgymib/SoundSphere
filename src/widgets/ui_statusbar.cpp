@@ -27,7 +27,7 @@ static const char* _music_type_to_str(Mix_MusicType type)
     case MUS_GME:       return "GME";
     default:            break;
     }
-    return "UNKNOWN";
+    return "---";
 }
 
 static void _widget_statusbar_draw(void)
