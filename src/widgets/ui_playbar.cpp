@@ -1,9 +1,15 @@
+#include <ev.h>
 #include <IconsFontAwesome6.h>
 #include <spdlog/spdlog.h>
 #include "runtime/__init__.hpp"
 #include "utils/time.hpp"
 #include "__init__.hpp"
 #include "dummy_player.hpp"
+
+/**
+ * @brief Jitter timeout.
+ */
+#define PROCESSBAR_JITTER_TIME  (100ULL * 1000 * 1000)
 
 static void _widget_playbar_init(void)
 {
@@ -18,7 +24,6 @@ static void _widget_playbar_draw_backward_btn(void)
     if (ImGui::Button(ICON_FA_BACKWARD))
     {
     }
-    ImGui::SameLine();
 }
 
 static void _widget_playbar_draw_play_btn(void)
@@ -37,7 +42,6 @@ static void _widget_playbar_draw_play_btn(void)
             soundsphere::dummy_player_resume_or_play();
         }
     }
-    ImGui::SameLine();
 }
 
 static void _widget_playbar_draw_forward_btn(void)
@@ -46,7 +50,6 @@ static void _widget_playbar_draw_forward_btn(void)
     {
         soundsphere::dummy_player_next();
     }
-    ImGui::SameLine();
 }
 
 static void _widget_playbar_draw_shuffle_btn(void)
@@ -59,7 +62,7 @@ static void _widget_playbar_draw_shuffle_btn(void)
         {
             soundsphere::dummy_player_set_shuffle(soundsphere::SHUFFLE_RANDOM);
         }
-        goto finish;
+        return;
     }
 
     if (mode == soundsphere::SHUFFLE_RANDOM)
@@ -68,7 +71,7 @@ static void _widget_playbar_draw_shuffle_btn(void)
         {
             soundsphere::dummy_player_set_shuffle(soundsphere::SHUFFLE_REPEAT);
         }
-        goto finish;
+        return;
     }
 
     if (mode == soundsphere::SHUFFLE_REPEAT)
@@ -77,11 +80,40 @@ static void _widget_playbar_draw_shuffle_btn(void)
         {
             soundsphere::dummy_player_set_shuffle(soundsphere::SHUFFLE_ORDER);
         }
-        goto finish;
+        return;
+    }
+}
+
+static void _widget_playbar_draw_processbar(void)
+{
+    static uint64_t last_click_time = 0;
+
+    float position_percentage = (soundsphere::_G.playbar.music_duration == 0.0) ?
+        0.0f : (float)(soundsphere::_G.playbar.music_position / soundsphere::_G.playbar.music_duration);
+    if (!ImGui::SliderFloat("##playbar_slider", &position_percentage, 0, 1, "", ImGuiSliderFlags_NoInput))
+    {
+        return;
     }
 
-finish:
-    ImGui::SameLine();
+    /*
+     * Use jitter timeout to avoid user long press process bar.
+     *
+     * If user long press process bar, this function is called in FPS frequency,
+     * AKA 30 / 60 / 120hz.
+     *
+     * If the FPS is 30, it means the interval between function calls is approximately
+     * 34 milliseconds, so the jitter timeout is 34 milliseconds.
+     *
+     * The lower FPS, the higher the jitter value is. Here 100ms should be enough.
+     */
+    uint64_t now_time = ev_hrtime();
+    if (now_time - last_click_time > PROCESSBAR_JITTER_TIME)
+    {
+        double target_position = soundsphere::_G.playbar.music_duration * position_percentage;
+        soundsphere::dummy_player_set_position(target_position);
+    }
+
+    last_click_time = now_time;
 }
 
 static void _widget_playbar_draw(void)
@@ -96,8 +128,11 @@ static void _widget_playbar_draw(void)
     if (ImGui::Begin("PlayBar", nullptr, play_bar_flags))
     {
         _widget_playbar_draw_backward_btn();
+        ImGui::SameLine();
         _widget_playbar_draw_play_btn();
+        ImGui::SameLine();
         _widget_playbar_draw_forward_btn();
+        ImGui::SameLine();
 
         {
             static char buf[12];
@@ -107,17 +142,8 @@ static void _widget_playbar_draw(void)
         }
         ImGui::SameLine();
 
-        ImGui::SetNextItemWidth(-256);
-        {
-            float position_percentage = (soundsphere::_G.playbar.music_duration == 0.0) ?
-                0.0f : (float)(soundsphere::_G.playbar.music_position / soundsphere::_G.playbar.music_duration);
-            if (ImGui::SliderFloat("##playbar_slider", &position_percentage, 0, 1, "", ImGuiSliderFlags_NoInput))
-            {
-                double target_position = soundsphere::_G.playbar.music_duration * position_percentage;
-                soundsphere::dummy_player_set_position(target_position);
-            }
-            ImGui::SameLine();
-        }
+        _widget_playbar_draw_processbar();
+        ImGui::SameLine();
 
         {
             static char buf[12];
@@ -128,11 +154,12 @@ static void _widget_playbar_draw(void)
         ImGui::SameLine();
 
         _widget_playbar_draw_shuffle_btn();
+        ImGui::SameLine();
 
         ImGui::Text(ICON_FA_VOLUME_HIGH);
         ImGui::SameLine();
 
-        ImGui::SetNextItemWidth(128);
+        ImGui::SetNextItemWidth(-1);
         if (ImGui::SliderInt("##PlayerBarVolume", &soundsphere::_G.playbar.volume, 0, 100, "", ImGuiSliderFlags_NoInput))
         {
             soundsphere::dummy_player_set_volume(soundsphere::_G.playbar.volume);
