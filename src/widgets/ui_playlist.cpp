@@ -3,6 +3,7 @@
 #include <spdlog/spdlog.h>
 #include "i18n/__init__.h"
 #include "runtime/__init__.hpp"
+#include "utils/time.hpp"
 #include "__init__.hpp"
 #include "dummy_player.hpp"
 
@@ -200,7 +201,7 @@ static void _ui_playlist_draw_table(soundsphere::PlayItem::PtrVec* vec)
     clipper.Begin((int)vec->size());
 
     /* Get current time. */
-    uint64_t ts = ev_hrtime();
+    uint64_t ts = soundsphere::clock_time_ms();
 
     /* Draw table. */
     while (clipper.Step())
@@ -235,7 +236,7 @@ static void _ui_playlist_draw_window(void)
 
 static void _ui_playlist_gc(void)
 {
-    const uint64_t ts = ev_hrtime();
+    const uint64_t ts = soundsphere::clock_time_ms();
     const uint64_t gc_timeout = (uint64_t)10 * 1000 * 1000 * 1000;
 
     uint64_t gc_cnt = 0;

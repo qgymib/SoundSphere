@@ -4,6 +4,7 @@
 #include <SDL_mixer.h>
 #include <spdlog/spdlog.h>
 #include "runtime/__init__.hpp"
+#include "utils/time.hpp"
 #include "dummy_player.hpp"
 #include "__init__.hpp"
 
@@ -193,7 +194,7 @@ static soundsphere::PlayItem::PtrVecPtr _shuffle_media(soundsphere::PlayItem::Pt
 {
     soundsphere::PlayItem::PtrVecPtr ret = std::make_shared<soundsphere::PlayItem::PtrVec>(*vec);
 
-    unsigned seed = (unsigned)(ev_hrtime() / 1000 / 1000 / 1000);
+    unsigned seed = (unsigned)(soundsphere::clock_time_ms() / 1000);
     std::shuffle(ret->begin(), ret->end(), std::default_random_engine(seed));
 
     return ret;

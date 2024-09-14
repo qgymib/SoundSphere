@@ -29,12 +29,12 @@ static void _widget_preferences_draw_select_lang(void)
 
 static void _widget_preferences_draw_lyric_auto_center_time(void)
 {
-    int time = (int)(soundsphere::_G.lyric.auto_center_time / 1000 / 1000 / 1000);
+    int time = (int)(soundsphere::_G.lyric.auto_center_time_ms / 1000);
     if (ImGui::InputInt(soundsphere_i18n->lyric_auto_center_time, &time))
     {
         if (time >= 0)
         {
-            soundsphere::_G.lyric.auto_center_time = (uint64_t)time * 1000 * 1000 * 1000;
+            soundsphere::_G.lyric.auto_center_time_ms = (uint64_t)time * 1000;
         }
     }
     ImGui::SameLine();

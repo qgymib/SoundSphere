@@ -44,9 +44,9 @@ typedef struct runtime
     struct
     {
         /**
-         * @brief Time for auto-centering.
+         * @brief Time for auto-centering in milliseconds.
          */
-        uint64_t auto_center_time;
+        uint64_t auto_center_time_ms;
 
         /**
          * @brief Current shown lyric color.

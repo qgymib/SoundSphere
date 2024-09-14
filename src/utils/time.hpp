@@ -2,6 +2,7 @@
 #define SOUND_SPHERE_UTILS_TIME_HPP
 
 #include <cstddef>
+#include <cstdint>
 
 namespace soundsphere {
 
@@ -12,6 +13,12 @@ namespace soundsphere {
  * @param[in] seconds   Seconds.
  */
 void time_seconds_to_string(char* buff, size_t size, double seconds);
+
+/**
+ * @brief Get current clock time in milliseconds.
+ * @return Milliseconds.
+ */
+uint64_t clock_time_ms(void);
 
 }
 

@@ -1,8 +1,8 @@
-#include <ev.h>
 #include <imgui.h>
 #include <map>
 #include "runtime/__init__.hpp"
 #include "utils/string.hpp"
+#include "utils/time.hpp"
 #include "__init__.hpp"
 
 /**
@@ -140,7 +140,7 @@ static void _auto_scroll(void)
         return;
     }
 
-    uint64_t current_time = ev_hrtime();
+    uint64_t current_time = soundsphere::clock_time_ms();
     if (s_lyric->last_user_scroll_time == 0 || scroll_y != s_lyric->last_scroll_y)
     {
         s_lyric->last_scroll_y = scroll_y;
@@ -149,7 +149,7 @@ static void _auto_scroll(void)
     }
 
     uint64_t diff_time = current_time - s_lyric->last_user_scroll_time;
-    if (diff_time < soundsphere::_G.lyric.auto_center_time)
+    if (diff_time < soundsphere::_G.lyric.auto_center_time_ms)
     {
         return;
     }

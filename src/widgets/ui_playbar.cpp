@@ -1,15 +1,9 @@
-#include <ev.h>
 #include <IconsFontAwesome6.h>
 #include <spdlog/spdlog.h>
 #include "runtime/__init__.hpp"
 #include "utils/time.hpp"
 #include "__init__.hpp"
 #include "dummy_player.hpp"
-
-/**
- * @brief Jitter timeout.
- */
-#define PROCESSBAR_JITTER_TIME  (100ULL * 1000 * 1000)
 
 static void _widget_playbar_init(void)
 {
@@ -106,8 +100,8 @@ static void _widget_playbar_draw_processbar(void)
      *
      * The lower FPS, the higher the jitter value is. Here 100ms should be enough.
      */
-    uint64_t now_time = ev_hrtime();
-    if (now_time - last_click_time > PROCESSBAR_JITTER_TIME)
+    uint64_t now_time = soundsphere::clock_time_ms();
+    if (now_time - last_click_time > 100)
     {
         double target_position = soundsphere::_G.playbar.music_duration * position_percentage;
         soundsphere::dummy_player_set_position(target_position);
