@@ -156,6 +156,10 @@ std::string soundsphere::string_trim(const std::string& str)
         end--;
     } while (end != start && _isspace(*end));
 
+    if (end == str.end())
+    {
+        return std::string(start, end);
+    }
     return std::string(start, end + 1);
 }
 
@@ -199,4 +203,18 @@ std::string soundsphere::string_format_v(const char* fmt, va_list ap)
 
     // Return as a std::string
     return std::string(buf.data(), buf.size() - 1); // Exclude the null terminator
+}
+
+uint64_t soundsphere::string_hash_djb2(const std::string& str)
+{
+    const uint8_t* data = (uint8_t*)str.data();
+    const size_t size = str.size();
+
+    uint64_t hash = 5381;
+    for (size_t i = 0; i < size; i++)
+    {
+        hash = ((hash << 5) + hash) + data[i];
+    }
+
+    return hash;
 }

@@ -11,7 +11,7 @@ namespace soundsphere {
  * @param[in] with_exit whether Keep extensions.
  * @return Filename.
  */
-std::string basename(const std::string& path, bool with_ext = false);
+std::string basename(const std::string& path, bool with_ext);
 
 /**
  * @brief Get extension name.

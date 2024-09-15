@@ -1,11 +1,13 @@
 #include <ev.h>
 #include <map>
 #include <spdlog/spdlog.h>
+#include "backends/__init__.hpp"
 #include "i18n/__init__.h"
 #include "runtime/__init__.hpp"
 #include "utils/time.hpp"
 #include "__init__.hpp"
 #include "dummy_player.hpp"
+#include "tool_tag_editor.hpp"
 
 /**
  * @brief Texture map.
@@ -22,7 +24,7 @@ typedef struct texture_ts_record
     ev_map_node_t   node_ts;
     ev_map_node_t   node_uid;
 
-    uint64_t        uid;        /**< Music uid. */
+    uint64_t        path_hash;  /**< Music uid. */
     uint64_t        ts;         /**< Last used timestamp. */
 
     ImTextureID     texture;    /* Raw pointer to texture. */
@@ -60,11 +62,11 @@ static int _texture_ts_map_on_cmp(const ev_map_node_t* key1,
 
     if (rec_1->ts == rec_2->ts)
     {
-        if (rec_1->uid == rec_2->uid)
+        if (rec_1->path_hash == rec_2->path_hash)
         {
             return 0;
         }
-        return rec_1->uid > rec_2->uid ? 1 : -1;
+        return rec_1->path_hash > rec_2->path_hash ? 1 : -1;
     }
     return rec_1->ts > rec_2->ts ? 1 : -1;
 }
@@ -76,11 +78,11 @@ static int _texture_uid_map_on_cmp(const ev_map_node_t* key1,
     texture_ts_record_t* rec_1 = EV_CONTAINER_OF(key1, texture_ts_record_t, node_uid);
     texture_ts_record_t* rec_2 = EV_CONTAINER_OF(key2, texture_ts_record_t, node_uid);
 
-    if (rec_1->uid == rec_2->uid)
+    if (rec_1->path_hash == rec_2->path_hash)
     {
         return 0;
     }
-    return rec_1->uid > rec_2->uid ? 1 : -1;
+    return rec_1->path_hash > rec_2->path_hash ? 1 : -1;
 }
 
 playlist_ctx::playlist_ctx()
@@ -99,7 +101,7 @@ playlist_ctx::~playlist_ctx()
         ev_map_erase(&texture_ts_map, &rec->node_ts);
         ev_map_erase(&texture_uid_map, &rec->node_uid);
 
-        texture_table.erase(rec->uid);
+        texture_table.erase(rec->path_hash);
         ev_free(rec);
     }
 }
@@ -115,10 +117,10 @@ static void _ui_playlist_exit(void)
     s_playlist_ctx = nullptr;
 }
 
-static ImTextureID _ui_playlist_compile_cover(soundsphere::PlayItem* obj, uint64_t ts)
+static ImTextureID _ui_playlist_compile_cover(soundsphere::music_tags_t* obj, uint64_t ts)
 {
     texture_ts_record_t tmp_rec;
-    tmp_rec.uid = obj->uid;
+    tmp_rec.path_hash = obj->path_hash;
     ev_map_node_t* it = ev_map_find(&s_playlist_ctx->texture_uid_map, &tmp_rec.node_uid);
 
     /* If record exist, update the timestamp. */
@@ -135,12 +137,12 @@ static ImTextureID _ui_playlist_compile_cover(soundsphere::PlayItem* obj, uint64
     }
 
     /* If record not exist, compile the cover. */
-    TagLib::ByteVector* cover_data = &obj->cover_data;
+    auto cover_data = &obj->covers[0];
     soundsphere::Texture texture = soundsphere::backend_load_image(cover_data->data(), cover_data->size());
-    s_playlist_ctx->texture_table.insert(TextureMap::value_type(obj->uid, texture));
+    s_playlist_ctx->texture_table.insert(TextureMap::value_type(obj->path_hash, texture));
 
     texture_ts_record_t* rec = (texture_ts_record_t*)ev_malloc(sizeof(texture_ts_record_t));
-    rec->uid = obj->uid;
+    rec->path_hash = obj->path_hash;
     rec->ts = ts;
     rec->texture = texture.get();
 
@@ -150,7 +152,7 @@ static ImTextureID _ui_playlist_compile_cover(soundsphere::PlayItem* obj, uint64
     return rec->texture;
 }
 
-static void _ui_playlist_draw_table_item(soundsphere::PlayItem* obj, uint64_t ts)
+static void _ui_playlist_draw_table_item(soundsphere::music_tags_t* obj, uint64_t ts)
 {
     ImTextureID texture = _ui_playlist_compile_cover(obj, ts);
 
@@ -163,7 +165,7 @@ static void _ui_playlist_draw_table_item(soundsphere::PlayItem* obj, uint64_t ts
         ImGui::SameLine();
 
         bool is_playing = soundsphere::_G.dummy_player.current_music.get() == obj;
-        bool is_selected = soundsphere::_G.playlist.selected_id == obj->uid;
+        bool is_selected = soundsphere::_G.playlist.selected_id == obj->path_hash;
 
         if (is_playing)
         {
@@ -185,17 +187,25 @@ static void _ui_playlist_draw_table_item(soundsphere::PlayItem* obj, uint64_t ts
     }
     ImGui::EndGroup();
 
-    if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+    if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
     {
-        soundsphere::_G.playlist.selected_id = obj->uid;
+        soundsphere::_G.playlist.selected_id = obj->path_hash;
     }
-    if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+    if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
     {
         soundsphere::dummy_player_resume_or_play();
     }
+    if (ImGui::BeginPopupContextItem("Tag Editor##435bf70d-067a-43ca-96aa-423071a6f817"))
+    {
+        if (ImGui::MenuItem(soundsphere_i18n->tag_editor))
+        {
+            soundsphere::tag_editor_open(obj->path);
+        }
+        ImGui::EndPopup();
+    }
 }
 
-static void _ui_playlist_draw_table(soundsphere::PlayItem::PtrVec* vec)
+static void _ui_playlist_draw_table(soundsphere::MusicTagPtrVec* vec)
 {
     ImGuiListClipper clipper;
     clipper.Begin((int)vec->size());
@@ -208,7 +218,7 @@ static void _ui_playlist_draw_table(soundsphere::PlayItem::PtrVec* vec)
     {
         for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++)
         {
-            soundsphere::PlayItem::Ptr obj = vec->at(row_n);
+            soundsphere::MusicTagPtr obj = vec->at(row_n);
 
             ImGui::PushID(obj->path.c_str());
             ImGui::TableNextRow();
@@ -220,7 +230,7 @@ static void _ui_playlist_draw_table(soundsphere::PlayItem::PtrVec* vec)
 
 static void _ui_playlist_draw_window(void)
 {
-    soundsphere::PlayItem::PtrVecPtr vec = soundsphere::_G.playlist.show_vec;
+    soundsphere::MusicTagPtrVecPtr vec = soundsphere::_G.playlist.show_vec;
 
     const int table_flags = ImGuiTableFlags_Resizable;
     if (ImGui::BeginTable("PlayListTable", 1, table_flags))
@@ -254,7 +264,7 @@ static void _ui_playlist_gc(void)
 
         ev_map_erase(&s_playlist_ctx->texture_ts_map, &rec->node_ts);
         ev_map_erase(&s_playlist_ctx->texture_uid_map, &rec->node_uid);
-        s_playlist_ctx->texture_table.erase(rec->uid);
+        s_playlist_ctx->texture_table.erase(rec->path_hash);
 
         ev_free(rec);
         gc_cnt++;

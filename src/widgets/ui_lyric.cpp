@@ -19,7 +19,7 @@ typedef struct lyric_ctx
     /**
      * @brief Music ID.
      */
-    uint64_t    music_id;
+    uint64_t    path_hash;
 
     /**
      * @brief Lyric.
@@ -46,7 +46,7 @@ static lyric_ctx_t* s_lyric = nullptr;
 
 lyric_ctx::lyric_ctx()
 {
-    music_id = (uint64_t)-1;
+    path_hash = (uint64_t)-1;
     lyric_scroll_y = 0.0f;
     last_scroll_y = 0.0f;
     last_user_scroll_time = 0;
@@ -222,9 +222,9 @@ static void _ui_lyric_draw(void)
             goto finish;
         }
 
-        if (s_lyric->music_id != soundsphere::_G.dummy_player.current_music->uid)
+        if (s_lyric->path_hash != soundsphere::_G.dummy_player.current_music->path_hash)
         {
-            s_lyric->music_id = soundsphere::_G.dummy_player.current_music->uid;
+            s_lyric->path_hash = soundsphere::_G.dummy_player.current_music->path_hash;
             s_lyric->lyric = _compile_lyric(soundsphere::_G.dummy_player.current_music->lyric);
         }
 

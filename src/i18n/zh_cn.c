@@ -13,6 +13,12 @@ soundsphere_i18n_t soundsphere_i18n_zh_cn = {
 .artist =
 "艺术家",
 
+.bit_rate =
+"比特率",
+
+.channel =
+"通道",
+
 .file =
 "文件",
 
@@ -27,6 +33,9 @@ soundsphere_i18n_t soundsphere_i18n_zh_cn = {
 
 .localization =
 "语言",
+
+.lyric =
+"歌词",
 
 .lyric_auto_center_time =
 "歌词自动居中时间",
@@ -49,8 +58,14 @@ soundsphere_i18n_t soundsphere_i18n_zh_cn = {
 .original_text =
 "原文",
 
+.path =
+"路径",
+
 .preferences =
 "首选项",
+
+.sample_rate =
+"采样率",
 
 .search_artist =
 "搜索艺术家",
@@ -63,6 +78,9 @@ soundsphere_i18n_t soundsphere_i18n_zh_cn = {
 
 .settings =
 "设置",
+
+.tag_editor =
+"标签编辑器",
 
 .tip_lyric_auto_center_time =
 "手动滚动歌词后的自动回正时间。单位：秒。",

@@ -20,8 +20,11 @@ static const soundsphere::widget_t* s_main_ui[] = {
     &soundsphere::ui_playlist,
     &soundsphere::ui_statusbar,
 
-    /* Dummy items. */
-    & soundsphere::dummy_player,
+    /* Dummy widgets. */
+    &soundsphere::dummy_player,
+
+    /* Tool widgets. */
+    &soundsphere::tool_tag_editor,
 };
 
 static float _widget_get_main_menu_bar_height(void)

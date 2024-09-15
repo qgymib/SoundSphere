@@ -11,11 +11,14 @@ extern "C" {
     xx(about)                       \
     xx(about_show_config_info)      \
     xx(artist)                      \
+    xx(bit_rate)                    \
+    xx(channel)                     \
     xx(file)                        \
     xx(help)                        \
     xx(homepage)                    \
     xx(lang)                        \
     xx(localization)                \
+    xx(lyric)                       \
     xx(lyric_auto_center_time)      \
     xx(lyric_back_color)            \
     xx(lyric_fore_color)            \
@@ -23,11 +26,14 @@ extern "C" {
     xx(open)                        \
     xx(open_folder)                 \
     xx(original_text)               \
+    xx(path)                        \
     xx(preferences)                 \
+    xx(sample_rate)                 \
     xx(search_artist)               \
     xx(search_playlist)             \
     xx(search_title)                \
     xx(settings)                    \
+    xx(tag_editor)                  \
     xx(tip_lyric_auto_center_time)  \
     xx(title)                       \
     xx(translated_text)             \

@@ -7,8 +7,8 @@ namespace soundsphere {
 
 typedef struct widget_pos_size
 {
-    ImVec2 pos;
-    ImVec2 size;
+    ImVec2  pos;    /**< Position. */
+    ImVec2  size;   /**< Size. */
 } widget_pos_size_t;
 
 typedef struct widget_layout
@@ -43,7 +43,7 @@ typedef struct widget
  * @brief Dummy widgets. Does not have UI.
  * @{
  */
-extern const widget_t dummy_player;
+extern const widget_t dummy_player; /**< The music player. */
 /**
  * @}
  */
@@ -71,6 +71,15 @@ extern const widget_t ui_lyric;
 extern const widget_t ui_playbar;
 extern const widget_t ui_playlist;
 extern const widget_t ui_statusbar;
+/**
+ * @}
+ */
+
+/**
+ * @brief Tool widgets. Can be opened by other widgets.
+ * {
+ */
+extern const widget_t tool_tag_editor;
 /**
  * @}
  */

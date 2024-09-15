@@ -54,11 +54,11 @@ static void _ui_cover_draw_cover(const ImVec2& display_sz)
     }
 
     /* If current playing music is changed, refresh cover. */
-    if (s_cover_ctx->last_show_item_id != soundsphere::_G.dummy_player.current_music->uid)
+    if (s_cover_ctx->last_show_item_id != soundsphere::_G.dummy_player.current_music->path_hash)
     {
-        s_cover_ctx->last_show_item_id = soundsphere::_G.dummy_player.current_music->uid;
+        s_cover_ctx->last_show_item_id = soundsphere::_G.dummy_player.current_music->path_hash;
 
-        TagLib::ByteVector* cover_data = &soundsphere::_G.dummy_player.current_music->cover_data;
+        soundsphere::Bin* cover_data = &soundsphere::_G.dummy_player.current_music->covers[0];
         if (cover_data->size() != 0)
         {
             s_cover_ctx->last_cover = soundsphere::backend_load_image(cover_data->data(), cover_data->size());

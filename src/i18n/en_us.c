@@ -10,6 +10,12 @@ soundsphere_i18n_t soundsphere_i18n_en_us = {
 .artist =
 "Artist",
 
+.bit_rate =
+"Bit rate",
+
+.channel =
+"Channel",
+
 .file =
 "File",
 
@@ -24,6 +30,9 @@ soundsphere_i18n_t soundsphere_i18n_en_us = {
 
 .localization =
 "Localization",
+
+.lyric =
+"Lyric",
 
 .lyric_auto_center_time =
 "Lyric auto center time",
@@ -46,8 +55,14 @@ soundsphere_i18n_t soundsphere_i18n_en_us = {
 .original_text =
 "Original Text",
 
+.path =
+"Path",
+
 .preferences =
 "Preferences",
+
+.sample_rate =
+"Sample rate",
 
 .search_artist =
 "Search Artist",
@@ -60,6 +75,9 @@ soundsphere_i18n_t soundsphere_i18n_en_us = {
 
 .settings =
 "Settings",
+
+.tag_editor =
+"Tag Editor",
 
 .tip_lyric_auto_center_time =
 "Time for auto-centering after manual scrolling of lyrics. Unit: seconds.",

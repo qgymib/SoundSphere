@@ -2,11 +2,14 @@
 #define SOUND_SPHERE_RUNTIME_INIT_HPP
 
 #include <functional>
-#include <memory>
 #include <SDL_mixer.h>
-#include "playitem.hpp"
+#include <vector>
+#include "utils/music_tag.hpp"
 
 namespace soundsphere {
+
+typedef std::vector<MusicTagPtr> MusicTagPtrVec;
+typedef std::shared_ptr<MusicTagPtrVec> MusicTagPtrVecPtr;
 
 /**
  * @brief Global runtime data.
@@ -18,14 +21,14 @@ typedef struct runtime
     /**
      * @brief Current playlist.
      */
-    PlayItem::PtrVecPtr media_list;
+    MusicTagPtrVecPtr       media_list;
 
     struct
     {
         /**
          * @brief The current playing music.
          */
-        PlayItem::Ptr   current_music;
+        MusicTagPtr         current_music;
     } dummy_player;
 
     struct
@@ -33,12 +36,12 @@ typedef struct runtime
         /**
          * @brief List shown in ui.
          */
-        PlayItem::PtrVecPtr show_vec;
+        MusicTagPtrVecPtr   show_vec;
 
         /**
          * @brief Which item selected.
          */
-        uint64_t selected_id;
+        uint64_t            selected_id;
     } playlist;
 
     struct
@@ -46,17 +49,17 @@ typedef struct runtime
         /**
          * @brief Time for auto-centering in milliseconds.
          */
-        uint64_t auto_center_time_ms;
+        uint64_t            auto_center_time_ms;
 
         /**
          * @brief Current shown lyric color.
          */
-        float fore_lyric_color[4];
+        float               fore_lyric_color[4];
 
         /**
          * @brief Background color of lyric.
          */
-        float back_lyric_color[4];
+        float               back_lyric_color[4];
     } lyric;
 
     struct
@@ -64,22 +67,22 @@ typedef struct runtime
         /**
          * @brief Is the audio is playing.
          */
-        int is_playing;
+        int                 is_playing;
 
         /**
          * @brief Volume. [0, 100].
          */
-        int volume;
+        int                 volume;
 
         /**
          * @brief Music duration, in seconds.
          */
-        double music_duration;
+        double              music_duration;
 
         /**
          * @brief Music position, in seconds.
          */
-        double music_position;
+        double              music_position;
     } playbar;
 
     struct
@@ -87,22 +90,22 @@ typedef struct runtime
         /**
          * @brief Music type.
          */
-        Mix_MusicType music_type;
+        Mix_MusicType       music_type;
 
         /**
          * @brief Bitrate in kb/s.
          */
-        int bitrate;
+        int                 bitrate;
 
         /**
          * @brief Sample rate in Hz.
          */
-        int samplerate;
+        int                 samplerate;
 
         /**
          * @brief The number of audio channels.
          */
-        int channels;
+        int                 channels;
     } statusbar;
 } runtime_t;
 

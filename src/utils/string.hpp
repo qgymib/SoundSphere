@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 #include <cstdarg>
 
 #if defined(_WIN32)
@@ -87,6 +88,13 @@ std::string string_format(const char* fmt, ...);
  * @return  Formated string.
  */
 std::string string_format_v(const char* fmt, va_list ap);
+
+/**
+ * @brief Return the hash of \p str.
+ * @param[in] str   String.
+ * @return Hash value.
+ */
+uint64_t string_hash_djb2(const std::string& str);
 
 }
 

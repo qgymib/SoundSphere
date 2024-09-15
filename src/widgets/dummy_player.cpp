@@ -20,7 +20,7 @@ typedef struct dummy_player
     /**
      * @brief Musics in play order.
      */
-    soundsphere::PlayItem::PtrVecPtr    shuffle_vec;
+    soundsphere::MusicTagPtrVecPtr      shuffle_vec;
 
     /**
      * @brief Is in shuffle mode.
@@ -110,23 +110,23 @@ _dummy_player_exit,
 _dummy_player_draw,
 };
 
-static soundsphere::PlayItem::Ptr _find_audio(uint64_t id)
+static soundsphere::MusicTagPtr _find_audio(uint64_t id)
 {
-    soundsphere::PlayItem::PtrVecPtr vec = soundsphere::_G.media_list;
+    soundsphere::MusicTagPtrVecPtr vec = soundsphere::_G.media_list;
 
     for (size_t i = 0; i < vec->size(); i++)
     {
-        soundsphere::PlayItem::Ptr obj = vec->at(i);
-        if (obj->uid == id)
+        soundsphere::MusicTagPtr obj = vec->at(i);
+        if (obj->path_hash == id)
         {
             return obj;
         }
     }
 
-    return soundsphere::PlayItem::Ptr();
+    return soundsphere::MusicTagPtr();
 }
 
-static void _play(soundsphere::PlayItem::Ptr obj)
+static void _play(soundsphere::MusicTagPtr obj)
 {
     soundsphere::_G.dummy_player.current_music = obj;
 
@@ -140,7 +140,7 @@ static void _play(soundsphere::PlayItem::Ptr obj)
     soundsphere::_G.statusbar.music_type = Mix_GetMusicType(s_player->music_mix);
     soundsphere::_G.statusbar.bitrate = obj->bitrate;
     soundsphere::_G.statusbar.samplerate = obj->samplerate;
-    soundsphere::_G.statusbar.channels = obj->channels;
+    soundsphere::_G.statusbar.channels = obj->channel;
 }
 
 void soundsphere::dummy_player_resume_or_play(void)
@@ -159,7 +159,7 @@ void soundsphere::dummy_player_resume_or_play(void)
     _stop_play();
 
     /* Find the song need to play. s*/
-    soundsphere::PlayItem::Ptr obj = _find_audio(soundsphere::_G.playlist.selected_id);
+    soundsphere::MusicTagPtr obj = _find_audio(soundsphere::_G.playlist.selected_id);
     if (obj.get() == nullptr)
     {
         return;
@@ -190,9 +190,9 @@ void soundsphere::dummy_player_set_position(double position)
     Mix_SetMusicPosition(position);
 }
 
-static soundsphere::PlayItem::PtrVecPtr _shuffle_media(soundsphere::PlayItem::PtrVecPtr vec)
+static soundsphere::MusicTagPtrVecPtr _shuffle_media(soundsphere::MusicTagPtrVecPtr vec)
 {
-    soundsphere::PlayItem::PtrVecPtr ret = std::make_shared<soundsphere::PlayItem::PtrVec>(*vec);
+    soundsphere::MusicTagPtrVecPtr ret = std::make_shared<soundsphere::MusicTagPtrVec>(*vec);
 
     unsigned seed = (unsigned)(soundsphere::clock_time_ms() / 1000);
     std::shuffle(ret->begin(), ret->end(), std::default_random_engine(seed));
@@ -221,7 +221,7 @@ void soundsphere::dummy_player_set_shuffle(soundsphere::shuffle_mode_t mode)
 void soundsphere::dummy_player_next(void)
 {
     size_t idx = 0;
-    soundsphere::PlayItem::PtrVecPtr vec = s_player->shuffle_vec;
+    soundsphere::MusicTagPtrVecPtr vec = s_player->shuffle_vec;
 
     _stop_play();
 
@@ -232,7 +232,7 @@ void soundsphere::dummy_player_next(void)
 
     for (; idx < vec->size(); idx++)
     {
-        soundsphere::PlayItem::Ptr obj = vec->at(idx);
+        soundsphere::MusicTagPtr obj = vec->at(idx);
         if (obj.get() == soundsphere::_G.dummy_player.current_music.get())
         {
             break;
@@ -252,7 +252,7 @@ void soundsphere::dummy_player_next(void)
         }
     }
 
-    soundsphere::PlayItem::Ptr obj = vec->at(idx);
+    soundsphere::MusicTagPtr obj = vec->at(idx);
     _play(obj);
 }
 

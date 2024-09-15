@@ -2,6 +2,7 @@
 #define SOUND_SPHERE_UTILS_IMGUI_HPP
 
 #include <imgui.h>
+#include <imgui_stdlib.h>
 #include <string>
 
 namespace ImGui {

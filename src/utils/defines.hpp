@@ -7,6 +7,11 @@
 /**
  * @brief Program name
  */
-#define PROG_NAME	"Sound Sphere"
+#define PROG_NAME	    "Sound Sphere"
+
+/**
+ * @brief Get array size.
+ */
+#define ARRAY_SIZE(x)   (sizeof(x) / sizeof(x[0]))
 
 #endif

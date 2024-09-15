@@ -66,7 +66,7 @@ static bool _search_string(const std::string& str, const std::string& pat)
     return lower_str.find(lower_pat) != std::string::npos;
 }
 
-static soundsphere::PlayItem::PtrVecPtr _filter(soundsphere::PlayItem::PtrVecPtr vec,
+static soundsphere::MusicTagPtrVecPtr _filter(soundsphere::MusicTagPtrVecPtr vec,
     const std::string& filter)
 {
     if (filter.empty())
@@ -74,12 +74,12 @@ static soundsphere::PlayItem::PtrVecPtr _filter(soundsphere::PlayItem::PtrVecPtr
         return vec;
     }
 
-    soundsphere::PlayItem::PtrVecPtr ret = std::make_shared<soundsphere::PlayItem::PtrVec>();
-    soundsphere::PlayItem::PtrVec::iterator it = vec->begin();
+    soundsphere::MusicTagPtrVecPtr ret = std::make_shared<soundsphere::MusicTagPtrVec>();
+    soundsphere::MusicTagPtrVec::iterator it = vec->begin();
 
     for (; it != vec->end(); it++)
     {
-        soundsphere::PlayItem::Ptr obj = *it;
+        soundsphere::MusicTagPtr obj = *it;
 
         if (s_filter->search_title && _search_string(obj->title, filter))
         {
