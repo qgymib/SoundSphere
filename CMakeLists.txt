@@ -39,6 +39,7 @@ set(soundsphere_sources
     "src/widgets/__init__.cpp"
     "src/widgets/dummy_player.cpp"
     "src/widgets/menubar_about.cpp"
+    "src/widgets/menubar_debug.cpp"
     "src/widgets/menubar_open.cpp"
     "src/widgets/menubar_preferences.cpp"
     "src/widgets/menubar_translations.cpp"

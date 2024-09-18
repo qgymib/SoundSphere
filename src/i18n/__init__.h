@@ -13,6 +13,7 @@ extern "C" {
     xx(artist)                      \
     xx(bit_rate)                    \
     xx(channel)                     \
+    xx(debug)                       \
     xx(file)                        \
     xx(help)                        \
     xx(homepage)                    \

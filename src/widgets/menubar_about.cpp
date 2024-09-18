@@ -109,13 +109,6 @@ static void _widget_about_draw_menu(void)
         "https://github.com/qgymib/SoundSphere");
     ImGui::Separator();
 
-    static bool show_imgui_demo_window = false;
-    ImGui::Checkbox("Show Imgui Demo Window", &show_imgui_demo_window);
-    if (show_imgui_demo_window)
-    {
-        ImGui::ShowDemoWindow(&show_imgui_demo_window);
-    }
-
     static bool show_config_info = false;
     ImGui::Checkbox(soundsphere_i18n->translation->about_show_config_info, &show_config_info);
     if (show_config_info)

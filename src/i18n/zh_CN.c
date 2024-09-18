@@ -18,6 +18,9 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_zh_CN = {
 .channel =
 "通道",
 
+.debug =
+"调试",
+
 .file =
 "文件",
 

@@ -10,6 +10,7 @@ static const soundsphere::widget_t* s_main_ui[] = {
     &soundsphere::menubar_open,
     &soundsphere::menubar_preferences,
     &soundsphere::menubar_translations,
+    &soundsphere::menubar_debug,
     &soundsphere::menubar_about,
 
     /* UI widgets. */

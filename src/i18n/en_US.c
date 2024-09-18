@@ -16,6 +16,9 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_en_us = {
 .channel =
 "Channel",
 
+.debug =
+"Debug",
+
 .file =
 "File",
 
