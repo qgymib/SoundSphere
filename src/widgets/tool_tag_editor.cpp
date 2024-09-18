@@ -50,14 +50,14 @@ static void _tool_tageditor_exit(void)
 
 static void _tool_tageditor_draw_editor(void)
 {
-    ImGui::InputText(soundsphere_i18n->path, &s_tag_editor->tags->path);
-    ImGui::InputText(soundsphere_i18n->title, &s_tag_editor->tags->title);
-    ImGui::InputText(soundsphere_i18n->artist, &s_tag_editor->tags->artist);
-    ImGui::InputTextMultiline(soundsphere_i18n->lyric, &s_tag_editor->tags->lyric);
+    ImGui::InputText(soundsphere_i18n->translation->path, &s_tag_editor->tags->path);
+    ImGui::InputText(soundsphere_i18n->translation->title, &s_tag_editor->tags->title);
+    ImGui::InputText(soundsphere_i18n->translation->artist, &s_tag_editor->tags->artist);
+    ImGui::InputTextMultiline(soundsphere_i18n->translation->lyric, &s_tag_editor->tags->lyric);
 
-    ImGui::Text("%s: %d", soundsphere_i18n->bit_rate, s_tag_editor->tags->bitrate);
-    ImGui::Text("%s: %d", soundsphere_i18n->sample_rate, s_tag_editor->tags->samplerate);
-    ImGui::Text("%s: %d", soundsphere_i18n->channel, s_tag_editor->tags->channel);
+    ImGui::Text("%s: %d", soundsphere_i18n->translation->bit_rate, s_tag_editor->tags->bitrate);
+    ImGui::Text("%s: %d", soundsphere_i18n->translation->sample_rate, s_tag_editor->tags->samplerate);
+    ImGui::Text("%s: %d", soundsphere_i18n->translation->channel, s_tag_editor->tags->channel);
 }
 
 static void _tool_tageditor_draw(void)
@@ -65,7 +65,7 @@ static void _tool_tageditor_draw(void)
     if (s_tag_editor->window_open)
     {
         ImGui::SetNextWindowSize(s_tag_editor->default_window_sz, ImGuiCond_FirstUseEver);
-        if (ImGui::Begin(soundsphere_i18n->tag_editor, &s_tag_editor->window_open))
+        if (ImGui::Begin(soundsphere_i18n->translation->tag_editor, &s_tag_editor->window_open))
         {
             _tool_tageditor_draw_editor();
         }

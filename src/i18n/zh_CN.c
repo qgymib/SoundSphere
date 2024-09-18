@@ -2,8 +2,7 @@
 
 I18N_LOCALE_BEG
 
-soundsphere_i18n_t soundsphere_i18n_zh_cn = {
-
+static soundsphere_i18n_translation_t _soundsphere_i18n_zh_CN = {
 .about =
 "关于",
 
@@ -100,3 +99,5 @@ soundsphere_i18n_t soundsphere_i18n_zh_cn = {
 };
 
 I18N_LOCALE_END
+
+I18N_LOCALE_IMPL(zh_CN, &_soundsphere_i18n_zh_CN);

@@ -53,9 +53,9 @@ static void _widget_about_3rd(void)
     const int table_flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit;
     if (ImGui::BeginTable("about_3rd", 3, table_flags))
     {
-        ImGui::TableSetupColumn(soundsphere_i18n->name);
-        ImGui::TableSetupColumn(soundsphere_i18n->version);
-        ImGui::TableSetupColumn(soundsphere_i18n->homepage);
+        ImGui::TableSetupColumn(soundsphere_i18n->translation->name);
+        ImGui::TableSetupColumn(soundsphere_i18n->translation->version);
+        ImGui::TableSetupColumn(soundsphere_i18n->translation->homepage);
         ImGui::TableHeadersRow();
 
         ImGuiListClipper clipper;
@@ -76,7 +76,7 @@ static void _widget_about_3rd(void)
                 ImGui::Text("%s", info->version);
 
                 ImGui::TableSetColumnIndex(2);
-                ImGui::TextLinkOpenURL(soundsphere_i18n->homepage, info->url);
+                ImGui::TextLinkOpenURL(soundsphere_i18n->translation->homepage, info->url);
 
                 ImGui::PopID();
             }
@@ -98,14 +98,15 @@ static void _widget_about_show_config_frame(void)
 
 static void _widget_about_draw_menu(void)
 {
-    const char* window_title = soundsphere_i18n->about;
+    const char* window_title = soundsphere_i18n->translation->about;
     if (!ImGui::Begin(window_title, &s_menu_about_show, ImGuiWindowFlags_AlwaysAutoResize))
     {
         goto finish;
     }
 
     ImGui::Text(PROG_NAME " %s", soundsphere::version());
-    ImGui::TextLinkOpenURL(soundsphere_i18n->homepage, "https://github.com/qgymib/SoundSphere");
+    ImGui::TextLinkOpenURL(soundsphere_i18n->translation->homepage,
+        "https://github.com/qgymib/SoundSphere");
     ImGui::Separator();
 
     static bool show_imgui_demo_window = false;
@@ -116,7 +117,7 @@ static void _widget_about_draw_menu(void)
     }
 
     static bool show_config_info = false;
-    ImGui::Checkbox(soundsphere_i18n->about_show_config_info, &show_config_info);
+    ImGui::Checkbox(soundsphere_i18n->translation->about_show_config_info, &show_config_info);
     if (show_config_info)
     {
         _widget_about_show_config_frame();
@@ -131,9 +132,9 @@ static void _widget_about_draw(void)
     /* Register to MainMenu. */
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu(soundsphere_i18n->help))
+        if (ImGui::BeginMenu(soundsphere_i18n->translation->help))
         {
-            ImGui::MenuItem(soundsphere_i18n->about, nullptr, &s_menu_about_show);
+            ImGui::MenuItem(soundsphere_i18n->translation->about, nullptr, &s_menu_about_show);
             ImGui::EndMenu();
         }
 

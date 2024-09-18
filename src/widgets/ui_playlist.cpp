@@ -197,7 +197,7 @@ static void _ui_playlist_draw_table_item(soundsphere::music_tags_t* obj, uint64_
     }
     if (ImGui::BeginPopupContextItem("Tag Editor##435bf70d-067a-43ca-96aa-423071a6f817"))
     {
-        if (ImGui::MenuItem(soundsphere_i18n->tag_editor))
+        if (ImGui::MenuItem(soundsphere_i18n->translation->tag_editor))
         {
             soundsphere::tag_editor_open(obj->path);
         }

@@ -45,9 +45,14 @@ extern "C" {
  * @note To implement a new local, use #I18N_LOCALE_BEG and #I18N_LOCALE_END
  *   to disable struct initialize warning.
  */
-#define I18N_LOCALE_TABLE(xx)                       \
-    xx(I18N_LOCALE_EN_US,  soundsphere_i18n_en_us)  \
-    xx(I18N_LOCALE_ZH_CN,  soundsphere_i18n_zh_cn)
+#define I18N_LOCALE_TABLE(xx)   \
+    xx(en_US)                   \
+    xx(zh_CN)
+
+#define I18N_LOCALE_IMPL(lang, addr)    \
+    const soundsphere_i18n_t soundsphere_i18n_##lang = {\
+        I18N_LOCALE_##lang, #lang, addr\
+    }
 
 /**
  * @brief Setup before localization.
@@ -75,7 +80,7 @@ extern "C" {
  */
 typedef enum soundsphere_i18n_locale_e
 {
-#define I18N_EXPAND_LOCALE_AS_ENUM(a, b) a,
+#define I18N_EXPAND_LOCALE_AS_ENUM(a) I18N_LOCALE_##a,
     I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_ENUM)
 #undef I18N_EXPAND_LOCALE_AS_ENUM
 
@@ -98,21 +103,37 @@ typedef enum soundsphere_i18n_string_e
 /**
  * @brief Strings that has locales.
  */
-typedef struct soundsphere_i18n_s
+typedef struct soundsphere_i18n_translation
 {
 #define I18N_EXPAND_STRING_AS_FIELD(a)  const char* a;
     I18N_STRING_TABLE(I18N_EXPAND_STRING_AS_FIELD)
 #undef I18N_EXPAND_STRING_AS_FIELD
+} soundsphere_i18n_translation_t;
+
+typedef struct soundsphere_i18n_s
+{
+    soundsphere_i18n_locale_t       locale;
+
+    /**
+     * @brief The locale category for native language.
+     * @see [Locale](https://wiki.archlinux.org/title/Locale)
+     */
+    const char*                     language_territory;
+
+    /**
+     * @brief Translations.
+     */
+    soundsphere_i18n_translation_t* translation;
 } soundsphere_i18n_t;
 
-#define I18N_EXPAND_LOCALE_AS_EXTERN(a, b) extern soundsphere_i18n_t b;
+#define I18N_EXPAND_LOCALE_AS_EXTERN(a) extern const soundsphere_i18n_t soundsphere_i18n_##a;
 I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_EXTERN)
 #undef I18N_EXPAND_LOCALE_AS_EXTERN
 
 /**
  * @brief Global i18n.
  */
-extern soundsphere_i18n_t* soundsphere_i18n;
+extern const soundsphere_i18n_t* soundsphere_i18n;
 
 /**
  * @brief Initialize i18n.
@@ -135,14 +156,14 @@ void soundsphere_i18n_set_locale(soundsphere_i18n_locale_t locale);
  * @param[in] locale    Locale.
  * @return Translated strings.
  */
-soundsphere_i18n_t* soundsphere_i18n_get_locale(soundsphere_i18n_locale_t locale);
+const soundsphere_i18n_t* soundsphere_i18n_get_locale(soundsphere_i18n_locale_t locale);
 
 /**
  * @brief Get local string for id \p s.
  * @param[in] s The string id.
  * @return      The local string.
  */
-const char* soundsphere_i18n_locale_string(soundsphere_i18n_t* locale, soundsphere_i18n_string_t s);
+const char* soundsphere_i18n_locale_string(const soundsphere_i18n_t* locale, soundsphere_i18n_string_t s);
 
 #ifdef __cplusplus
 }

@@ -88,15 +88,17 @@ static void _menubar_open_draw(void)
 {
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu(soundsphere_i18n->file))
+        if (ImGui::BeginMenu(soundsphere_i18n->translation->file))
         {
             bool enabled = (s_open_thread == EV_OS_THREAD_INVALID);
-            if (ImGui::MenuItem(soundsphere_i18n->open, nullptr, nullptr, enabled))
+            if (ImGui::MenuItem(soundsphere_i18n->translation->open, nullptr,
+                nullptr, enabled))
             {
                 IM_ASSERT(s_open_thread == EV_OS_THREAD_INVALID);
                 ev_thread_init(&s_open_thread, NULL, _start_open_files_thread, NULL);
             }
-            if (ImGui::MenuItem(soundsphere_i18n->open_folder, nullptr, nullptr, enabled))
+            if (ImGui::MenuItem(soundsphere_i18n->translation->open_folder,
+                nullptr, nullptr, enabled))
             {
                 IM_ASSERT(s_open_thread == EV_OS_THREAD_INVALID);
                 ev_thread_init(&s_open_thread, NULL, _start_open_folder_thread, NULL);

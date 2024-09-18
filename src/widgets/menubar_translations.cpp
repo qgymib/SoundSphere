@@ -2,7 +2,7 @@
 #include "__init__.hpp"
 
 static const char* s_locales[] = {
-#define I18N_EXPAND_LOCALE_AS_STRING(a, b)   b.lang,
+#define I18N_EXPAND_LOCALE_AS_STRING(a)   soundsphere_i18n_##a.translation->lang,
     I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_STRING)
 #undef I18N_EXPAND_LOCALE_AS_STRING
 };
@@ -31,7 +31,7 @@ typedef struct menubar_translations_ctx
      * @brief Selected locale.
      * Everything in this window (except window title) use it's own locale.
      */
-    soundsphere_i18n_t*         selected_locale;
+    const soundsphere_i18n_t*   selected_locale;
 
     /**
      * @brief Translation percentage of selected locale.
@@ -57,13 +57,13 @@ static float _menubar_translation_calcuate_translation_percentage(soundsphere_i1
     size_t translated_cnt = 0;
     size_t total_cnt = (size_t)soundsphere_i18n_string_t::I18N_STRING__MAX;
 
-    if (locale == soundsphere_i18n_locale_t::I18N_LOCALE_EN_US)
+    if (locale == soundsphere_i18n_locale_t::I18N_LOCALE_en_US)
     {
         return 1.0f;
     }
 
-    soundsphere_i18n_t* original_locale = &soundsphere_i18n_en_us;
-    soundsphere_i18n_t* target_locale = soundsphere_i18n_get_locale(locale);
+    const soundsphere_i18n_t* original_locale = &soundsphere_i18n_en_US;
+    const soundsphere_i18n_t* target_locale = soundsphere_i18n_get_locale(locale);
 
     for (size_t i = 0; i < total_cnt; i++)
     {
@@ -81,7 +81,7 @@ static float _menubar_translation_calcuate_translation_percentage(soundsphere_i1
 menubar_translations_ctx::menubar_translations_ctx()
 {
     default_window_sz = ImVec2(640, 400);
-    selected_locale_id = soundsphere_i18n_locale_t::I18N_LOCALE_EN_US;
+    selected_locale_id = soundsphere_i18n_locale_t::I18N_LOCALE_en_US;
     selected_locale = soundsphere_i18n_get_locale(selected_locale_id);
     translation_percentage = _menubar_translation_calcuate_translation_percentage(selected_locale_id);
     menu_show_translations = false;
@@ -101,7 +101,8 @@ static void _menubar_translations_exit(void)
 static void _menubar_translations_show(void)
 {
     int selected_locale = (int)s_translation_ctx->selected_locale_id;
-    if (ImGui::Combo(s_translation_ctx->selected_locale->localization, &selected_locale, s_locales, IM_ARRAYSIZE(s_locales)))
+    const char* label = s_translation_ctx->selected_locale->translation->localization;
+    if (ImGui::Combo(label, &selected_locale, s_locales, IM_ARRAYSIZE(s_locales)))
     {
         /* Update selected locale information. */
         s_translation_ctx->selected_locale_id = (soundsphere_i18n_locale_t)selected_locale;
@@ -115,9 +116,12 @@ static void _menubar_translations_show(void)
     /* Show translation details table. */
     if (ImGui::BeginTable("about_translations_locale", 3, ImGuiTableFlags_Borders))
     {
-        ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed, 128);
-        ImGui::TableSetupColumn(s_translation_ctx->selected_locale->original_text, ImGuiTableColumnFlags_WidthFixed, 256);
-        ImGui::TableSetupColumn(s_translation_ctx->selected_locale->translated_text, ImGuiTableColumnFlags_WidthFixed, 256);
+        const char* label = "id";
+        ImGui::TableSetupColumn(label, ImGuiTableColumnFlags_WidthFixed, 128);
+        label = s_translation_ctx->selected_locale->translation->original_text;
+        ImGui::TableSetupColumn(label, ImGuiTableColumnFlags_WidthFixed, 256);
+        label = s_translation_ctx->selected_locale->translation->translated_text;
+        ImGui::TableSetupColumn(label, ImGuiTableColumnFlags_WidthFixed, 256);
         ImGui::TableHeadersRow();
 
         ImGuiListClipper clipper;
@@ -136,7 +140,7 @@ static void _menubar_translations_show(void)
                 ImGui::Tip(key);
 
                 ImGui::TableSetColumnIndex(1);
-                const char* original_text = soundsphere_i18n_locale_string(&soundsphere_i18n_en_us, (soundsphere_i18n_string_t)row_n);
+                const char* original_text = soundsphere_i18n_locale_string(&soundsphere_i18n_en_US, (soundsphere_i18n_string_t)row_n);
                 ImGui::Text("%s", original_text);
                 ImGui::Tip(original_text);
 
@@ -159,9 +163,10 @@ static void _menubar_translations_draw(void)
     /* Register menu. */
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu(soundsphere_i18n->help))
+        if (ImGui::BeginMenu(soundsphere_i18n->translation->help))
         {
-            ImGui::MenuItem(soundsphere_i18n->translations, nullptr, &s_translation_ctx->menu_show_translations);
+            ImGui::MenuItem(soundsphere_i18n->translation->translations, nullptr,
+                &s_translation_ctx->menu_show_translations);
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -170,7 +175,7 @@ static void _menubar_translations_draw(void)
     /* Show window. */
     if (s_translation_ctx->menu_show_translations)
     {
-        const char* window_title = soundsphere_i18n->translations;
+        const char* window_title = soundsphere_i18n->translation->translations;
         ImGui::SetNextWindowSize(s_translation_ctx->default_window_sz, ImGuiCond_FirstUseEver);
         if (ImGui::Begin(window_title, &s_translation_ctx->menu_show_translations, 0))
         {

@@ -1,6 +1,6 @@
 #include "__init__.h"
 
-soundsphere_i18n_t soundsphere_i18n_en_us = {
+static soundsphere_i18n_translation_t _soundsphere_i18n_en_us = {
 .about =
 "About",
 
@@ -95,3 +95,5 @@ soundsphere_i18n_t soundsphere_i18n_en_us = {
 "Version",
 
 };
+
+I18N_LOCALE_IMPL(en_US, &_soundsphere_i18n_en_us);
