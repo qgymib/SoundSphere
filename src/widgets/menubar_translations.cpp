@@ -116,7 +116,7 @@ static void _menubar_translations_show(void)
     /* Show translation details table. */
     if (ImGui::BeginTable("about_translations_locale", 3, ImGuiTableFlags_Borders))
     {
-        const char* label = "id";
+        label = "id";
         ImGui::TableSetupColumn(label, ImGuiTableColumnFlags_WidthFixed, 128);
         label = s_translation_ctx->selected_locale->translation->original_text;
         ImGui::TableSetupColumn(label, ImGuiTableColumnFlags_WidthFixed, 256);

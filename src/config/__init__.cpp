@@ -1,7 +1,7 @@
 #include <nlohmann/json.hpp>
-#include <cstdlib>
 #include <ev.h>
 #include "utils/defines.hpp"
+#include "utils/env.hpp"
 #include "utils/path.hpp"
 #include "__init__.hpp"
 
@@ -36,24 +36,24 @@ config_ctx::config_ctx()
      * Calculate default configuration path.
      */
 #if defined(_WIN32)
-    const char* app_data = std::getenv("APPDATA");
-    if (app_data != nullptr)
+    std::string app_data = soundsphere::getenv("APPDATA");
+    if (!app_data.empty())
     {
-        path = std::string(app_data) + "\\" PROG_ID + "\\config.json";
+        path = app_data + "\\" PROG_ID + "\\config.json";
         return;
     }
 #else
-    const char* xdg_config_home = std::getenv("XDG_CONFIG_HOME");
-    if (xdg_config_home != nullptr)
+    std::string xdg_config_home = soundsphere::getenv("XDG_CONFIG_HOME");
+    if (!xdg_config_home.empty())
     {
-        path = std::string(xdg_config_home) + "/" PROG_ID "/config.json";
+        path = xdg_config_home + "/" PROG_ID "/config.json";
         return;
     }
 
-    const char* home = std::getenv("HOME");
-    if (home != nullptr)
+    std::string home = soundsphere::getenv("HOME");
+    if (!home.empty())
     {
-        path = std::string(home) + "/.config/" PROG_ID "/config.json";
+        path = home + "/.config/" PROG_ID "/config.json";
         return;
     }
 #endif
@@ -66,7 +66,7 @@ config_ctx::config_ctx()
 static void _config_load(void)
 {
     ev_fs_req_t req;
-    int ret = ev_fs_readfile(nullptr, &req, s_config_ctx->path.c_str(), nullptr);
+    ssize_t ret = ev_fs_readfile(nullptr, &req, s_config_ctx->path.c_str(), nullptr);
     if (ret < 0)
     {
         return;

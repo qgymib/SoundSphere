@@ -31,6 +31,7 @@ set(soundsphere_sources
     "src/i18n/zh_CN.c"
     "src/runtime/__init__.cpp"
     "src/utils/binary.cpp"
+    "src/utils/env.cpp"
     "src/utils/explorer.cpp"
     "src/utils/imgui.cpp"
     "src/utils/music_tag.cpp"

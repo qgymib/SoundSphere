@@ -1,6 +1,6 @@
-#include <cstdlib>
 #include <spdlog/spdlog.h>
 #include "utils/defines.hpp"
+#include "utils/env.hpp"
 #include "utils/string.hpp"
 #include "__init__.h"
 
@@ -38,7 +38,7 @@ static void _soundsphere_i18n_init_locales(void)
 
 static void _soundsphere_i18n_set_default_locale(void)
 {
-    std::string lang = std::getenv("LANG");
+    std::string lang = soundsphere::getenv("LANG");
     std::string language = soundsphere::string_split(lang, ".")[0];
     spdlog::info("language {} -> {}", lang, language);
 
