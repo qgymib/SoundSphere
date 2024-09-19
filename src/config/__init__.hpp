@@ -10,6 +10,11 @@ typedef struct config
     config();
 
     /**
+     * @brief Display language.
+     */
+    std::string language;
+
+    /**
      * @brief Time for auto-centering in milliseconds.
      */
     uint64_t    lyric_auto_center_time_ms;

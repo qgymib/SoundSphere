@@ -19,14 +19,40 @@ soundsphere::config_t soundsphere::_config;
 
 static config_ctx_t* s_config_ctx = nullptr;
 
+static std::string _get_locale(void)
+{
+    std::string lang = soundsphere::getenv("LANG");
+    if (!lang.empty())
+    {
+        return soundsphere::string_split(lang, ".")[0];
+    }
+
+#if defined(_WIN32)
+    LANGID langId = GetUserDefaultUILanguage();
+    WCHAR localeName[LOCALE_NAME_MAX_LENGTH];
+    if (LCIDToLocaleName(MAKELCID(langId, SORT_DEFAULT), localeName, LOCALE_NAME_MAX_LENGTH, 0) != 0)
+    {
+        lang = soundsphere::wide_to_utf8(localeName);
+        lang = soundsphere::string_replace(lang, "-", "_");
+        return lang;
+    }
+#endif
+
+    return "en_US";
+}
+
 namespace soundsphere {
 
 config::config()
 {
+    language = _get_locale();
     lyric_auto_center_time_ms = 3 * 1000;
 }
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(config, lyric_auto_center_time_ms)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(config,
+    language,
+    lyric_auto_center_time_ms
+)
 
 }
 

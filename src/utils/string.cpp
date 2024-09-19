@@ -218,3 +218,18 @@ uint64_t soundsphere::string_hash_djb2(const std::string& str)
 
     return hash;
 }
+
+std::string soundsphere::string_replace(const std::string& str,
+    const std::string& match, const std::string& replace)
+{
+    std::string copy = str;
+    size_t pos = 0;
+
+    while ((pos = copy.find(match, pos)) != std::string::npos)
+    {
+        copy.replace(pos, match.length(), replace);
+        pos += replace.length();
+    }
+
+    return copy;
+}

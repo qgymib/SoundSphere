@@ -96,6 +96,16 @@ std::string string_format_v(const char* fmt, va_list ap);
  */
 uint64_t string_hash_djb2(const std::string& str);
 
+/**
+ * @brief Find all substring \p match and replace them with \p replace.
+ * @param[in] str       The original string.
+ * @param[in] match     The string to find.
+ * @param[in] replace   The string to replace.
+ * @return              The replaced string.
+ */
+std::string string_replace(const std::string& str, const std::string& match,
+    const std::string& replace);
+
 }
 
 #endif

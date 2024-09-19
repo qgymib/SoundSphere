@@ -1,4 +1,5 @@
 #include <spdlog/spdlog.h>
+#include "config/__init__.hpp"
 #include "utils/defines.hpp"
 #include "utils/env.hpp"
 #include "utils/string.hpp"
@@ -38,15 +39,11 @@ static void _soundsphere_i18n_init_locales(void)
 
 static void _soundsphere_i18n_set_default_locale(void)
 {
-    std::string lang = soundsphere::getenv("LANG");
-    std::string language = soundsphere::string_split(lang, ".")[0];
-    spdlog::info("language {} -> {}", lang, language);
-
     /* Search for matching language. */
     for (size_t i = 0; i < ARRAY_SIZE(s_i18n); i++)
     {
         const soundsphere_i18n_t* i18n = s_i18n[i];
-        if (language == i18n->language_territory)
+        if (soundsphere::_config.language == i18n->language_territory)
         {
             soundsphere_i18n = i18n;
             return;
