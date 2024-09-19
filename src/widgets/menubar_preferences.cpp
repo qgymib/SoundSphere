@@ -3,34 +3,41 @@
 #include "runtime/__init__.hpp"
 #include "__init__.hpp"
 
-static bool s_show_preferences_window = false;
+typedef struct preference_tab
+{
+    /**
+     * @brief The name of tab.
+     */
+    const char* name;
+
+    /**
+     * @brief Draw function.
+     */
+    void (*draw)(void);
+} preference_tab_t;
 
 typedef struct preferences_ctx
 {
     preferences_ctx();
 
+    /**
+     * @brief Show preferences window.
+     */
+    bool show_window;
+
+    /**
+     * @brief Selected locale.
+     */
     int selected_locale;
 } preferences_ctx_t;
 
 static preferences_ctx* s_preferences_ctx = nullptr;
 
-preferences_ctx::preferences_ctx()
-{
-    selected_locale = (int)soundsphere_i18n->locale;
-}
+///////////////////////////////////////////////////////////////////////////////
+// Preference tab: Generic
+///////////////////////////////////////////////////////////////////////////////
 
-static void _widget_preferences_init(void)
-{
-    s_preferences_ctx = new preferences_ctx_t;
-}
-
-static void _widget_preferences_exit(void)
-{
-    delete s_preferences_ctx;
-    s_preferences_ctx = nullptr;
-}
-
-static void _widget_preferences_draw_select_lang(void)
+static void _widget_preferences_draw_generic_select_lang(void)
 {
     const char* item_locals[] = {
 #define I18N_EXPAND_LOCALE_AS_STRING(a)   soundsphere_i18n_##a.translation->lang,
@@ -43,6 +50,15 @@ static void _widget_preferences_draw_select_lang(void)
         soundsphere_i18n_set_locale((soundsphere_i18n_locale_t)s_preferences_ctx->selected_locale);
     }
 }
+
+static void _widget_preference_draw_generic(void)
+{
+    _widget_preferences_draw_generic_select_lang();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Preference tab: Lyric
+///////////////////////////////////////////////////////////////////////////////
 
 static void _widget_preferences_draw_lyric_auto_center_time(void)
 {
@@ -68,6 +84,29 @@ static void _widget_preferences_draw_lyric_color(void)
         soundsphere::_G.lyric.back_lyric_color, flags);
 }
 
+static void _widget_preference_draw_lyric(void)
+{
+    _widget_preferences_draw_lyric_auto_center_time();
+    _widget_preferences_draw_lyric_color();
+}
+
+preferences_ctx::preferences_ctx()
+{
+    show_window = false;
+    selected_locale = (int)soundsphere_i18n->locale;
+}
+
+static void _widget_preferences_init(void)
+{
+    s_preferences_ctx = new preferences_ctx_t;
+}
+
+static void _widget_preferences_exit(void)
+{
+    delete s_preferences_ctx;
+    s_preferences_ctx = nullptr;
+}
+
 static void _widget_preferences_draw(void)
 {
     /* Register to MainMenu. */
@@ -76,25 +115,43 @@ static void _widget_preferences_draw(void)
         if (ImGui::BeginMenu(soundsphere_i18n->translation->settings))
         {
             ImGui::MenuItem(soundsphere_i18n->translation->preferences, nullptr,
-                &s_show_preferences_window);
+                &s_preferences_ctx->show_window);
             ImGui::EndMenu();
         }
 
         ImGui::EndMainMenuBar();
     }
+    if (!s_preferences_ctx->show_window)
+    {
+        return;
+    }
+
+    /* Preferences tabs. */
+    const preference_tab_t tabs[] = {
+        { soundsphere_i18n->translation->localization,  _widget_preference_draw_generic },
+        { soundsphere_i18n->translation->lyric,         _widget_preference_draw_lyric },
+    };
 
     /* Show window. */
-    if (s_show_preferences_window)
+    const char* window_name = soundsphere_i18n->translation->preferences;
+    const int window_flag = ImGuiWindowFlags_AlwaysAutoResize;
+    if (ImGui::Begin(window_name, &s_preferences_ctx->show_window, window_flag))
     {
-        const char* window_name = soundsphere_i18n->translation->preferences;
-        if (ImGui::Begin(window_name, &s_show_preferences_window, ImGuiWindowFlags_AlwaysAutoResize))
+        if (ImGui::BeginTabBar("preferences_tabbar"))
         {
-            _widget_preferences_draw_select_lang();
-            _widget_preferences_draw_lyric_auto_center_time();
-            _widget_preferences_draw_lyric_color();
+            for (size_t i = 0; i < IM_ARRAYSIZE(tabs); i++)
+            {
+                const preference_tab_t* tab = &tabs[i];
+                if (ImGui::BeginTabItem(tab->name))
+                {
+                    tab->draw();
+                    ImGui::EndTabItem();
+                }
+            }
+            ImGui::EndTabBar();
         }
-        ImGui::End();
     }
+    ImGui::End();
 }
 
 const soundsphere::widget_t soundsphere::menubar_preferences = {
