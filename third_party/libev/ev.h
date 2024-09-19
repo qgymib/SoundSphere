@@ -26,7 +26,7 @@
 /**
  * # Changelog
  * 
- * ## v0.1.1
+ * ## v0.1.1 (2024/09/19)
  * 
  * ### BREAKING CHANGES
  * 1. merge `ev_file_init()` with `ev_file_open()`.
@@ -56,7 +56,8 @@
  * ### Bug Fixes
  * 1. `ev_hrtime()` no longer require initialize event loop first.
  * 2. can not open file in windows if path contains CJK characters.
- * 
+ * 3. Use `ev_fs_readfile()` in synchronous mode may crash in windows.
+ * 4. `ev_fs_mkdir()` should not fail if already exist in windows.
  * 
  * ## v0.1.0 (2024/08/06)
  * 
@@ -299,8 +300,8 @@
 // #line 68 "ev.h"
 ////////////////////////////////////////////////////////////////////////////////
 // FILE:    ev/version.h
-// SIZE:    1189
-// SHA-256: e7cd5e8f37838aceebe0a81ad77931bf1302b2a07fc8e4f796a61fdc5cadd4ac
+// SIZE:    1188
+// SHA-256: 8afb944a6fb8cddac12a6c1a9d64adabdaef359e0936150ec70f48e228703aab
 ////////////////////////////////////////////////////////////////////////////////
 // #line 1 "ev/version.h"
 #ifndef __EV_VERSION_H__
@@ -332,7 +333,7 @@ extern "C" {
 /**
  * @brief Development version.
  */
-#define EV_VERSION_PREREL           10
+#define EV_VERSION_PREREL           0
 
 /**
  * @brief Version calculate helper macro.
