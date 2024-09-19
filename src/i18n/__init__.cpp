@@ -37,27 +37,10 @@ static void _soundsphere_i18n_init_locales(void)
 #undef I18N_EXPAND_AS_CHECK
 }
 
-static void _soundsphere_i18n_set_default_locale(void)
-{
-    /* Search for matching language. */
-    for (size_t i = 0; i < ARRAY_SIZE(s_i18n); i++)
-    {
-        const soundsphere_i18n_t* i18n = s_i18n[i];
-        if (soundsphere::_config.language == i18n->language_territory)
-        {
-            soundsphere_i18n = i18n;
-            return;
-        }
-    }
-
-    /* Default locale is en_US. */
-    soundsphere_i18n = &soundsphere_i18n_en_US;
-}
-
 void soundsphere_i18n_init()
 {
     _soundsphere_i18n_init_locales();
-    _soundsphere_i18n_set_default_locale();
+    soundsphere_i18n_reload_locale();
 }
 
 void soundsphere_i18n_exit(void)
@@ -80,9 +63,20 @@ const char* soundsphere_i18n_locale_string(const soundsphere_i18n_t* locale,
 #undef I18N_EXPAND_AS_CHOOSE
 }
 
-void soundsphere_i18n_set_locale(soundsphere_i18n_locale_t locale)
+void soundsphere_i18n_reload_locale(void)
 {
-    soundsphere_i18n = soundsphere_i18n_get_locale(locale);
+    for (size_t i = 0; i < ARRAY_SIZE(s_i18n); i++)
+    {
+        const soundsphere_i18n_t* i18n = s_i18n[i];
+        if (soundsphere::_config.language == i18n->language_territory)
+        {
+            soundsphere_i18n = i18n;
+            return;
+        }
+    }
+
+    /* No locale match, set to default. */
+    soundsphere_i18n = &soundsphere_i18n_en_US;
 }
 
 const soundsphere_i18n_t* soundsphere_i18n_get_locale(soundsphere_i18n_locale_t locale)

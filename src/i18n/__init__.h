@@ -113,6 +113,9 @@ typedef struct soundsphere_i18n_translation
 
 typedef struct soundsphere_i18n_s
 {
+    /**
+     * @brief Locale.
+     */
     soundsphere_i18n_locale_t       locale;
 
     /**
@@ -150,7 +153,7 @@ void soundsphere_i18n_exit(void);
  * @brief Set current locale.
  * @param[in] locale    Current locale.
  */
-void soundsphere_i18n_set_locale(soundsphere_i18n_locale_t locale);
+void soundsphere_i18n_reload_locale(void);
 
 /**
  * @brief Get locale translations.

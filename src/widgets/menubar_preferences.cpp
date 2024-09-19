@@ -42,13 +42,19 @@ static void _widget_preferences_draw_generic_select_lang(void)
 {
     const char* item_locals[] = {
 #define I18N_EXPAND_LOCALE_AS_STRING(a)   soundsphere_i18n_##a.translation->lang,
-    I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_STRING)
+        I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_STRING)
+#undef I18N_EXPAND_LOCALE_AS_STRING
+    };
+    static const char* item_lang[] = {
+#define I18N_EXPAND_LOCALE_AS_STRING(a)   soundsphere_i18n_##a.language_territory,
+	    I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_STRING)
 #undef I18N_EXPAND_LOCALE_AS_STRING
     };
     const char* label = soundsphere_i18n->translation->localization;
     if (ImGui::Combo(label, &s_preferences_ctx->selected_locale, item_locals, IM_ARRAYSIZE(item_locals)))
     {
-        soundsphere_i18n_set_locale((soundsphere_i18n_locale_t)s_preferences_ctx->selected_locale);
+        soundsphere::_config.language = item_lang[s_preferences_ctx->selected_locale];
+        soundsphere_i18n_reload_locale();
     }
 }
 
