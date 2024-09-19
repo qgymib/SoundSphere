@@ -71,11 +71,6 @@ static void _stop_play(void)
     soundsphere::_G.playbar.music_position = 0.0;
     soundsphere::_G.playbar.music_duration = 0.0;
 
-    soundsphere::_G.statusbar.bitrate = 0;
-    soundsphere::_G.statusbar.samplerate = 0;
-    soundsphere::_G.statusbar.channels = 0;
-    soundsphere::_G.statusbar.music_type = MUS_NONE;
-
     soundsphere::dummy_player_set_position(0);
 }
 
@@ -136,11 +131,6 @@ static void _play(soundsphere::MusicTagPtr obj)
     soundsphere::_G.playbar.is_playing = true;
     soundsphere::_G.playbar.music_duration = Mix_MusicDuration(s_player->music_mix);
     soundsphere::_G.playbar.music_position = 0.0;
-
-    soundsphere::_G.statusbar.music_type = Mix_GetMusicType(s_player->music_mix);
-    soundsphere::_G.statusbar.bitrate = obj->bitrate;
-    soundsphere::_G.statusbar.samplerate = obj->samplerate;
-    soundsphere::_G.statusbar.channels = obj->channel;
 }
 
 void soundsphere::dummy_player_resume_or_play(void)

@@ -50,6 +50,7 @@ set(soundsphere_sources
     "src/widgets/ui_playbar.cpp"
     "src/widgets/ui_playlist.cpp"
     "src/widgets/ui_statusbar.cpp"
+    "src/widgets/ui_title.cpp"
     "src/main.cpp"
     "src/version.cpp"
 )

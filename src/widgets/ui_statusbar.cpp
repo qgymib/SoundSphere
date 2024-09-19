@@ -3,31 +3,55 @@
 #include "utils/time.hpp"
 #include "__init__.hpp"
 
+typedef struct statusbar_ctx
+{
+    /**
+     * @brief Hash of path.
+     */
+    uint64_t                    path_hash;
+
+    /**
+     * @brief Music format.
+     */
+    soundsphere::music_type_t   format;
+
+    /**
+     * @brief Bitrate in kb/s.
+     */
+    int                         bitrate;
+
+    /**
+     * @brief Sample rate in Hz.
+     */
+    int                         samplerate;
+
+    /**
+     * @brief The number of audio channels.
+     */
+    int                         channels;
+} statusbar_ctx_t;
+
+static statusbar_ctx_t* s_statusbar_ctx = nullptr;
+
+static void _reset_status(void)
+{
+    s_statusbar_ctx->path_hash = (uint64_t)-1;
+    s_statusbar_ctx->format = soundsphere::MUSIC_NONE;
+    s_statusbar_ctx->bitrate = 0;
+    s_statusbar_ctx->samplerate = 0;
+    s_statusbar_ctx->channels = 0;
+}
+
 static void _widget_statusbar_init(void)
 {
+    s_statusbar_ctx = new statusbar_ctx_t;
+    _reset_status();
 }
 
 static void _widget_statusbar_exit(void)
 {
-}
-
-static const char* _music_type_to_str(Mix_MusicType type)
-{
-    switch (type)
-    {
-    case MUS_CMD:       return "CMD";
-    case MUS_WAV:       return "WAV";
-    case MUS_MOD:       return "MOD";
-    case MUS_MID:       return "MID";
-    case MUS_OGG:       return "OGG";
-    case MUS_MP3:       return "MP3";
-    case MUS_FLAC:      return "FLAC";
-    case MUS_OPUS:      return "OPUS";
-    case MUS_WAVPACK:   return "WAVPACK";
-    case MUS_GME:       return "GME";
-    default:            break;
-    }
-    return "---";
+    delete s_statusbar_ctx;
+    s_statusbar_ctx = nullptr;
 }
 
 static void _widget_statusbar_draw(void)
@@ -44,15 +68,33 @@ static void _widget_statusbar_draw(void)
         | ImGuiWindowFlags_NoBringToFrontOnFocus;
     if (ImGui::Begin("StatusBar", nullptr, status_bar_flags))
     {
-        const char* type = _music_type_to_str(soundsphere::_G.statusbar.music_type);
+        soundsphere::MusicTagPtr obj = soundsphere::_G.dummy_player.current_music;
+        if (obj.get() == nullptr)
+        {
+            _reset_status();
+        }
+        else if (obj->path_hash != s_statusbar_ctx->path_hash)
+        {
+            s_statusbar_ctx->path_hash = obj->path_hash;
+            s_statusbar_ctx->format = obj->format;
+            s_statusbar_ctx->bitrate = obj->bitrate;
+            s_statusbar_ctx->channels = obj->channel;
+            s_statusbar_ctx->samplerate = obj->samplerate;
+        }
+
+        const char* type = soundsphere::music_tag_format_name(s_statusbar_ctx->format);
         soundsphere::time_seconds_to_string(timebuf_pos, sizeof(timebuf_pos),
             soundsphere::_G.playbar.music_position);
         soundsphere::time_seconds_to_string(timebuf_len, sizeof(timebuf_len),
             soundsphere::_G.playbar.music_duration);
 
         ImGui::Text("%s | %d kbps | %d Hz | %d Channel | %s / %s",
-            type, soundsphere::_G.statusbar.bitrate, soundsphere::_G.statusbar.samplerate,
-            soundsphere::_G.statusbar.channels, timebuf_pos, timebuf_len);
+            type != NULL ? type : "---",
+            s_statusbar_ctx->bitrate,
+            s_statusbar_ctx->samplerate,
+            s_statusbar_ctx->channels,
+            timebuf_pos,
+            timebuf_len);
     }
     ImGui::End();
 }

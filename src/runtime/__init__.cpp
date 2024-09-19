@@ -28,11 +28,6 @@ soundsphere::runtime::runtime()
     playbar.volume = 50;
     playbar.music_duration = 0.0;
     playbar.music_position = 0.0;
-
-    statusbar.music_type = MUS_NONE;
-    statusbar.bitrate = 0;
-    statusbar.samplerate = 0;
-    statusbar.channels = 0;
 }
 
 void soundsphere::runtime_init(void)

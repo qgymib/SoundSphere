@@ -2,7 +2,6 @@
 #define SOUND_SPHERE_RUNTIME_INIT_HPP
 
 #include <functional>
-#include <SDL_mixer.h>
 #include <vector>
 #include "utils/music_tag.hpp"
 
@@ -84,29 +83,6 @@ typedef struct runtime
          */
         double              music_position;
     } playbar;
-
-    struct
-    {
-        /**
-         * @brief Music type.
-         */
-        Mix_MusicType       music_type;
-
-        /**
-         * @brief Bitrate in kb/s.
-         */
-        int                 bitrate;
-
-        /**
-         * @brief Sample rate in Hz.
-         */
-        int                 samplerate;
-
-        /**
-         * @brief The number of audio channels.
-         */
-        int                 channels;
-    } statusbar;
 } runtime_t;
 
 class JobDataBase

@@ -19,6 +19,7 @@ typedef struct widget_layout
     widget_pos_size_t   playlist;
     widget_pos_size_t   playbar;
     widget_pos_size_t   statusbar;
+    widget_pos_size_t   title;
 } widget_layout_t;
 
 typedef struct widget
@@ -72,6 +73,7 @@ extern const widget_t ui_lyric;
 extern const widget_t ui_playbar;
 extern const widget_t ui_playlist;
 extern const widget_t ui_statusbar;
+extern const widget_t ui_title;
 /**
  * @}
  */

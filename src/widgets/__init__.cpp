@@ -20,6 +20,7 @@ static const soundsphere::widget_t* s_main_ui[] = {
     &soundsphere::ui_playbar,
     &soundsphere::ui_playlist,
     &soundsphere::ui_statusbar,
+    &soundsphere::ui_title,
 
     /* Dummy widgets. */
     &soundsphere::dummy_player,
@@ -81,6 +82,7 @@ static void _widget_draw_update_pos_size(void)
     const float play_bar_height = ImGui::GetFrameHeight() * 1.7f;
     const float filter_width = _widget_get_filter_width(io);
     const float cover_width = _widget_get_cover_width(io);
+    const float title_height = 64.0f;
 
     soundsphere::_layout.statusbar.size.x = io.DisplaySize.x;
     soundsphere::_layout.statusbar.size.y = status_bar_height;
@@ -93,7 +95,8 @@ static void _widget_draw_update_pos_size(void)
     soundsphere::_layout.playbar.pos.y = io.DisplaySize.y - (status_bar_height + play_bar_height);
 
     soundsphere::_layout.filter.size.x = filter_width;
-    soundsphere::_layout.filter.size.y = io.DisplaySize.y - (main_menu_bar_height + play_bar_height + status_bar_height);
+    soundsphere::_layout.filter.size.y = io.DisplaySize.y -
+        (main_menu_bar_height + play_bar_height + status_bar_height);
     soundsphere::_layout.filter.pos.x = 0;
     soundsphere::_layout.filter.pos.y = main_menu_bar_height;
 
@@ -102,10 +105,16 @@ static void _widget_draw_update_pos_size(void)
     soundsphere::_layout.cover.pos.x = io.DisplaySize.x - cover_width;
     soundsphere::_layout.cover.pos.y = main_menu_bar_height;
 
+    soundsphere::_layout.title.size.x = cover_width;
+    soundsphere::_layout.title.size.y = title_height;
+    soundsphere::_layout.title.pos.x = io.DisplaySize.x - cover_width;
+    soundsphere::_layout.title.pos.y = main_menu_bar_height + cover_width;
+
     soundsphere::_layout.lyric.size.x = cover_width;
-    soundsphere::_layout.lyric.size.y = io.DisplaySize.y - main_menu_bar_height - cover_width - status_bar_height - play_bar_height;
+    soundsphere::_layout.lyric.size.y = io.DisplaySize.y -
+        (main_menu_bar_height + cover_width + title_height + status_bar_height + play_bar_height);
     soundsphere::_layout.lyric.pos.x = io.DisplaySize.x - cover_width;
-    soundsphere::_layout.lyric.pos.y = main_menu_bar_height + cover_width;
+    soundsphere::_layout.lyric.pos.y = main_menu_bar_height + cover_width + title_height;
 
     soundsphere::_layout.playlist.size.x = io.DisplaySize.x - filter_width - cover_width;
     soundsphere::_layout.playlist.size.y = io.DisplaySize.y - main_menu_bar_height - play_bar_height - status_bar_height;

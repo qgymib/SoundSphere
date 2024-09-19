@@ -17,9 +17,14 @@
 typedef struct tag_op_item
 {
     /**
+     * @brief Music format.
+     */
+    soundsphere::music_type_t   format;
+
+    /**
      * @brief Extension name.
      */
-    const char* ext;
+    const char*                 ext;
 
     /**
      * @brief Tags read function.
@@ -322,16 +327,28 @@ static bool _flac_tag_writer(const soundsphere::music_tags_t& tags,
 }
 
 static const tag_ops_item_t s_tag_op_table[] = {
-    { ".flac",  _flac_tag_reader,   _flac_tag_writer },
-    { ".mp3",   _mp3_tag_reader,    _mp3_tag_writer },
+    { soundsphere::MUSIC_FLAC,  ".flac",  _flac_tag_reader,   _flac_tag_writer },
+    { soundsphere::MUSIC_MP3,   ".mp3",   _mp3_tag_reader,    _mp3_tag_writer },
 };
 
 soundsphere::music_tags::music_tags()
 {
+    path_hash = 0;
+    format = MUSIC_NONE;
     bitrate = 0;
     samplerate = 0;
     channel = 0;
-    path_hash = 0;
+}
+
+const char* soundsphere::music_tag_format_name(music_type_t format)
+{
+    switch (format)
+    {
+    case MUSIC_FLAC:    return "FLAC";
+    case MUSIC_MP3:     return "MP3";
+    default:            break;
+    }
+    return nullptr;
 }
 
 bool soundsphere::music_read_tag(soundsphere::music_tags_t& tags,
@@ -345,6 +362,7 @@ bool soundsphere::music_read_tag(soundsphere::music_tags_t& tags,
         const tag_ops_item_t* reader = &s_tag_op_table[i];
         if (extname == reader->ext)
         {
+            tags.format = reader->format;
             ret = reader->read_tag_fn(tags, errinfo);
             goto finish_fill_title_if_empty;
         }

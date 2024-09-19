@@ -7,57 +7,79 @@
 
 namespace soundsphere {
 
+typedef enum music_type
+{
+    MUSIC_NONE,
+    MUSIC_FLAC,
+    MUSIC_MP3,
+} music_type_t;
+
 typedef struct music_tags
 {
     music_tags();
 
     /**
-     * @brief Music path in UTF-8 encoding.
+     * @brief The hash value of path.
      */
-    std::string path;
+    uint64_t        path_hash;
 
     /**
-     * @brief Title in UTF-8 encoding.
+     * @brief Music format.
      */
-    std::string title;
-
-    /**
-     * @brief Artist in UTF-8 encoding.
-     */
-    std::string artist;
-
-    /**
-     * @brief Lyric in UTF-8 encoding.
-     */
-    std::string lyric;
-
-    /**
-     * @brief Vector of cover binary data.
-     */
-    BinVec      covers;
+    music_type_t    format;
 
     /**
      * @brief Bitrate in kb/s.
      */
-    int         bitrate;
+    int             bitrate;
 
     /**
      * @brief Sample rate in Hz.
      */
-    int         samplerate;
+    int             samplerate;
 
     /**
      * @brief The number of audio channels.
      */
-    int         channel;
+    int             channel;
 
     /**
-     * @brief The hash value of path.
+     * @brief Music path in UTF-8 encoding.
      */
-    uint64_t    path_hash;
+    std::string     path;
+
+    /**
+     * @brief Title in UTF-8 encoding.
+     */
+    std::string     title;
+
+    /**
+     * @brief Artist in UTF-8 encoding.
+     */
+    std::string     artist;
+
+    /**
+     * @brief Lyric in UTF-8 encoding.
+     */
+    std::string     lyric;
+
+    /**
+     * @brief Vector of cover binary data.
+     */
+    BinVec          covers;
 } music_tags_t;
 
+/**
+ * @breif Smart pointer type for #music_tags_t.
+ */
 typedef std::shared_ptr<music_tags_t> MusicTagPtr;
+
+/**
+ * @brief Get format string.
+ * @param[in] format    Format type.
+ * @return  C string. For unknown type, NULL is returned.
+ */
+const char* music_tag_format_name(music_type_t format);
 
 /**
  * @brief Read music tags.
