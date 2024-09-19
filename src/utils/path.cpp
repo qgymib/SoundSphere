@@ -1,5 +1,17 @@
 #include "path.hpp"
 
+std::string soundsphere::dirname(const std::string& path)
+{
+    // Find the last occurrence of the path separators
+    size_t last_slash = path.find_last_of("/\\");
+    if (last_slash == std::string::npos)
+    {
+        return ".";
+    }
+
+    return path.substr(0, last_slash);
+}
+
 std::string soundsphere::basename(const std::string& path, bool with_ext)
 {
     // Find the last occurrence of the path separators

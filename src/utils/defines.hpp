@@ -10,6 +10,11 @@
 #define PROG_NAME	    "Sound Sphere"
 
 /**
+ * @brief Program ID.
+ */
+#define PROG_ID         "io.github.qgymib.SoundSphere"
+
+/**
  * @brief Get array size.
  */
 #define ARRAY_SIZE(x)   (sizeof(x) / sizeof(x[0]))

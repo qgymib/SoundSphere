@@ -1,5 +1,6 @@
 #include <imgui.h>
 #include <map>
+#include "config/__init__.hpp"
 #include "runtime/__init__.hpp"
 #include "utils/string.hpp"
 #include "utils/time.hpp"
@@ -149,7 +150,7 @@ static void _auto_scroll(void)
     }
 
     uint64_t diff_time = current_time - s_lyric->last_user_scroll_time;
-    if (diff_time < soundsphere::_G.lyric.auto_center_time_ms)
+    if (diff_time < soundsphere::_config.lyric_auto_center_time_ms)
     {
         return;
     }

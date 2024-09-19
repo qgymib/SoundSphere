@@ -6,6 +6,13 @@
 namespace soundsphere {
 
 /**
+ * @brief Get base directory.
+ * @param[in] path  Directory path.
+ * @return Base directory path.
+ */
+std::string dirname(const std::string& path);
+
+/**
  * @brief Get filename.
  * @param[in] path  Full path.
  * @param[in] with_exit whether Keep extensions.

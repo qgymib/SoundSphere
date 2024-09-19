@@ -1,4 +1,5 @@
 #include <imgui.h>
+#include "config/__init__.hpp"
 #include "i18n/__init__.h"
 #include "runtime/__init__.hpp"
 #include "__init__.hpp"
@@ -62,13 +63,13 @@ static void _widget_preference_draw_generic(void)
 
 static void _widget_preferences_draw_lyric_auto_center_time(void)
 {
-    int time = (int)(soundsphere::_G.lyric.auto_center_time_ms / 1000);
+    int time = (int)(soundsphere::_config.lyric_auto_center_time_ms / 1000);
     const char* label = soundsphere_i18n->translation->lyric_auto_center_time;
     if (ImGui::InputInt(label, &time))
     {
         if (time >= 0)
         {
-            soundsphere::_G.lyric.auto_center_time_ms = (uint64_t)time * 1000;
+            soundsphere::_config.lyric_auto_center_time_ms = (uint64_t)time * 1000;
         }
     }
     ImGui::SameLine();

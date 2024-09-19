@@ -2,6 +2,7 @@
 #include <ev.h>
 #include <taglib/taglib.h>
 #include <spdlog/spdlog.h>
+#include <nlohmann/json.hpp>
 #include <SDL_mixer.h>
 #include "version.hpp"
 #include "i18n/__init__.h"
@@ -28,6 +29,10 @@ static bool s_menu_about_show = false;
 #define SDL_MIXER_VERSION   \
     STRINGIFY(SDL_MIXER_MAJOR_VERSION) "." STRINGIFY(SDL_MIXER_MINOR_VERSION) "." STRINGIFY(SDL_MIXER_PATCHLEVEL)
 
+#undef JSON_VERSION
+#define JSON_VERSION    \
+    STRINGIFY(NLOHMANN_JSON_VERSION_MAJOR) "." STRINGIFY(NLOHMANN_JSON_VERSION_MINOR) "." STRINGIFY(NLOHMANN_JSON_VERSION_PATCH)
+
 static void _widget_about_init(void)
 {
 }
@@ -41,6 +46,7 @@ static void _widget_about_3rd(void)
     static dep_info_t third_party_list[] = {
         { "imgui", IMGUI_VERSION, "https://github.com/ocornut/imgui" },
         { "libev", ev_version_str(), "https://github.com/qgymib/libev" },
+        { "nlohmann-json", JSON_VERSION, "https://json.nlohmann.me" },
         { "spdlog", SPDLOG_VERSION, "https://github.com/gabime/spdlog" },
         { "stb", "", "https://github.com/nothings/stb" },
         { "IconFontCppHeaders", "", "https://github.com/juliettef/IconFontCppHeaders" },

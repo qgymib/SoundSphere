@@ -21,6 +21,7 @@ endfunction()
 set(soundsphere_sources
 	"src/assets/icon.c"
     "src/backends/sdl2_sdlrenderer2.cpp"
+    "src/config/__init__.cpp"
     "src/fonts/fa_solid_900.c"
     "src/fonts/NotoSans.c"
     "src/fonts/NotoSansKR.c"
@@ -106,3 +107,6 @@ endif ()
 
 include(third_party/stb.cmake)
 target_link_libraries(${PROJECT_NAME} PRIVATE stb)
+
+include(third_party/json.cmake)
+target_include_directories(${PROJECT_NAME} PRIVATE ${JSON_INCLUDE_DIRS})

@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <IconsFontAwesome6.h>
 #include "backends/__init__.hpp"
+#include "config/__init__.hpp"
 #include "fonts/fa_solid_900.h"
 #include "fonts/NotoSans.h"
 #include "fonts/NotoSansKR.h"
@@ -74,6 +75,7 @@ int main(int, char**)
     }
     io.Fonts->Build();
 
+    soundsphere::config_init();
     soundsphere_i18n_init();
     soundsphere::runtime_init();
     soundsphere::widget_init();
@@ -87,6 +89,7 @@ int main(int, char**)
     soundsphere::widget_exit();
     soundsphere::runtime_exit();
     soundsphere_i18n_exit();
+    soundsphere::config_exit();
 
     soundsphere::backend_exit();
 
