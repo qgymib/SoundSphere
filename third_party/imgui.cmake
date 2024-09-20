@@ -4,7 +4,6 @@ add_library(imgui
     ${IMGUI_ROOT}/backends/imgui_impl_sdl2.cpp
     ${IMGUI_ROOT}/backends/imgui_impl_sdlrenderer2.cpp
     ${IMGUI_ROOT}/misc/cpp/imgui_stdlib.cpp
-    #${IMGUI_ROOT}/misc/freetype/imgui_freetype.cpp
     ${IMGUI_ROOT}/imgui.cpp
     ${IMGUI_ROOT}/imgui_demo.cpp
     ${IMGUI_ROOT}/imgui_draw.cpp
@@ -55,3 +54,22 @@ endif()
 add_executable(binary_to_compressed_c
     ${IMGUI_ROOT}/misc/fonts/binary_to_compressed_c.cpp
 )
+
+###############################################################################
+# Require Freetype
+###############################################################################
+find_package(Freetype QUIET)
+if (FREETYPE_FOUND)
+    target_sources(imgui
+        PRIVATE
+            ${IMGUI_ROOT}/misc/freetype/imgui_freetype.cpp
+    )
+    target_compile_options(imgui
+        PUBLIC
+            -DIMGUI_ENABLE_FREETYPE
+    )
+    target_link_libraries(imgui
+        PUBLIC
+            Freetype::Freetype
+    )
+endif()

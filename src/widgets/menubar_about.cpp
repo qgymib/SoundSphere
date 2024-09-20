@@ -9,14 +9,12 @@
 #include "utils/defines.hpp"
 #include "__init__.hpp"
 
-typedef struct dep_info
-{
-    const char* name;
-    const char* version;
-    const char* url;
-} dep_info_t;
-
-static bool s_menu_about_show = false;
+#if defined(IMGUI_ENABLE_FREETYPE)
+#include <freetype/freetype.h>
+#undef FREETYPE_VERSION
+#define FREETYPE_VERSION    \
+    STRINGIFY(FREETYPE_MAJOR) "." STRINGIFY(FREETYPE_MINOR) "." STRINGIFY(FREETYPE_PATCH)
+#endif
 
 #define TAGLIB_VERSION  \
     STRINGIFY(TAGLIB_MAJOR_VERSION) "." STRINGIFY(TAGLIB_MINOR_VERSION) "." STRINGIFY(TAGLIB_PATCH_VERSION)
@@ -33,6 +31,15 @@ static bool s_menu_about_show = false;
 #define JSON_VERSION    \
     STRINGIFY(NLOHMANN_JSON_VERSION_MAJOR) "." STRINGIFY(NLOHMANN_JSON_VERSION_MINOR) "." STRINGIFY(NLOHMANN_JSON_VERSION_PATCH)
 
+typedef struct dep_info
+{
+    const char* name;
+    const char* version;
+    const char* url;
+} dep_info_t;
+
+static bool s_menu_about_show = false;
+
 static void _widget_about_init(void)
 {
 }
@@ -44,14 +51,17 @@ static void _widget_about_exit(void)
 static void _widget_about_3rd(void)
 {
     static dep_info_t third_party_list[] = {
-        { "imgui", IMGUI_VERSION, "https://github.com/ocornut/imgui" },
-        { "libev", ev_version_str(), "https://github.com/qgymib/libev" },
-        { "nlohmann-json", JSON_VERSION, "https://json.nlohmann.me" },
-        { "spdlog", SPDLOG_VERSION, "https://github.com/gabime/spdlog" },
-        { "stb", "", "https://github.com/nothings/stb" },
-        { "IconFontCppHeaders", "", "https://github.com/juliettef/IconFontCppHeaders" },
-        { "SDL_mixer", SDL_MIXER_VERSION, "https://github.com/libsdl-org/SDL_mixer" },
-        { "TagLib", TAGLIB_VERSION, "https://taglib.org/" },
+#if defined(IMGUI_ENABLE_FREETYPE)
+        { "freetype",           FREETYPE_VERSION,   "https://freetype.org" },
+#endif
+        { "imgui",              IMGUI_VERSION,      "https://github.com/ocornut/imgui" },
+        { "libev",              ev_version_str(),   "https://github.com/qgymib/libev" },
+        { "nlohmann-json",      JSON_VERSION,       "https://json.nlohmann.me" },
+        { "spdlog",             SPDLOG_VERSION,     "https://github.com/gabime/spdlog" },
+        { "stb",                "",                 "https://github.com/nothings/stb" },
+        { "IconFontCppHeaders", "",                 "https://github.com/juliettef/IconFontCppHeaders" },
+        { "SDL_mixer",          SDL_MIXER_VERSION,  "https://github.com/libsdl-org/SDL_mixer" },
+        { "TagLib",             TAGLIB_VERSION,     "https://taglib.org/" },
     };
 
     ImGui::SeparatorText("3rd");
