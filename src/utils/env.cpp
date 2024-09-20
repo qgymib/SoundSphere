@@ -19,6 +19,7 @@ std::string soundsphere::getenv(const std::string& name)
 
     return ret;
 #else
-    return std::getenv(name.c_str());
+    const char* env = std::getenv(name.c_str());
+    return env != nullptr ? env : "";
 #endif
 }
