@@ -5,19 +5,39 @@
 
 namespace soundsphere {
 
+typedef struct config_lyric
+{
+    config_lyric();
+
+    /**
+     * @brief Time for auto-centering in milliseconds.
+     */
+    uint64_t        auto_center_time_ms;
+
+    /**
+     * @brief Background color of lyric font.
+     */
+    float           back_font_color[4];
+
+    /**
+     * @brief Current shown lyric font color.
+     */
+    float           fore_font_color[4];
+} config_lyric_t;
+
 typedef struct config
 {
     config();
 
     /**
-     * @brief Display language.
+     * @brief Language
      */
-    std::string language;
+    std::string     language;
 
     /**
-     * @brief Time for auto-centering in milliseconds.
+     * @brief Lyric
      */
-    uint64_t    lyric_auto_center_time_ms;
+    config_lyric_t  lyric;
 } config_t;
 
 /**

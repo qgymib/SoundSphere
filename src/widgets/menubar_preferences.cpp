@@ -69,13 +69,13 @@ static void _widget_preference_draw_generic(void)
 
 static void _widget_preferences_draw_lyric_auto_center_time(void)
 {
-    int time = (int)(soundsphere::_config.lyric_auto_center_time_ms / 1000);
+    int time = (int)(soundsphere::_config.lyric.auto_center_time_ms / 1000);
     const char* label = soundsphere_i18n->translation->lyric_auto_center_time;
     if (ImGui::InputInt(label, &time))
     {
         if (time >= 0)
         {
-            soundsphere::_config.lyric_auto_center_time_ms = (uint64_t)time * 1000;
+            soundsphere::_config.lyric.auto_center_time_ms = (uint64_t)time * 1000;
         }
     }
     ImGui::SameLine();
@@ -85,10 +85,10 @@ static void _widget_preferences_draw_lyric_auto_center_time(void)
 static void _widget_preferences_draw_lyric_color(void)
 {
     int flags = 0;
-    ImGui::ColorPicker4(soundsphere_i18n->translation->lyric_fore_color,
-        soundsphere::_G.lyric.fore_lyric_color, flags);
-    ImGui::ColorPicker4(soundsphere_i18n->translation->lyric_back_color,
-        soundsphere::_G.lyric.back_lyric_color, flags);
+    ImGui::ColorEdit4(soundsphere_i18n->translation->lyric_font_fore_color,
+        soundsphere::_config.lyric.fore_font_color, flags);
+    ImGui::ColorEdit4(soundsphere_i18n->translation->lyric_font_back_color,
+        soundsphere::_config.lyric.back_font_color, flags);
 }
 
 static void _widget_preference_draw_lyric(void)

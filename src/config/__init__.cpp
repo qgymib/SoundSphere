@@ -43,15 +43,33 @@ static std::string _get_locale(void)
 
 namespace soundsphere {
 
+config_lyric::config_lyric()
+{
+    auto_center_time_ms = 3 * 1000;
+    back_font_color[0] = 1.0f;
+    back_font_color[1] = 1.0f;
+    back_font_color[2] = 1.0f;
+    back_font_color[3] = 1.0f;
+    fore_font_color[0] = 1.0f;
+    fore_font_color[1] = 0.0f;
+    fore_font_color[2] = 0.0f;
+    fore_font_color[3] = 1.0f;
+}
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(config_lyric_t,
+    auto_center_time_ms,
+    back_font_color,
+    fore_font_color
+)
+
 config::config()
 {
     language = _get_locale();
-    lyric_auto_center_time_ms = 3 * 1000;
 }
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(config,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(config_t,
     language,
-    lyric_auto_center_time_ms
+    lyric
 )
 
 }

@@ -150,7 +150,7 @@ static void _auto_scroll(void)
     }
 
     uint64_t diff_time = current_time - s_lyric->last_user_scroll_time;
-    if (diff_time < soundsphere::_config.lyric_auto_center_time_ms)
+    if (diff_time < soundsphere::_config.lyric.auto_center_time_ms)
     {
         return;
     }
@@ -161,15 +161,15 @@ static void _auto_scroll(void)
 static void _show_lyric(const Lyric& lyric, double playing_position)
 {
     ImVec4 fore_color(
-        soundsphere::_G.lyric.fore_lyric_color[0],
-        soundsphere::_G.lyric.fore_lyric_color[1],
-        soundsphere::_G.lyric.fore_lyric_color[2],
-        soundsphere::_G.lyric.fore_lyric_color[3]);
+        soundsphere::_config.lyric.fore_font_color[0],
+        soundsphere::_config.lyric.fore_font_color[1],
+        soundsphere::_config.lyric.fore_font_color[2],
+        soundsphere::_config.lyric.fore_font_color[3]);
     ImVec4 back_color(
-        soundsphere::_G.lyric.back_lyric_color[0],
-        soundsphere::_G.lyric.back_lyric_color[1],
-        soundsphere::_G.lyric.back_lyric_color[2],
-        soundsphere::_G.lyric.back_lyric_color[3]);
+        soundsphere::_config.lyric.back_font_color[0],
+        soundsphere::_config.lyric.back_font_color[1],
+        soundsphere::_config.lyric.back_font_color[2],
+        soundsphere::_config.lyric.back_font_color[3]);
 
     Lyric::const_iterator it = lyric.begin();
     for (; it != lyric.end(); it++)

@@ -21,8 +21,8 @@ extern "C" {
     xx(localization)                \
     xx(lyric)                       \
     xx(lyric_auto_center_time)      \
-    xx(lyric_back_color)            \
-    xx(lyric_fore_color)            \
+    xx(lyric_font_back_color)       \
+    xx(lyric_font_fore_color)       \
     xx(name)                        \
     xx(open)                        \
     xx(open_folder)                 \

@@ -40,11 +40,11 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_en_us = {
 .lyric_auto_center_time =
 "Lyric auto center time",
 
-.lyric_back_color =
-"Background color of lyric",
+.lyric_font_back_color =
+"Background color of lyric font",
 
-.lyric_fore_color =
-"Foreground color of lyric",
+.lyric_font_fore_color =
+"Foreground color of lyric font",
 
 .name =
 "Name",

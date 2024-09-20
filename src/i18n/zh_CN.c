@@ -42,11 +42,11 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_zh_CN = {
 .lyric_auto_center_time =
 "歌词自动居中时间",
 
-.lyric_back_color =
-"歌词背景色",
+.lyric_font_back_color =
+"歌词字体背景色",
 
-.lyric_fore_color =
-"歌词前景色",
+.lyric_font_fore_color =
+"歌词字体前景色",
 
 .name =
 "名称",

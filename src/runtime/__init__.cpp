@@ -14,15 +14,6 @@ soundsphere::runtime::runtime()
 {
     playlist.selected_id = (uint64_t)-1;
 
-    lyric.fore_lyric_color[0] = 1.0f;
-    lyric.fore_lyric_color[1] = 0.0f;
-    lyric.fore_lyric_color[2] = 0.0f;
-    lyric.fore_lyric_color[3] = 1.0f;
-    lyric.back_lyric_color[0] = 1.0f;
-    lyric.back_lyric_color[1] = 1.0f;
-    lyric.back_lyric_color[2] = 1.0f;
-    lyric.back_lyric_color[3] = 1.0f;
-
     playbar.is_playing = false;
     playbar.volume = 50;
     playbar.music_duration = 0.0;

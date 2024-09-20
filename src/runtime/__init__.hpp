@@ -45,20 +45,6 @@ typedef struct runtime
 
     struct
     {
-
-        /**
-         * @brief Current shown lyric color.
-         */
-        float               fore_lyric_color[4];
-
-        /**
-         * @brief Background color of lyric.
-         */
-        float               back_lyric_color[4];
-    } lyric;
-
-    struct
-    {
         /**
          * @brief Is the audio is playing.
          */
