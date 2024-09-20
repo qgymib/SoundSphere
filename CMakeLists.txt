@@ -104,6 +104,14 @@ if (TARGET SDL2_mixer::SDL2_mixer-static)
     target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_mixer::SDL2_mixer-static)
 else ()
     target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_mixer::SDL2_mixer)
+    if (WIN32)
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:SDL2_mixer::SDL2_mixer>
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            VERBATIM
+        )
+    endif()
 endif ()
 
 include(third_party/stb.cmake)
