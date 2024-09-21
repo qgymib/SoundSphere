@@ -167,7 +167,7 @@ bool soundsphere::config_save(std::string& errinfo)
     }
 
     nlohmann::json j = _config;
-    std::string config_data = j.dump();
+    std::string config_data = j.dump(2);
 
     ev_file_t file;
     ret = ev_file_open(nullptr, &file, nullptr, s_config_ctx->path.c_str(),
