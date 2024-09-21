@@ -5,6 +5,22 @@
 #include "utils/path.hpp"
 #include "__init__.hpp"
 
+#define JSON_SERDE_FIELD_TO_JSON(field)     \
+    json[#field] = type.field;
+
+#define JSON_SERDE_FIELD_FROM_JSON(field)   \
+    if (json.contains(#field)) {\
+        json.at(#field).get_to(type.field);\
+    }
+
+#define JSON_SERDE(TYPE, ...)   \
+    void to_json(nlohmann::json& json, const TYPE& type) {\
+        NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(JSON_SERDE_FIELD_TO_JSON, __VA_ARGS__))\
+    }\
+    void from_json(const nlohmann::json& json, TYPE& type) {\
+        NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(JSON_SERDE_FIELD_FROM_JSON, __VA_ARGS__))\
+    }
+
 typedef struct config_ctx
 {
     config_ctx();
@@ -56,7 +72,7 @@ config_lyric::config_lyric()
     fore_font_color[3] = 1.0f;
 }
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(config_lyric_t,
+JSON_SERDE(config_lyric_t,
     auto_center_time_ms,
     back_font_color,
     fore_font_color
@@ -67,7 +83,7 @@ config::config()
     language = _get_locale();
 }
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(config_t,
+JSON_SERDE(config_t,
     language,
     lyric
 )
