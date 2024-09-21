@@ -170,7 +170,7 @@ bool soundsphere::config_save(std::string& errinfo)
 
     ev_file_t file;
     ret = ev_file_open(nullptr, &file, nullptr, s_config_ctx->path.c_str(),
-        EV_FS_O_CREAT | EV_FS_O_WRONLY,
+        EV_FS_O_CREAT | EV_FS_O_TRUNC | EV_FS_O_WRONLY,
         EV_FS_S_IRUSR | EV_FS_S_IWUSR, nullptr);
     if (ret != 0)
     {
