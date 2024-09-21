@@ -58,7 +58,7 @@ set(soundsphere_sources
 )
 
 if (WIN32)
-    add_executable(${PROJECT_NAME} WIN32 ${soundsphere_sources})
+    add_executable(${PROJECT_NAME} WIN32 ${soundsphere_sources} "resource.rc")
     target_compile_options(${PROJECT_NAME}
         PRIVATE
             /utf-8
