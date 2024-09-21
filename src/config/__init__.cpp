@@ -81,10 +81,12 @@ JSON_SERDE(config_lyric_t,
 config::config()
 {
     language = _get_locale();
+    volume = 50;
 }
 
 JSON_SERDE(config_t,
     language,
+    volume,
     lyric,
     songs
 )

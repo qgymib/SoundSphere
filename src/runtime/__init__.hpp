@@ -48,11 +48,6 @@ typedef struct runtime
         int                 is_playing;
 
         /**
-         * @brief Volume. [0, 100].
-         */
-        int                 volume;
-
-        /**
          * @brief Music duration, in seconds.
          */
         double              music_duration;

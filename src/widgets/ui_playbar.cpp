@@ -1,5 +1,6 @@
 #include <IconsFontAwesome6.h>
 #include <spdlog/spdlog.h>
+#include "config/__init__.hpp"
 #include "runtime/__init__.hpp"
 #include "utils/time.hpp"
 #include "__init__.hpp"
@@ -154,9 +155,9 @@ static void _widget_playbar_draw(void)
         ImGui::SameLine();
 
         ImGui::SetNextItemWidth(-1);
-        if (ImGui::SliderInt("##PlayerBarVolume", &soundsphere::_G.playbar.volume, 0, 100, "", ImGuiSliderFlags_NoInput))
+        if (ImGui::SliderInt("##PlayerBarVolume", &soundsphere::_config.volume, 0, 100, "", ImGuiSliderFlags_NoInput))
         {
-            soundsphere::dummy_player_set_volume(soundsphere::_G.playbar.volume);
+            soundsphere::dummy_player_set_volume(soundsphere::_config.volume);
         }
     }
     ImGui::End();

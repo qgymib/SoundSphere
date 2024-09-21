@@ -27,7 +27,6 @@ soundsphere::runtime::runtime()
     playlist.selected_id = (uint64_t)-1;
 
     playbar.is_playing = false;
-    playbar.volume = 50;
     playbar.music_duration = 0.0;
     playbar.music_position = 0.0;
 }

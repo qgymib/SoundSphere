@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <SDL_mixer.h>
 #include <spdlog/spdlog.h>
+#include "config/__init__.hpp"
 #include "runtime/__init__.hpp"
 #include "utils/time.hpp"
 #include "dummy_player.hpp"
@@ -56,7 +57,7 @@ static void _dummy_player_init(void)
         exit(EXIT_FAILURE);
     }
 
-    soundsphere::dummy_player_set_volume(soundsphere::_G.playbar.volume);
+    soundsphere::dummy_player_set_volume(soundsphere::_config.volume);
 }
 
 static void _stop_play(void)

@@ -35,6 +35,11 @@ typedef struct config
     std::string     language;
 
     /**
+     * @brief Volume. [0, 100].
+     */
+    int             volume;
+
+    /**
      * @brief Lyric
      */
     config_lyric_t  lyric;
