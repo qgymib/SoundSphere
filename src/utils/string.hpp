@@ -106,6 +106,14 @@ uint64_t string_hash_djb2(const std::string& str);
 std::string string_replace(const std::string& str, const std::string& match,
     const std::string& replace);
 
+/**
+ * @brief Check if \p path match with last part of \p str.
+ * @param[in] str   String to match.
+ * @param[in] pat   Pattern to match.
+ * @return          boolean.
+ */
+bool string_last_match(const std::string& str, const std::string& pat);
+
 }
 
 #endif

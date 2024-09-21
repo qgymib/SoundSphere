@@ -68,9 +68,9 @@ static void _ui_title_draw(void)
         else if (s_title_ctx->path_hash != obj->path_hash)
         {
             s_title_ctx->path_hash = obj->path_hash;
-            s_title_ctx->bitrate = obj->bitrate;
-            s_title_ctx->title = obj->title;
-            s_title_ctx->format = obj->format;
+            s_title_ctx->bitrate = obj->info.bitrate;
+            s_title_ctx->title = obj->info.title;
+            s_title_ctx->format = obj->info.format;
         }
 
         const char* type = soundsphere::music_tag_format_name(s_title_ctx->format);

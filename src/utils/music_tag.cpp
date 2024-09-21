@@ -94,19 +94,19 @@ template<typename T>
 static void _tag_reader_get_properties_common(T* file,
     soundsphere::music_tags_t& tags)
 {
-    tags.title = file->tag()->title().to8Bit(true);
-    tags.artist = file->tag()->artist().to8Bit(true);
-    tags.bitrate = file->audioProperties()->bitrate();
-    tags.samplerate = file->audioProperties()->sampleRate();
-    tags.channel = file->audioProperties()->channels();
+    tags.info.title = file->tag()->title().to8Bit(true);
+    tags.info.artist = file->tag()->artist().to8Bit(true);
+    tags.info.bitrate = file->audioProperties()->bitrate();
+    tags.info.samplerate = file->audioProperties()->sampleRate();
+    tags.info.channel = file->audioProperties()->channels();
 }
 
 template<typename T>
 static void _tag_writer_set_properties_common(T* file,
     const soundsphere::music_tags_t& tags)
 {
-    file->tag()->setTitle(tags.title);
-    file->tag()->setArtist(tags.artist);
+    file->tag()->setTitle(tags.info.title);
+    file->tag()->setArtist(tags.info.artist);
 }
 
 template<typename T>
@@ -127,7 +127,7 @@ static bool _tag_reader_get_lyric_id3v2(T* file,
 
     TagLib::ID3v2::UnsynchronizedLyricsFrame* lyricsFrame =
         static_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame*>(frames.front());
-    tags.lyric = lyricsFrame->text().to8Bit(true);
+    tags.info.lyric = lyricsFrame->text().to8Bit(true);
 
     return true;
 }
@@ -138,7 +138,7 @@ static bool _tag_writer_set_lyric_id3v2(T* file,
 {
     TagLib::ID3v2::UnsynchronizedLyricsFrame* lyric_frame =
         new TagLib::ID3v2::UnsynchronizedLyricsFrame(TagLib::String::UTF8);
-    lyric_frame->setText(tags.lyric);
+    lyric_frame->setText(tags.info.lyric);
 
     TagLib::ID3v2::Tag* tag = file->ID3v2Tag(true);
     tag->removeFrames("USLT");
@@ -167,7 +167,7 @@ static bool _tag_reader_get_cover_id3v2(T* file,
         static_cast<TagLib::ID3v2::AttachedPictureFrame*>(frames.front());
     soundsphere::Bin cover;
     _taglib_binary_to_std_vector(cover, cover_raw->picture());
-    tags.covers.push_back(cover);
+    tags.info.covers.push_back(cover);
 
     return true;
 }
@@ -176,13 +176,13 @@ template<typename T>
 static bool _tag_writer_set_cover_id3v2(T* file,
     const soundsphere::music_tags_t& tags)
 {
-    if (tags.covers.size() == 0)
+    if (tags.info.covers.size() == 0)
     {
         return false;
     }
 
     TagLib::ByteVector picture;
-    _std_vector_to_taglib_binary(picture, tags.covers[0]);
+    _std_vector_to_taglib_binary(picture, tags.info.covers[0]);
 
     TagLib::ID3v2::AttachedPictureFrame* cover_frame = new TagLib::ID3v2::AttachedPictureFrame;
     cover_frame->setPicture(picture);
@@ -243,7 +243,7 @@ static bool _flac_get_lyric(TagLib::FLAC::File* file,
         return false;
     }
 
-    tags.lyric = lyric.to8Bit(true);
+    tags.info.lyric = lyric.to8Bit(true);
     return true;
 }
 
@@ -251,7 +251,7 @@ static void _flac_set_lyric(TagLib::FLAC::File* file,
     const soundsphere::music_tags_t& tags)
 {
     TagLib::Ogg::XiphComment* tag = file->xiphComment(true);
-    tag->addField("LYRICS", tags.lyric);
+    tag->addField("LYRICS", tags.info.lyric);
 }
 
 static bool _flac_get_cover(TagLib::FLAC::File* file,
@@ -270,7 +270,7 @@ static bool _flac_get_cover(TagLib::FLAC::File* file,
         soundsphere::Bin cover;
         TagLib::FLAC::Picture* picture = *it;
         _taglib_binary_to_std_vector(cover, picture->data());
-        tags.covers.push_back(cover);
+        tags.info.covers.push_back(cover);
     }
 
     return true;
@@ -281,8 +281,8 @@ static void _flac_set_cover(TagLib::FLAC::File* file,
 {
     file->removePictures();
 
-    soundsphere::BinVec::const_iterator it = tags.covers.begin();
-    for (; it != tags.covers.end(); it++)
+    soundsphere::BinVec::const_iterator it = tags.info.covers.begin();
+    for (; it != tags.info.covers.end(); it++)
     {
         TagLib::ByteVector cover;
         _std_vector_to_taglib_binary(cover, *it);
@@ -334,6 +334,11 @@ static const tag_ops_item_t s_tag_op_table[] = {
 soundsphere::music_tags::music_tags()
 {
     path_hash = 0;
+    valid = false;
+}
+
+soundsphere::music_tags_info::music_tags_info()
+{
     format = MUSIC_NONE;
     bitrate = 0;
     samplerate = 0;
@@ -351,34 +356,31 @@ const char* soundsphere::music_tag_format_name(music_type_t format)
     return nullptr;
 }
 
-bool soundsphere::music_read_tag(soundsphere::music_tags_t& tags,
-    std::string& errinfo)
+bool soundsphere::music_read_tag(soundsphere::music_tags_t& tags)
 {
-    std::string extname = soundsphere::extname(tags.path);
-
-    bool ret = false;
     for (size_t i = 0; i < ARRAY_SIZE(s_tag_op_table); i++)
     {
         const tag_ops_item_t* reader = &s_tag_op_table[i];
-        if (extname == reader->ext)
+        if (soundsphere::string_last_match(tags.path, reader->ext))
         {
-            tags.format = reader->format;
-            ret = reader->read_tag_fn(tags, errinfo);
+            tags.info.format = reader->format;
+            tags.valid = reader->read_tag_fn(tags, tags.errinfo);
             goto finish_fill_title_if_empty;
         }
     }
 
-    errinfo = soundsphere::string_format("%s: %s",
-        "Unknown music format", extname.c_str());
+    tags.valid = false;
+    tags.errinfo = soundsphere::string_format("%s: %s",
+        "Unknown music format", tags.path.c_str());
     return false;
 
 finish_fill_title_if_empty:
-    if (ret && tags.title.empty())
+    if (tags.valid && tags.info.title.empty())
     {
-        tags.title = soundsphere::basename(tags.path, false);
+        tags.info.title = soundsphere::basename(tags.path, false);
     }
     tags.path_hash = soundsphere::string_hash_djb2(tags.path);
-    return ret;
+    return tags.valid;
 }
 
 bool soundsphere::music_write_tag(const soundsphere::music_tags_t& tags,
@@ -398,4 +400,20 @@ bool soundsphere::music_write_tag(const soundsphere::music_tags_t& tags,
     errinfo = soundsphere::string_format("%s: %s",
         "Unknown music format", extname.c_str());
     return false;
+}
+
+soundsphere::MusicTagPtrVecPtr soundsphere::music_read_tag_v(const StringVec& paths)
+{
+    soundsphere::MusicTagPtrVecPtr vec = std::make_shared<soundsphere::MusicTagPtrVec>();
+
+    for (size_t i = 0; i < paths.size(); i++)
+    {
+        soundsphere::MusicTagPtr obj = std::make_shared<soundsphere::music_tags_t>();
+        obj->path = paths[i];
+
+        soundsphere::music_read_tag(*obj);
+        vec->push_back(obj);
+    }
+
+    return vec;
 }

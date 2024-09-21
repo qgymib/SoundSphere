@@ -51,13 +51,13 @@ static void _tool_tageditor_exit(void)
 static void _tool_tageditor_draw_editor(void)
 {
     ImGui::InputText(soundsphere_i18n->translation->path, &s_tag_editor->tags->path);
-    ImGui::InputText(soundsphere_i18n->translation->title, &s_tag_editor->tags->title);
-    ImGui::InputText(soundsphere_i18n->translation->artist, &s_tag_editor->tags->artist);
-    ImGui::InputTextMultiline(soundsphere_i18n->translation->lyric, &s_tag_editor->tags->lyric);
+    ImGui::InputText(soundsphere_i18n->translation->title, &s_tag_editor->tags->info.title);
+    ImGui::InputText(soundsphere_i18n->translation->artist, &s_tag_editor->tags->info.artist);
+    ImGui::InputTextMultiline(soundsphere_i18n->translation->lyric, &s_tag_editor->tags->info.lyric);
 
-    ImGui::Text("%s: %d", soundsphere_i18n->translation->bit_rate, s_tag_editor->tags->bitrate);
-    ImGui::Text("%s: %d", soundsphere_i18n->translation->sample_rate, s_tag_editor->tags->samplerate);
-    ImGui::Text("%s: %d", soundsphere_i18n->translation->channel, s_tag_editor->tags->channel);
+    ImGui::Text("%s: %d", soundsphere_i18n->translation->bit_rate, s_tag_editor->tags->info.bitrate);
+    ImGui::Text("%s: %d", soundsphere_i18n->translation->sample_rate, s_tag_editor->tags->info.samplerate);
+    ImGui::Text("%s: %d", soundsphere_i18n->translation->channel, s_tag_editor->tags->info.channel);
 }
 
 static void _tool_tageditor_draw(void)
@@ -86,8 +86,7 @@ void soundsphere::tag_editor_open(const std::string& path)
     soundsphere::MusicTagPtr tags = std::make_shared<soundsphere::music_tags_t>();
     tags->path = path;
 
-    std::string errinfo;
-    music_read_tag(*tags, errinfo);
+    music_read_tag(*tags);
 
     s_tag_editor->tags = tags;
     s_tag_editor->window_open = true;

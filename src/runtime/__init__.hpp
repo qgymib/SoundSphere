@@ -7,9 +7,6 @@
 
 namespace soundsphere {
 
-typedef std::vector<MusicTagPtr> MusicTagPtrVec;
-typedef std::shared_ptr<MusicTagPtrVec> MusicTagPtrVecPtr;
-
 /**
  * @brief Global runtime data.
  */

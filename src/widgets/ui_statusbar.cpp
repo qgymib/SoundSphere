@@ -76,10 +76,10 @@ static void _widget_statusbar_draw(void)
         else if (obj->path_hash != s_statusbar_ctx->path_hash)
         {
             s_statusbar_ctx->path_hash = obj->path_hash;
-            s_statusbar_ctx->format = obj->format;
-            s_statusbar_ctx->bitrate = obj->bitrate;
-            s_statusbar_ctx->channels = obj->channel;
-            s_statusbar_ctx->samplerate = obj->samplerate;
+            s_statusbar_ctx->format = obj->info.format;
+            s_statusbar_ctx->bitrate = obj->info.bitrate;
+            s_statusbar_ctx->channels = obj->info.channel;
+            s_statusbar_ctx->samplerate = obj->info.samplerate;
         }
 
         const char* type = soundsphere::music_tag_format_name(s_statusbar_ctx->format);

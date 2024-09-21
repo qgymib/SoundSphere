@@ -85,7 +85,8 @@ config::config()
 
 JSON_SERDE(config_t,
     language,
-    lyric
+    lyric,
+    songs
 )
 
 }

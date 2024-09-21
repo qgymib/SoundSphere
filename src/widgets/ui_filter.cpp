@@ -39,6 +39,7 @@ ui_filter_ctx::ui_filter_ctx()
 static void _ui_filter_init(void)
 {
     s_filter = new ui_filter_ctx_t;
+    soundsphere::ui_filter_reset();
 }
 
 static void _ui_filter_exit(void)
@@ -81,12 +82,12 @@ static soundsphere::MusicTagPtrVecPtr _filter(soundsphere::MusicTagPtrVecPtr vec
     {
         soundsphere::MusicTagPtr obj = *it;
 
-        if (s_filter->search_title && _search_string(obj->title, filter))
+        if (s_filter->search_title && _search_string(obj->info.title, filter))
         {
             ret->push_back(obj);
         }
 
-        if (s_filter->search_artist && _search_string(obj->artist, filter))
+        if (s_filter->search_artist && _search_string(obj->info.artist, filter))
         {
             ret->push_back(obj);
         }

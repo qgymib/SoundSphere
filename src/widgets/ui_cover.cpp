@@ -46,19 +46,20 @@ static void _ui_cover_exit(void)
 
 static void _ui_cover_draw_cover(const ImVec2& display_sz)
 {
+    soundsphere::MusicTagPtr music = soundsphere::_G.dummy_player.current_music;
     /* If no music is playing, show default cover. */
-    if (soundsphere::_G.dummy_player.current_music.get() == nullptr)
+    if (music.get() == nullptr)
     {
         ImGui::Image(s_cover_ctx->default_cover.get(), display_sz);
         return;
     }
 
     /* If current playing music is changed, refresh cover. */
-    if (s_cover_ctx->last_show_item_id != soundsphere::_G.dummy_player.current_music->path_hash)
+    if (s_cover_ctx->last_show_item_id != music->path_hash)
     {
-        s_cover_ctx->last_show_item_id = soundsphere::_G.dummy_player.current_music->path_hash;
+        s_cover_ctx->last_show_item_id = music->path_hash;
 
-        soundsphere::Bin* cover_data = &soundsphere::_G.dummy_player.current_music->covers[0];
+        soundsphere::Bin* cover_data = &music->info.covers[0];
         if (cover_data->size() != 0)
         {
             s_cover_ctx->last_cover = soundsphere::backend_load_image(cover_data->data(), cover_data->size());

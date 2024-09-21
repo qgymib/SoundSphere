@@ -218,15 +218,16 @@ static void _ui_lyric_draw(void)
         | ImGuiWindowFlags_NoBringToFrontOnFocus;
     if (ImGui::Begin("Lyric", nullptr, lyric_flags))
     {
-        if (soundsphere::_G.dummy_player.current_music.get() == nullptr)
+        soundsphere::MusicTagPtr obj = soundsphere::_G.dummy_player.current_music;
+        if (obj.get() == nullptr)
         {
             goto finish;
         }
 
-        if (s_lyric->path_hash != soundsphere::_G.dummy_player.current_music->path_hash)
+        if (s_lyric->path_hash != obj->path_hash)
         {
-            s_lyric->path_hash = soundsphere::_G.dummy_player.current_music->path_hash;
-            s_lyric->lyric = _compile_lyric(soundsphere::_G.dummy_player.current_music->lyric);
+            s_lyric->path_hash = obj->path_hash;
+            s_lyric->lyric = _compile_lyric(obj->info.lyric);
         }
 
         _show_lyric(s_lyric->lyric, soundsphere::_G.playbar.music_position);

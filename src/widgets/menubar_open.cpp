@@ -27,7 +27,7 @@ static void _menubar_open_exit(void)
     }
 }
 
-static void _handle_files_on_ui(soundsphere::MusicTagPtrVecPtr vec)
+static void _handle_open_files_on_ui(soundsphere::MusicTagPtrVecPtr vec)
 {
     /* Update playlist. */
     soundsphere::_G.media_list = vec;
@@ -38,23 +38,10 @@ static void _handle_files_on_ui(soundsphere::MusicTagPtrVecPtr vec)
     soundsphere::dummy_player_reload();
 }
 
-static void _handle_files(const soundsphere::StringVec& paths)
+static void _handle_open_files(const soundsphere::StringVec& paths)
 {
-    soundsphere::MusicTagPtrVecPtr vec = std::make_shared<soundsphere::MusicTagPtrVec>();
-
-    for (size_t i = 0; i < paths.size(); i++)
-    {
-        soundsphere::MusicTagPtr obj = std::make_shared<soundsphere::music_tags_t>();
-        obj->path = paths[i];
-
-        std::string errinfo;
-        if (soundsphere::music_read_tag(*obj, errinfo))
-        {
-            vec->push_back(obj);
-        }
-    }
-
-    soundsphere::runtime_call_in_ui<soundsphere::MusicTagPtrVec>(_handle_files_on_ui, vec);
+    soundsphere::MusicTagPtrVecPtr vec = soundsphere::music_read_tag_v(paths);
+    soundsphere::runtime_call_in_ui<soundsphere::MusicTagPtrVec>(_handle_open_files_on_ui, vec);
 }
 
 static void _start_open_files_thread(void* arg)
@@ -67,7 +54,7 @@ static void _start_open_files_thread(void* arg)
         return;
     }
 
-    _handle_files(paths);
+    _handle_open_files(paths);
 }
 
 static void _start_open_folder_thread(void* arg)
@@ -81,7 +68,7 @@ static void _start_open_folder_thread(void* arg)
     }
 
     soundsphere::StringVec paths = soundsphere::explorer_scan_folder(path, s_filters, IM_ARRAYSIZE(s_filters));
-    _handle_files(paths);
+    _handle_open_files(paths);
 }
 
 static void _menubar_open_draw(void)

@@ -233,3 +233,14 @@ std::string soundsphere::string_replace(const std::string& str,
 
     return copy;
 }
+
+bool soundsphere::string_last_match(const std::string& str, const std::string& pat)
+{
+    if (pat.size() > str.size())
+    {
+        return false;
+    }
+
+    size_t off = str.size() - pat.size();
+    return str.compare(off, std::string::npos, pat) == 0;
+}

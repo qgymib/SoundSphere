@@ -137,7 +137,7 @@ static ImTextureID _ui_playlist_compile_cover(soundsphere::music_tags_t* obj, ui
     }
 
     /* If record not exist, compile the cover. */
-    auto cover_data = &obj->covers[0];
+    auto cover_data = &obj->info.covers[0];
     soundsphere::Texture texture = soundsphere::backend_load_image(cover_data->data(), cover_data->size());
     s_playlist_ctx->texture_table.insert(TextureMap::value_type(obj->path_hash, texture));
 
@@ -178,8 +178,8 @@ static void _ui_playlist_draw_table_item(soundsphere::music_tags_t* obj, uint64_
 
         ImGui::BeginGroup();
         {
-            ImGui::Text("%s", obj->title.c_str());
-            ImGui::Text("%s", obj->artist.c_str());
+            ImGui::Text("%s", obj->info.title.c_str());
+            ImGui::Text("%s", obj->info.artist.c_str());
         }
         ImGui::EndGroup();
 

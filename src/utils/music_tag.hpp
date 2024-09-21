@@ -1,9 +1,10 @@
 #ifndef SOUND_SPHERE_UTILS_MUSIC_TAG_HPP
 #define SOUND_SPHERE_UTILS_MUSIC_TAG_HPP
 
-#include <string>
 #include <memory>
+#include <vector>
 #include "utils/binary.hpp"
+#include "utils/string.hpp"
 
 namespace soundsphere {
 
@@ -14,14 +15,9 @@ typedef enum music_type
     MUSIC_MP3,
 } music_type_t;
 
-typedef struct music_tags
+typedef struct music_tags_info
 {
-    music_tags();
-
-    /**
-     * @brief The hash value of path.
-     */
-    uint64_t        path_hash;
+    music_tags_info();
 
     /**
      * @brief Music format.
@@ -44,11 +40,6 @@ typedef struct music_tags
     int             channel;
 
     /**
-     * @brief Music path in UTF-8 encoding.
-     */
-    std::string     path;
-
-    /**
      * @brief Title in UTF-8 encoding.
      */
     std::string     title;
@@ -67,12 +58,48 @@ typedef struct music_tags
      * @brief Vector of cover binary data.
      */
     BinVec          covers;
+} music_tags_info_t;
+
+typedef struct music_tags
+{
+    music_tags();
+
+    /**
+     * @brief The hash value of path.
+     */
+    uint64_t            path_hash;
+
+    /**
+     * @brief Music path in UTF-8 encoding.
+     */
+    std::string         path;
+
+    /**
+     * @brief Whether this is a valid tags.
+     */
+    bool                valid;
+
+    /**
+     * @brief Error information if #valid is false.
+     */
+    std::string         errinfo;
+
+    /**
+     * @brief Music tags if #valid is true.
+     */
+    music_tags_info_t   info;
 } music_tags_t;
 
 /**
- * @breif Smart pointer type for #music_tags_t.
+ * @breif Smart pointer types for #music_tags_t.
+ * @{
  */
 typedef std::shared_ptr<music_tags_t> MusicTagPtr;
+typedef std::vector<MusicTagPtr> MusicTagPtrVec;
+typedef std::shared_ptr<MusicTagPtrVec> MusicTagPtrVecPtr;
+/**
+ * @}
+ */
 
 /**
  * @brief Get format string.
@@ -87,7 +114,14 @@ const char* music_tag_format_name(music_type_t format);
  * @param[out] errinfo  Error information
  * @return  Boolean.
  */
-bool music_read_tag(music_tags_t& tags, std::string& errinfo);
+bool music_read_tag(music_tags_t& tags);
+
+/**
+ * @brief Read batch of path and return their tags.
+ * @param[in] path  Path list.
+ * @return          Music tags for each file.
+ */
+MusicTagPtrVecPtr music_read_tag_v(const StringVec& paths);
 
 /**
  * @brief Write music tags.

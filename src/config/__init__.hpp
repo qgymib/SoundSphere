@@ -38,6 +38,11 @@ typedef struct config
      * @brief Lyric
      */
     config_lyric_t  lyric;
+
+    /**
+     * @brief Song paths.
+     */
+    StringVec       songs;
 } config_t;
 
 /**
