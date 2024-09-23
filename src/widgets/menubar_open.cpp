@@ -2,29 +2,50 @@
 #include <string>
 #include "i18n/__init__.h"
 #include "runtime/__init__.hpp"
+#include "utils/binary.hpp"
 #include "utils/explorer.hpp"
 #include "utils/string.hpp"
 #include "__init__.hpp"
 #include "ui_filter.hpp"
 #include "dummy_player.hpp"
 
+typedef struct menubar_open_ctx
+{
+    menubar_open_ctx();
+    virtual ~menubar_open_ctx();
+
+    ev_os_thread_t open_thread;
+} menubar_open_ctx_t;
+
+static menubar_open_ctx_t* s_menubar_open_ctx = nullptr;
+
 static const char* s_filters[] = {
-    "Music\n*.flac\n*.mp3\n*.ogg\n*.voc\n*.wav",
+    "Music\n*.flac\n*.mp3",
 };
 
-static ev_os_thread_t s_open_thread = EV_OS_THREAD_INVALID;
+menubar_open_ctx::menubar_open_ctx()
+{
+    open_thread = EV_OS_THREAD_INVALID;
+}
+
+menubar_open_ctx::~menubar_open_ctx()
+{
+    if (open_thread != EV_OS_THREAD_INVALID)
+    {
+        ev_thread_exit(&open_thread, EV_INFINITE_TIMEOUT);
+        open_thread = EV_OS_THREAD_INVALID;
+    }
+}
 
 static void _menubar_open_init(void)
 {
+    s_menubar_open_ctx = new menubar_open_ctx_t;
 }
 
 static void _menubar_open_exit(void)
 {
-    if (s_open_thread != EV_OS_THREAD_INVALID)
-    {
-        ev_thread_exit(&s_open_thread, EV_INFINITE_TIMEOUT);
-        s_open_thread = EV_OS_THREAD_INVALID;
-    }
+    delete s_menubar_open_ctx;
+    s_menubar_open_ctx = nullptr;
 }
 
 static void _handle_open_files_on_ui(soundsphere::MusicTagPtrVecPtr vec)
@@ -67,8 +88,52 @@ static void _start_open_folder_thread(void* arg)
         return;
     }
 
-    soundsphere::StringVec paths = soundsphere::explorer_scan_folder(path, s_filters, IM_ARRAYSIZE(s_filters));
+    soundsphere::StringVec paths = soundsphere::explorer_scan_folder(path,
+        s_filters, IM_ARRAYSIZE(s_filters));
     _handle_open_files(paths);
+}
+
+static void _handle_add_files_on_ui(soundsphere::MusicTagPtrVecPtr vec)
+{
+    soundsphere::MusicTagPtrVecPtr songs = soundsphere::_G.media_list;
+    songs->insert(songs->end(), vec->begin(), vec->end());
+
+    soundsphere::remove_duplicate<soundsphere::MusicTagPtr, uint64_t>(
+        *songs.get(), [](const soundsphere::MusicTagPtr& p){ return p->path_hash; });
+
+    soundsphere::ui_filter_reset();
+}
+
+static void _handle_add_files(const soundsphere::StringVec& paths)
+{
+    soundsphere::MusicTagPtrVecPtr vec = soundsphere::music_read_tag_v(paths);
+    soundsphere::runtime_call_in_ui<soundsphere::MusicTagPtrVec>(_handle_add_files_on_ui, vec);
+}
+
+static void _start_add_file_thread(void* arg)
+{
+    (void)arg;
+    soundsphere::StringVec paths;
+    if (!soundsphere::explorer_open_files(paths, s_filters, IM_ARRAYSIZE(s_filters)))
+    {
+        return;
+    }
+    _handle_add_files(paths);
+}
+
+static void _start_add_folder_thread(void* arg)
+{
+    (void)arg;
+
+    std::string path;
+    if (!soundsphere::explorer_open_folder(path))
+    {
+        return;
+    }
+
+    soundsphere::StringVec paths = soundsphere::explorer_scan_folder(path,
+        s_filters, IM_ARRAYSIZE(s_filters));
+    _handle_add_files(paths);
 }
 
 static void _menubar_open_draw(void)
@@ -77,18 +142,26 @@ static void _menubar_open_draw(void)
     {
         if (ImGui::BeginMenu(soundsphere_i18n->translation->file))
         {
-            bool enabled = (s_open_thread == EV_OS_THREAD_INVALID);
+            bool enabled = (s_menubar_open_ctx->open_thread == EV_OS_THREAD_INVALID);
             if (ImGui::MenuItem(soundsphere_i18n->translation->open, nullptr,
                 nullptr, enabled))
             {
-                IM_ASSERT(s_open_thread == EV_OS_THREAD_INVALID);
-                ev_thread_init(&s_open_thread, NULL, _start_open_files_thread, NULL);
+                ev_thread_init(&s_menubar_open_ctx->open_thread, NULL, _start_open_files_thread, NULL);
             }
             if (ImGui::MenuItem(soundsphere_i18n->translation->open_folder,
                 nullptr, nullptr, enabled))
             {
-                IM_ASSERT(s_open_thread == EV_OS_THREAD_INVALID);
-                ev_thread_init(&s_open_thread, NULL, _start_open_folder_thread, NULL);
+                ev_thread_init(&s_menubar_open_ctx->open_thread, NULL, _start_open_folder_thread, NULL);
+            }
+            if (ImGui::MenuItem(soundsphere_i18n->translation->add, nullptr,
+                nullptr, enabled))
+            {
+                ev_thread_init(&s_menubar_open_ctx->open_thread, nullptr, _start_add_file_thread, nullptr);
+            }
+            if (ImGui::MenuItem(soundsphere_i18n->translation->add_folder,
+                nullptr, nullptr, enabled))
+            {
+                ev_thread_init(&s_menubar_open_ctx->open_thread, nullptr, _start_add_folder_thread, nullptr);
             }
             ImGui::EndMenu();
         }
@@ -96,11 +169,11 @@ static void _menubar_open_draw(void)
         ImGui::EndMainMenuBar();
     }
 
-    if (s_open_thread != EV_OS_THREAD_INVALID)
+    if (s_menubar_open_ctx->open_thread != EV_OS_THREAD_INVALID)
     {
-        if (ev_thread_exit(&s_open_thread, 0) == 0)
+        if (ev_thread_exit(&s_menubar_open_ctx->open_thread, 0) == 0)
         {
-            s_open_thread = EV_OS_THREAD_INVALID;
+            s_menubar_open_ctx->open_thread = EV_OS_THREAD_INVALID;
         }
     }
 }

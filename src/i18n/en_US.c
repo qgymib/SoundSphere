@@ -1,6 +1,12 @@
 #include "__init__.h"
 
 static soundsphere_i18n_translation_t _soundsphere_i18n_en_us = {
+.add =
+"Add",
+
+.add_folder =
+"Add Folder",
+
 .about =
 "About",
 

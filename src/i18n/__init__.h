@@ -8,6 +8,8 @@ extern "C" {
  * @brief i18n strings.
  */
 #define I18N_STRING_TABLE(xx)       \
+    xx(add)                         \
+    xx(add_folder)                  \
     xx(about)                       \
     xx(about_show_config_info)      \
     xx(artist)                      \

@@ -3,6 +3,12 @@
 I18N_LOCALE_BEG
 
 static soundsphere_i18n_translation_t _soundsphere_i18n_zh_CN = {
+.add =
+"添加",
+
+.add_folder =
+"添加文件夹",
+
 .about =
 "关于",
 
