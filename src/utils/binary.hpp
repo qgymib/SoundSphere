@@ -39,6 +39,7 @@ std::vector<T> remove_duplicate_r(const std::vector<T>& vec, std::function<K(con
         if (seen.find(key) == seen.end())
         {
             ret.push_back(*it);
+            seen.insert(*it);
         }
     }
 

@@ -1,5 +1,6 @@
 #include <nlohmann/json.hpp>
 #include <ev.h>
+#include "utils/binary.hpp"
 #include "utils/defines.hpp"
 #include "utils/env.hpp"
 #include "utils/path.hpp"
@@ -170,19 +171,7 @@ bool soundsphere::config_save(std::string& errinfo)
 
     nlohmann::json j = _config;
     std::string config_data = j.dump(2);
-
-    ev_file_t file;
-    ret = ev_file_open(nullptr, &file, nullptr, s_config_ctx->path.c_str(),
-        EV_FS_O_CREAT | EV_FS_O_TRUNC | EV_FS_O_WRONLY,
-        EV_FS_S_IRUSR | EV_FS_S_IWUSR, nullptr);
-    if (ret != 0)
-    {
-        errinfo = ev_strerror(ret);
-        return false;
-    }
-
-    ev_file_write(&file, nullptr, config_data.c_str(), config_data.size(), nullptr);
-    ev_file_close(&file, nullptr);
+    soundsphere::dump(s_config_ctx->path.c_str(), config_data.c_str(), config_data.size());
 
     return true;
 }
