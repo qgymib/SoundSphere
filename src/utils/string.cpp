@@ -150,6 +150,10 @@ std::string soundsphere::string_trim(const std::string& str)
     {
         start++;
     }
+    if (start == str.end())
+    {
+        return std::string();
+    }
 
     std::string::const_iterator end = str.end();
     do {
