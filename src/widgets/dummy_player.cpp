@@ -58,6 +58,7 @@ static void _dummy_player_init(void)
     }
 
     soundsphere::dummy_player_set_volume(soundsphere::_config.volume);
+    soundsphere::dummy_player_reload();
 }
 
 static void _stop_play(void)
@@ -191,9 +192,9 @@ static soundsphere::MusicTagPtrVecPtr _shuffle_media(soundsphere::MusicTagPtrVec
     return ret;
 }
 
-void soundsphere::dummy_player_set_shuffle(soundsphere::shuffle_mode_t mode)
+static void _dummy_player_reshuffle(void)
 {
-    switch (mode)
+    switch (s_player->shuffle_mode)
     {
     case soundsphere::SHUFFLE_ORDER:
         s_player->shuffle_vec = soundsphere::_G.media_list;
@@ -206,7 +207,12 @@ void soundsphere::dummy_player_set_shuffle(soundsphere::shuffle_mode_t mode)
         s_player->shuffle_vec = _shuffle_media(soundsphere::_G.media_list);
         break;
     }
+}
+
+void soundsphere::dummy_player_set_shuffle(soundsphere::shuffle_mode_t mode)
+{
     s_player->shuffle_mode = mode;
+    _dummy_player_reshuffle();
 }
 
 void soundsphere::dummy_player_next(void)
@@ -250,7 +256,7 @@ void soundsphere::dummy_player_next(void)
 void soundsphere::dummy_player_reload(void)
 {
     _stop_play();
-    dummy_player_set_shuffle(s_player->shuffle_mode);
+    _dummy_player_reshuffle();
 }
 
 soundsphere::shuffle_mode_t soundsphere::dummy_player_get_shuffle_mode(void)
