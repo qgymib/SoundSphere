@@ -106,6 +106,49 @@ static double _split_lyric(std::string& dst, const std::string& str)
     return minute * 60 + seconds + millisecond / 1000;
 }
 
+static void _strip_lyric(std::string& lyric)
+{
+    size_t start = 0;
+
+    while (start < lyric.size())
+    {
+        size_t pos = lyric.find("<", start);
+        if (pos == std::string::npos)
+        {
+            break;
+        }
+
+        if (isdigit(lyric[pos + 1]) &&
+            isdigit(lyric[pos + 2]) &&
+            lyric[pos + 3] == ':' &&
+            isdigit(lyric[pos + 4]) &&
+            isdigit(lyric[pos + 5]) &&
+            lyric[pos + 6] == '.' &&
+            isdigit(lyric[pos + 7]) &&
+            isdigit(lyric[pos + 8]))
+        {
+            if (lyric[pos + 9] == '>')
+            {
+                lyric.erase(pos, 10);
+                start = pos;
+                continue;
+            }
+
+            if (isdigit(lyric[pos + 9]) && lyric[pos + 10] == '>')
+            {
+                lyric.erase(pos, 11);
+                start = pos;
+                continue;
+            }
+
+            start = pos + 9;
+            continue;
+        }
+
+        start++;
+    }
+}
+
 static Lyric _compile_lyric(const std::string& src)
 {
     Lyric lyric;
@@ -117,6 +160,7 @@ static Lyric _compile_lyric(const std::string& src)
     {
         std::string sentence;
         double position = _split_lyric(sentence, *it);
+        _strip_lyric(sentence);
 
         lyric.insert(Lyric::value_type(position, sentence));
     }
