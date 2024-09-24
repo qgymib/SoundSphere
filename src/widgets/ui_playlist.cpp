@@ -119,6 +119,11 @@ static void _ui_playlist_exit(void)
 
 static ImTextureID _ui_playlist_compile_cover(soundsphere::music_tags_t* obj, uint64_t ts)
 {
+    if (!obj->valid)
+    {
+        return nullptr;
+    }
+
     texture_ts_record_t tmp_rec;
     tmp_rec.path_hash = obj->path_hash;
     ev_map_node_t* it = ev_map_find(&s_playlist_ctx->texture_uid_map, &tmp_rec.node_uid);
@@ -161,7 +166,15 @@ static void _ui_playlist_draw_table_item(soundsphere::music_tags_t* obj, uint64_
     ImGui::BeginGroup();
     {
         static ImVec2 img_sz(64, 64);
-        ImGui::Image(texture, img_sz);
+        if (texture != nullptr)
+        {
+            ImGui::Image(texture, img_sz);
+        }
+        else
+        {
+            ImGui::Dummy(img_sz);
+        }
+
         ImGui::SameLine();
 
         bool is_playing = soundsphere::_G.dummy_player.current_music.get() == obj;
@@ -177,9 +190,15 @@ static void _ui_playlist_draw_table_item(soundsphere::music_tags_t* obj, uint64_
         }
 
         ImGui::BeginGroup();
+        if (obj->valid)
         {
             ImGui::Text("%s", obj->info.title.c_str());
             ImGui::Text("%s", obj->info.artist.c_str());
+        }
+        else
+        {
+            ImVec4 color(1.0f, 0.0f, 0.0f, 1.0f);
+            ImGui::TextColored(color, "%s.", obj->path.c_str());
         }
         ImGui::EndGroup();
 
