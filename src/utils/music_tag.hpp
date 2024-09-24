@@ -15,6 +15,21 @@ typedef enum music_type
     MUSIC_MP3,
 } music_type_t;
 
+typedef struct music_tag_image
+{
+    /**
+     * @brief `image/png` or `image/jpeg`.
+     */
+    std::string mime;
+
+    /**
+     * @brief Image data.
+     */
+    Bin         data;
+} music_tag_image_t;
+
+typedef std::vector<music_tag_image_t> ImageVec;
+
 typedef struct music_tags_info
 {
     music_tags_info();
@@ -57,7 +72,7 @@ typedef struct music_tags_info
     /**
      * @brief Vector of cover binary data.
      */
-    BinVec          covers;
+    ImageVec        covers;
 } music_tags_info_t;
 
 typedef struct music_tags

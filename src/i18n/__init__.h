@@ -32,6 +32,7 @@ extern "C" {
     xx(path)                        \
     xx(preferences)                 \
     xx(sample_rate)                 \
+    xx(save)                        \
     xx(search_artist)               \
     xx(search_playlist)             \
     xx(search_title)                \

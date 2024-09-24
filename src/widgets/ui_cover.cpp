@@ -59,10 +59,10 @@ static void _ui_cover_draw_cover(const ImVec2& display_sz)
     {
         s_cover_ctx->last_show_item_id = music->path_hash;
 
-        soundsphere::Bin* cover_data = &music->info.covers[0];
-        if (cover_data->size() != 0)
+        soundsphere::music_tag_image_t* cover_data = &music->info.covers[0];
+        if (cover_data->data.size() != 0)
         {
-            s_cover_ctx->last_cover = soundsphere::backend_load_image(cover_data->data(), cover_data->size());
+            s_cover_ctx->last_cover = soundsphere::backend_load_image(cover_data->data.data(), cover_data->data.size());
         }
         else
         {

@@ -55,17 +55,19 @@ static void _tool_tageditor_draw_editor(void)
     ImGui::InputText(_T->artist, &s_tag_editor->tags->info.artist);
     ImGui::InputTextMultiline(_T->lyric, &s_tag_editor->tags->info.lyric);
 
-    ImGui::Text("%s: %d", _T->bit_rate, s_tag_editor->tags->info.bitrate);
-    ImGui::Text("%s: %d", _T->sample_rate, s_tag_editor->tags->info.samplerate);
-    ImGui::Text("%s: %d", _T->channel, s_tag_editor->tags->info.channel);
+    if (ImGui::Button(_T->save))
+    {
+        std::string errinfo;
+        soundsphere::music_write_tag(*s_tag_editor->tags, errinfo);
+    }
 }
 
 static void _tool_tageditor_draw(void)
 {
     if (s_tag_editor->window_open)
     {
-        ImGui::SetNextWindowSize(s_tag_editor->default_window_sz, ImGuiCond_FirstUseEver);
-        if (ImGui::Begin(_T->tag_editor, &s_tag_editor->window_open))
+        //ImGui::SetNextWindowSize(s_tag_editor->default_window_sz, ImGuiCond_FirstUseEver);
+        if (ImGui::Begin(_T->tag_editor, &s_tag_editor->window_open, ImGuiWindowFlags_AlwaysAutoResize))
         {
             _tool_tageditor_draw_editor();
         }

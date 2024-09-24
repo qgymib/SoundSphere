@@ -75,6 +75,9 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_zh_CN = {
 .sample_rate =
 "采样率",
 
+.save =
+"保存",
+
 .search_artist =
 "搜索艺术家",
 

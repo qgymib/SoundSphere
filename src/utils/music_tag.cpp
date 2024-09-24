@@ -105,8 +105,11 @@ template<typename T>
 static void _tag_writer_set_properties_common(T* file,
     const soundsphere::music_tags_t& tags)
 {
-    file->tag()->setTitle(tags.info.title);
-    file->tag()->setArtist(tags.info.artist);
+    TagLib::String title(tags.info.title, TagLib::String::UTF8);
+    file->tag()->setTitle(title);
+
+    TagLib::String artist(tags.info.artist, TagLib::String::UTF8);
+    file->tag()->setArtist(artist);
 }
 
 template<typename T>
@@ -136,9 +139,11 @@ template<typename T>
 static bool _tag_writer_set_lyric_id3v2(T* file,
     const soundsphere::music_tags_t& tags)
 {
+    TagLib::String lyric(tags.info.lyric, TagLib::String::UTF8);
+
     TagLib::ID3v2::UnsynchronizedLyricsFrame* lyric_frame =
         new TagLib::ID3v2::UnsynchronizedLyricsFrame(TagLib::String::UTF8);
-    lyric_frame->setText(tags.info.lyric);
+    lyric_frame->setText(lyric);
 
     TagLib::ID3v2::Tag* tag = file->ID3v2Tag(true);
     tag->removeFrames("USLT");
@@ -165,8 +170,9 @@ static bool _tag_reader_get_cover_id3v2(T* file,
 
     TagLib::ID3v2::AttachedPictureFrame* cover_raw =
         static_cast<TagLib::ID3v2::AttachedPictureFrame*>(frames.front());
-    soundsphere::Bin cover;
-    _taglib_binary_to_std_vector(cover, cover_raw->picture());
+    soundsphere::music_tag_image_t cover;
+    _taglib_binary_to_std_vector(cover.data, cover_raw->picture());
+    cover.mime = cover_raw->mimeType().to8Bit(true);
     tags.info.covers.push_back(cover);
 
     return true;
@@ -181,10 +187,18 @@ static bool _tag_writer_set_cover_id3v2(T* file,
         return false;
     }
 
+    const soundsphere::music_tag_image_t& music_picture = tags.info.covers[0];
+
     TagLib::ByteVector picture;
-    _std_vector_to_taglib_binary(picture, tags.info.covers[0]);
+    _std_vector_to_taglib_binary(picture, music_picture.data);
 
     TagLib::ID3v2::AttachedPictureFrame* cover_frame = new TagLib::ID3v2::AttachedPictureFrame;
+    cover_frame->setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
+
+    TagLib::String mime(music_picture.mime, TagLib::String::UTF8);
+    cover_frame->setMimeType(mime);
+
+    cover_frame->setDescription("Cover");
     cover_frame->setPicture(picture);
 
     TagLib::ID3v2::Tag* tag = file->ID3v2Tag(true);
@@ -250,8 +264,10 @@ static bool _flac_get_lyric(TagLib::FLAC::File* file,
 static void _flac_set_lyric(TagLib::FLAC::File* file,
     const soundsphere::music_tags_t& tags)
 {
+    TagLib::String lyric(tags.info.lyric, TagLib::String::UTF8);
+
     TagLib::Ogg::XiphComment* tag = file->xiphComment(true);
-    tag->addField("LYRICS", tags.info.lyric);
+    tag->addField("LYRICS", lyric);
 }
 
 static bool _flac_get_cover(TagLib::FLAC::File* file,
@@ -267,9 +283,10 @@ static bool _flac_get_cover(TagLib::FLAC::File* file,
     TagLib::List<TagLib::FLAC::Picture*>::Iterator it = picture_list.begin();
     for (; it != picture_list.end(); it++)
     {
-        soundsphere::Bin cover;
+        soundsphere::music_tag_image_t cover;
         TagLib::FLAC::Picture* picture = *it;
-        _taglib_binary_to_std_vector(cover, picture->data());
+        _taglib_binary_to_std_vector(cover.data, picture->data());
+        cover.mime = picture->mimeType().to8Bit(true);
         tags.info.covers.push_back(cover);
     }
 
@@ -281,13 +298,22 @@ static void _flac_set_cover(TagLib::FLAC::File* file,
 {
     file->removePictures();
 
-    soundsphere::BinVec::const_iterator it = tags.info.covers.begin();
+    soundsphere::ImageVec::const_iterator it = tags.info.covers.begin();
     for (; it != tags.info.covers.end(); it++)
     {
+        const soundsphere::music_tag_image_t& music_image = *it;
+        
         TagLib::ByteVector cover;
-        _std_vector_to_taglib_binary(cover, *it);
+        _std_vector_to_taglib_binary(cover, music_image.data);
 
-        TagLib::FLAC::Picture* picture = new TagLib::FLAC::Picture(cover);
+        TagLib::FLAC::Picture* picture = new TagLib::FLAC::Picture;
+        picture->setType(TagLib::FLAC::Picture::FrontCover);
+
+        TagLib::String mime(music_image.mime, TagLib::String::UTF8);
+        picture->setMimeType(mime);
+
+        picture->setDescription("Cover");
+        picture->setData(cover);
         file->addPicture(picture);
     }
 }

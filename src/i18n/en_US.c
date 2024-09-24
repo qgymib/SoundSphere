@@ -73,6 +73,9 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_en_us = {
 .sample_rate =
 "Sample rate",
 
+.save =
+"Save",
+
 .search_artist =
 "Search Artist",
 
