@@ -69,9 +69,9 @@ static void _widget_about_3rd(void)
     const int table_flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit;
     if (ImGui::BeginTable("about_3rd", 3, table_flags))
     {
-        ImGui::TableSetupColumn(soundsphere_i18n->translation->name);
-        ImGui::TableSetupColumn(soundsphere_i18n->translation->version);
-        ImGui::TableSetupColumn(soundsphere_i18n->translation->homepage);
+        ImGui::TableSetupColumn(_T->name);
+        ImGui::TableSetupColumn(_T->version);
+        ImGui::TableSetupColumn(_T->homepage);
         ImGui::TableHeadersRow();
 
         ImGuiListClipper clipper;
@@ -92,7 +92,7 @@ static void _widget_about_3rd(void)
                 ImGui::Text("%s", info->version);
 
                 ImGui::TableSetColumnIndex(2);
-                ImGui::TextLinkOpenURL(soundsphere_i18n->translation->homepage, info->url);
+                ImGui::TextLinkOpenURL(_T->homepage, info->url);
 
                 ImGui::PopID();
             }
@@ -114,19 +114,19 @@ static void _widget_about_show_config_frame(void)
 
 static void _widget_about_draw_menu(void)
 {
-    const char* window_title = soundsphere_i18n->translation->about;
+    const char* window_title = _T->about;
     if (!ImGui::Begin(window_title, &s_menu_about_show, ImGuiWindowFlags_AlwaysAutoResize))
     {
         goto finish;
     }
 
     ImGui::Text(PROG_NAME " %s", soundsphere::version());
-    ImGui::TextLinkOpenURL(soundsphere_i18n->translation->homepage,
+    ImGui::TextLinkOpenURL(_T->homepage,
         "https://github.com/qgymib/SoundSphere");
     ImGui::Separator();
 
     static bool show_config_info = false;
-    ImGui::Checkbox(soundsphere_i18n->translation->about_show_config_info, &show_config_info);
+    ImGui::Checkbox(_T->about_show_config_info, &show_config_info);
     if (show_config_info)
     {
         _widget_about_show_config_frame();
@@ -141,9 +141,9 @@ static void _widget_about_draw(void)
     /* Register to MainMenu. */
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu(soundsphere_i18n->translation->help))
+        if (ImGui::BeginMenu(_T->help))
         {
-            ImGui::MenuItem(soundsphere_i18n->translation->about, nullptr, &s_menu_about_show);
+            ImGui::MenuItem(_T->about, nullptr, &s_menu_about_show);
             ImGui::EndMenu();
         }
 

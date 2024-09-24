@@ -113,7 +113,7 @@ static void _ui_filter_draw(void)
     if (ImGui::Begin("Filter", nullptr, play_list_flags))
     {
         ImGui::SetNextItemWidth(soundsphere::_layout.filter.size.x - 50);
-        if (ImGui::InputTextWithHint("##filter_search", soundsphere_i18n->translation->search_playlist,
+        if (ImGui::InputTextWithHint("##filter_search", _T->search_playlist,
             s_filter->filter, sizeof(s_filter->filter)))
         {
             _do_filter();
@@ -124,11 +124,11 @@ static void _ui_filter_draw(void)
             soundsphere::ui_filter_reset();
         }
 
-        if (ImGui::Checkbox(soundsphere_i18n->translation->search_title, &s_filter->search_title))
+        if (ImGui::Checkbox(_T->search_title, &s_filter->search_title))
         {
             _do_filter();
         }
-        if (ImGui::Checkbox(soundsphere_i18n->translation->search_artist, &s_filter->search_artist))
+        if (ImGui::Checkbox(_T->search_artist, &s_filter->search_artist))
         {
             _do_filter();
         }

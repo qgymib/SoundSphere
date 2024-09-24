@@ -39,9 +39,9 @@ static void _menubar_debug_draw(void)
 {
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu(soundsphere_i18n->translation->help))
+        if (ImGui::BeginMenu(_T->help))
         {
-            ImGui::MenuItem(soundsphere_i18n->translation->debug, nullptr,
+            ImGui::MenuItem(_T->debug, nullptr,
                 &s_debug_ctx->show_window);
             ImGui::EndMenu();
         }
@@ -52,7 +52,7 @@ static void _menubar_debug_draw(void)
         return;
     }
 
-    const char* window_title = soundsphere_i18n->translation->debug;
+    const char* window_title = _T->debug;
     if (ImGui::Begin(window_title, &s_debug_ctx->show_window))
     {
         ImGui::Checkbox("Show Imgui Demo Window", &s_debug_ctx->show_imgui_demo);

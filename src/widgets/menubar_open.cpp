@@ -140,25 +140,25 @@ static void _menubar_open_draw(void)
 {
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu(soundsphere_i18n->translation->file))
+        if (ImGui::BeginMenu(_T->file))
         {
             bool enabled = (s_menubar_open_ctx->open_thread == EV_OS_THREAD_INVALID);
-            if (ImGui::MenuItem(soundsphere_i18n->translation->open, nullptr,
+            if (ImGui::MenuItem(_T->open, nullptr,
                 nullptr, enabled))
             {
                 ev_thread_init(&s_menubar_open_ctx->open_thread, NULL, _start_open_files_thread, NULL);
             }
-            if (ImGui::MenuItem(soundsphere_i18n->translation->open_folder,
+            if (ImGui::MenuItem(_T->open_folder,
                 nullptr, nullptr, enabled))
             {
                 ev_thread_init(&s_menubar_open_ctx->open_thread, NULL, _start_open_folder_thread, NULL);
             }
-            if (ImGui::MenuItem(soundsphere_i18n->translation->add, nullptr,
+            if (ImGui::MenuItem(_T->add, nullptr,
                 nullptr, enabled))
             {
                 ev_thread_init(&s_menubar_open_ctx->open_thread, nullptr, _start_add_file_thread, nullptr);
             }
-            if (ImGui::MenuItem(soundsphere_i18n->translation->add_folder,
+            if (ImGui::MenuItem(_T->add_folder,
                 nullptr, nullptr, enabled))
             {
                 ev_thread_init(&s_menubar_open_ctx->open_thread, nullptr, _start_add_folder_thread, nullptr);

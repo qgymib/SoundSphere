@@ -18,6 +18,7 @@ static const soundsphere_i18n_t* s_i18n[] = {
  * @brief By default we are using en_US.
  */
 const soundsphere_i18n_t* soundsphere_i18n = nullptr;
+const soundsphere_i18n_translation_t* _T = nullptr;
 
 static void _soundsphere_i18n_init_locales(void)
 {
@@ -65,18 +66,22 @@ const char* soundsphere_i18n_locale_string(const soundsphere_i18n_t* locale,
 
 void soundsphere_i18n_reload_locale(void)
 {
+    const soundsphere_i18n_t* i18n = nullptr;
     for (size_t i = 0; i < ARRAY_SIZE(s_i18n); i++)
     {
-        const soundsphere_i18n_t* i18n = s_i18n[i];
+        i18n = s_i18n[i];
         if (soundsphere::_config.language == i18n->language_territory)
         {
-            soundsphere_i18n = i18n;
-            return;
+            goto finish;
         }
     }
 
     /* No locale match, set to default. */
-    soundsphere_i18n = &soundsphere_i18n_en_US;
+    i18n = &soundsphere_i18n_en_US;
+
+finish:
+    soundsphere_i18n = i18n;
+    _T = i18n->translation;
 }
 
 const soundsphere_i18n_t* soundsphere_i18n_get_locale(soundsphere_i18n_locale_t locale)

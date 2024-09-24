@@ -163,9 +163,9 @@ static void _menubar_translations_draw(void)
     /* Register menu. */
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu(soundsphere_i18n->translation->help))
+        if (ImGui::BeginMenu(_T->help))
         {
-            ImGui::MenuItem(soundsphere_i18n->translation->translations, nullptr,
+            ImGui::MenuItem(_T->translations, nullptr,
                 &s_translation_ctx->menu_show_translations);
             ImGui::EndMenu();
         }
@@ -175,7 +175,7 @@ static void _menubar_translations_draw(void)
     /* Show window. */
     if (s_translation_ctx->menu_show_translations)
     {
-        const char* window_title = soundsphere_i18n->translation->translations;
+        const char* window_title = _T->translations;
         ImGui::SetNextWindowSize(s_translation_ctx->default_window_sz, ImGuiCond_FirstUseEver);
         if (ImGui::Begin(window_title, &s_translation_ctx->menu_show_translations, 0))
         {

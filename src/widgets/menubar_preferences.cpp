@@ -50,7 +50,7 @@ static void _widget_preferences_draw_generic_select_lang(void)
 	    I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_STRING)
 #undef I18N_EXPAND_LOCALE_AS_STRING
     };
-    const char* label = soundsphere_i18n->translation->localization;
+    const char* label = _T->localization;
     if (ImGui::Combo(label, &s_preferences_ctx->selected_locale, item_locals, IM_ARRAYSIZE(item_locals)))
     {
         soundsphere::_config.language = item_lang[s_preferences_ctx->selected_locale];
@@ -70,7 +70,7 @@ static void _widget_preference_draw_generic(void)
 static void _widget_preferences_draw_lyric_auto_center_time(void)
 {
     int time = (int)(soundsphere::_config.lyric.auto_center_time_ms / 1000);
-    const char* label = soundsphere_i18n->translation->lyric_auto_center_time;
+    const char* label = _T->lyric_auto_center_time;
     if (ImGui::InputInt(label, &time))
     {
         if (time >= 0)
@@ -79,15 +79,15 @@ static void _widget_preferences_draw_lyric_auto_center_time(void)
         }
     }
     ImGui::SameLine();
-    ImGui::TipMark(soundsphere_i18n->translation->tip_lyric_auto_center_time);
+    ImGui::TipMark(_T->tip_lyric_auto_center_time);
 }
 
 static void _widget_preferences_draw_lyric_color(void)
 {
     int flags = 0;
-    ImGui::ColorEdit4(soundsphere_i18n->translation->lyric_font_fore_color,
+    ImGui::ColorEdit4(_T->lyric_font_fore_color,
         soundsphere::_config.lyric.fore_font_color, flags);
-    ImGui::ColorEdit4(soundsphere_i18n->translation->lyric_font_back_color,
+    ImGui::ColorEdit4(_T->lyric_font_back_color,
         soundsphere::_config.lyric.back_font_color, flags);
 }
 
@@ -119,9 +119,9 @@ static void _widget_preferences_draw(void)
     /* Register to MainMenu. */
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu(soundsphere_i18n->translation->settings))
+        if (ImGui::BeginMenu(_T->settings))
         {
-            ImGui::MenuItem(soundsphere_i18n->translation->preferences, nullptr,
+            ImGui::MenuItem(_T->preferences, nullptr,
                 &s_preferences_ctx->show_window);
             ImGui::EndMenu();
         }
@@ -135,12 +135,12 @@ static void _widget_preferences_draw(void)
 
     /* Preferences tabs. */
     const preference_tab_t tabs[] = {
-        { soundsphere_i18n->translation->localization,  _widget_preference_draw_generic },
-        { soundsphere_i18n->translation->lyric,         _widget_preference_draw_lyric },
+        { _T->localization,  _widget_preference_draw_generic },
+        { _T->lyric,         _widget_preference_draw_lyric },
     };
 
     /* Show window. */
-    const char* window_name = soundsphere_i18n->translation->preferences;
+    const char* window_name = _T->preferences;
     const int window_flag = ImGuiWindowFlags_AlwaysAutoResize;
     if (ImGui::Begin(window_name, &s_preferences_ctx->show_window, window_flag))
     {

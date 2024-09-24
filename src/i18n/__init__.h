@@ -142,6 +142,12 @@ I18N_LOCALE_TABLE(I18N_EXPAND_LOCALE_AS_EXTERN)
 extern const soundsphere_i18n_t* soundsphere_i18n;
 
 /**
+ * @brief Global translation.
+ * Fast access for #soundsphere_i18n->translation.
+ */
+extern const soundsphere_i18n_translation_t* _T;
+
+/**
  * @brief Initialize i18n.
  */
 void soundsphere_i18n_init(void);
