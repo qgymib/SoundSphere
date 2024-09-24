@@ -176,12 +176,28 @@ static void _scroll_here(void)
     s_lyric->last_user_scroll_time = 0;
 }
 
+/**
+ * @brief Scroll the lyric.
+ * 
+ * This is how scroll works:
+ * 1. Player draw lyrics for eachline, and call this function when draw the
+ *   current playing lyric.
+ * 2. For normal condition, the lyric should shown in center of the view.
+ * 3. But if user scroll the lyric view, the lyric should come back in center
+ *   after certain delay, to let user can actually scroll the lyric.
+ * 4. The auto center function should not work when music is not playing.
+ */
 static void _auto_scroll(void)
 {
     float scroll_y = ImGui::GetScrollY();
     if (scroll_y == s_lyric->lyric_scroll_y)
     {
         _scroll_here();
+        return;
+    }
+
+    if (!soundsphere::_G.playbar.is_playing)
+    {
         return;
     }
 
