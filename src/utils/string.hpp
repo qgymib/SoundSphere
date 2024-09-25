@@ -1,6 +1,7 @@
 #ifndef SOUND_SPHERE_UTILS_STRING_HPP
 #define SOUND_SPHERE_UTILS_STRING_HPP
 
+#include <cstring>
 #include <string>
 #include <vector>
 #include <cstdint>

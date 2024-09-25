@@ -13,6 +13,7 @@
 #include <imgui.h>
 #include <stdio.h>
 #include <IconsFontAwesome6.h>
+#include <curl/curl.h>
 #include "backends/__init__.hpp"
 #include "config/__init__.hpp"
 #include "fonts/fa_solid_900.h"
@@ -30,6 +31,11 @@ typedef struct soundsphere_module
     void (*exit)(void);
 } soundsphere_module_t;
 
+static void _curl_init(void)
+{
+    curl_global_init(CURL_GLOBAL_ALL);
+}
+
 /**
  * @brief Registered modules.
  * Modules are initialized in order and cleanup in reverse order.
@@ -39,6 +45,7 @@ static soundsphere_module_t s_modules[] = {
     { soundsphere_i18n_init,        soundsphere_i18n_exit },
     { soundsphere::runtime_init,    soundsphere::runtime_exit },
     { soundsphere::widget_init,     soundsphere::widget_exit },
+    { _curl_init,                   curl_global_cleanup },
 };
 
 // Main code

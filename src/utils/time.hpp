@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include "utils/string.hpp"
 
 namespace soundsphere {
 
@@ -13,6 +14,11 @@ namespace soundsphere {
  * @param[in] seconds   Seconds.
  */
 void time_seconds_to_string(char* buff, size_t size, double seconds);
+
+/**
+ * @brief Convert seconds into HH:MM:SS.
+ */
+std::string time_seconds_to_string(double seconds);
 
 /**
  * @brief Get current clock time in milliseconds.

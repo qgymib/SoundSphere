@@ -27,8 +27,14 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_zh_CN = {
 .debug =
 "调试",
 
+.duration =
+"时长",
+
 .file =
 "文件",
+
+.generic =
+"通用",
 
 .help =
 "帮助",
@@ -72,6 +78,9 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_zh_CN = {
 .preferences =
 "首选项",
 
+.proxy =
+"代理",
+
 .sample_rate =
 "采样率",
 
@@ -80,6 +89,9 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_zh_CN = {
 
 .search_artist =
 "搜索艺术家",
+
+.search_lyric =
+"搜索歌词",
 
 .search_playlist =
 "搜索播放列表",

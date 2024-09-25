@@ -10,6 +10,13 @@ void soundsphere::time_seconds_to_string(char* buff, size_t size, double seconds
     snprintf(buff, size, "%02d:%02d:%02d", hours, minutes, secs);
 }
 
+std::string soundsphere::time_seconds_to_string(double seconds)
+{
+    char buf[12];
+    time_seconds_to_string(buf, sizeof(buf), seconds);
+    return buf;
+}
+
 uint64_t soundsphere::clock_time_ms(void)
 {
     uint64_t t = ev_hrtime();

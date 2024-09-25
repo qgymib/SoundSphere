@@ -89,7 +89,8 @@ JSON_SERDE(config_t,
     language,
     volume,
     lyric,
-    songs
+    songs,
+    proxy
 )
 
 }

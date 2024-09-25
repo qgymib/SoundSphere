@@ -1,9 +1,11 @@
-#include <imgui.h>
 #include <ev.h>
+#include <base64.h>
+#include <imgui.h>
 #include <taglib/taglib.h>
 #include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
 #include <SDL_mixer.h>
+#include <zlib.h>
 #include "version.hpp"
 #include "i18n/__init__.h"
 #include "utils/defines.hpp"
@@ -51,6 +53,7 @@ static void _widget_about_exit(void)
 static void _widget_about_3rd(void)
 {
     static dep_info_t third_party_list[] = {
+        { "cpp-base64",         "",                 "https://github.com/ReneNyffenegger/cpp-base64" },
 #if defined(IMGUI_ENABLE_FREETYPE)
         { "freetype",           FREETYPE_VERSION,   "https://freetype.org" },
 #endif
@@ -59,6 +62,7 @@ static void _widget_about_3rd(void)
         { "nlohmann-json",      JSON_VERSION,       "https://json.nlohmann.me" },
         { "spdlog",             SPDLOG_VERSION,     "https://github.com/gabime/spdlog" },
         { "stb",                "",                 "https://github.com/nothings/stb" },
+        { "zlib",               ZLIB_VERSION,       "https://www.zlib.net" },
         { "IconFontCppHeaders", "",                 "https://github.com/juliettef/IconFontCppHeaders" },
         { "SDL_mixer",          SDL_MIXER_VERSION,  "https://github.com/libsdl-org/SDL_mixer" },
         { "TagLib",             TAGLIB_VERSION,     "https://taglib.org/" },

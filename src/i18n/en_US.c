@@ -25,8 +25,14 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_en_us = {
 .debug =
 "Debug",
 
+.duration =
+"Duration",
+
 .file =
 "File",
+
+.generic =
+"Generic",
 
 .help =
 "Help",
@@ -70,6 +76,9 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_en_us = {
 .preferences =
 "Preferences",
 
+.proxy =
+"Proxy",
+
 .sample_rate =
 "Sample rate",
 
@@ -78,6 +87,9 @@ static soundsphere_i18n_translation_t _soundsphere_i18n_en_us = {
 
 .search_artist =
 "Search Artist",
+
+.search_lyric =
+"Search Lyric",
 
 .search_playlist =
 "Search Playlist",

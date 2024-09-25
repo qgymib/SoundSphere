@@ -48,6 +48,11 @@ typedef struct config
      * @brief Song paths.
      */
     StringVec       songs;
+
+    /**
+     * @brief Proxy.
+     */
+    std::string     proxy;
 } config_t;
 
 /**

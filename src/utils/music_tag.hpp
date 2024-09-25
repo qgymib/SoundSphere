@@ -55,6 +55,11 @@ typedef struct music_tags_info
     int             channel;
 
     /**
+     * @brief The length of audio in seconds.
+     */
+    double          duration;
+
+    /**
      * @brief Title in UTF-8 encoding.
      */
     std::string     title;

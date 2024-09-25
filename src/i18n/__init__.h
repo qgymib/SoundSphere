@@ -16,7 +16,9 @@ extern "C" {
     xx(bit_rate)                    \
     xx(channel)                     \
     xx(debug)                       \
+    xx(duration)                    \
     xx(file)                        \
+    xx(generic)                     \
     xx(help)                        \
     xx(homepage)                    \
     xx(lang)                        \
@@ -31,9 +33,11 @@ extern "C" {
     xx(original_text)               \
     xx(path)                        \
     xx(preferences)                 \
+    xx(proxy)                       \
     xx(sample_rate)                 \
     xx(save)                        \
     xx(search_artist)               \
+    xx(search_lyric)                \
     xx(search_playlist)             \
     xx(search_title)                \
     xx(settings)                    \

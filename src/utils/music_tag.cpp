@@ -99,6 +99,9 @@ static void _tag_reader_get_properties_common(T* file,
     tags.info.bitrate = file->audioProperties()->bitrate();
     tags.info.samplerate = file->audioProperties()->sampleRate();
     tags.info.channel = file->audioProperties()->channels();
+
+    int length = file->audioProperties()->lengthInMilliseconds();
+    tags.info.duration = (double)length / 1000.0;
 }
 
 template<typename T>
@@ -369,6 +372,7 @@ soundsphere::music_tags_info::music_tags_info()
     bitrate = 0;
     samplerate = 0;
     channel = 0;
+    duration = 0.0;
 }
 
 const char* soundsphere::music_tag_format_name(music_type_t format)

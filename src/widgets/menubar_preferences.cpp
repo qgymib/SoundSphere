@@ -61,6 +61,7 @@ static void _widget_preferences_draw_generic_select_lang(void)
 static void _widget_preference_draw_generic(void)
 {
     _widget_preferences_draw_generic_select_lang();
+    ImGui::InputText(_T->proxy, &soundsphere::_config.proxy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -135,8 +136,8 @@ static void _widget_preferences_draw(void)
 
     /* Preferences tabs. */
     const preference_tab_t tabs[] = {
-        { _T->localization,  _widget_preference_draw_generic },
-        { _T->lyric,         _widget_preference_draw_lyric },
+        { _T->generic,      _widget_preference_draw_generic },
+        { _T->lyric,        _widget_preference_draw_lyric },
     };
 
     /* Show window. */

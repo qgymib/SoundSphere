@@ -31,9 +31,11 @@ set(soundsphere_sources
     "src/i18n/zh_CN.c"
     "src/runtime/__init__.cpp"
     "src/utils/binary.cpp"
+    "src/utils/curl.cpp"
     "src/utils/env.cpp"
     "src/utils/explorer.cpp"
     "src/utils/imgui.cpp"
+    "src/utils/krc.cpp"
     "src/utils/music_tag.cpp"
     "src/utils/path.cpp"
     "src/utils/string.cpp"
@@ -62,7 +64,6 @@ if (WIN32)
     target_compile_options(${PROJECT_NAME}
         PRIVATE
             /utf-8
-            /std:c++17
     )
     target_link_options(${PROJECT_NAME}
         PRIVATE
@@ -75,6 +76,10 @@ endif()
 target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_compile_features(${PROJECT_NAME}
+    PRIVATE
+        cxx_std_17
 )
 
 setup_target_wall(${PROJECT_NAME})
@@ -119,3 +124,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE stb)
 
 include(third_party/json.cmake)
 target_include_directories(${PROJECT_NAME} PRIVATE ${JSON_INCLUDE_DIRS})
+
+find_package(CURL REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl)
+
+include(third_party/cpp-base64.cmake)
+target_link_libraries(${PROJECT_NAME} PRIVATE cpp_base64)
+
+find_package(ZLIB REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE ZLIB::ZLIB)
