@@ -51,7 +51,7 @@ CURL* soundsphere::EasyCurl::get()
 
 std::string soundsphere::EasyCurl::escape(const std::string& data)
 {
-    char* escape_data = curl_easy_escape(m_iner->curl, data.data(), data.size());
+    char* escape_data = curl_easy_escape(m_iner->curl, data.data(), (int)data.size());
     std::string ret(escape_data);
     curl_free(escape_data);
     return ret;

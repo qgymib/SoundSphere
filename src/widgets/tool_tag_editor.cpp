@@ -128,7 +128,8 @@ static void _lyric_search_thread(void* arg)
     CURLcode ret = curl->perform(body);
     if (ret != CURLE_OK)
     {
-        spdlog::error("curl_easy_perform() failed: {}", curl_easy_strerror(ret));
+        const char* errinfo = curl_easy_strerror(ret);
+        spdlog::error("curl_easy_perform() failed: {}", errinfo);
         return;
     }
 
@@ -203,7 +204,7 @@ static void _show_lyric_table(const LyricSearchItemVec* lyrics)
         ImGui::TableHeadersRow();
 
         ImGuiListClipper clipper;
-        clipper.Begin(lyrics->size());
+        clipper.Begin((int)lyrics->size());
         while (clipper.Step())
         {
             for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++)

@@ -20,9 +20,9 @@ static soundsphere::Bin _krc_xor(const std::string& data)
     };
     for (size_t i = 4; i < data.size(); i++)
     {
-        int x = data[i];
-        int y = enckey[(i - 4) % sizeof(enckey)];
-        int v = x ^ y;
+        uint8_t x = data[i];
+        uint8_t y = enckey[(i - 4) % sizeof(enckey)];
+        uint8_t v = x ^ y;
         ret.push_back(v);
     }
 
@@ -36,7 +36,7 @@ static std::string _zlib_uncompress(const soundsphere::Bin& data)
     z_stream stream;
     memset(&stream, 0, sizeof(stream));
     stream.next_in = (Bytef*)data.data();
-    stream.avail_in = data.size();
+    stream.avail_in = (uInt)data.size();
 
     if (inflateInit(&stream) != Z_OK)
     {
