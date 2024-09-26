@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <IconsFontAwesome6.h>
 #include <curl/curl.h>
+#include "addons/__init__.hpp"
 #include "backends/__init__.hpp"
 #include "config/__init__.hpp"
 #include "fonts/fa_solid_900.h"
@@ -46,6 +47,7 @@ static soundsphere_module_t s_modules[] = {
     { soundsphere::runtime_init,    soundsphere::runtime_exit },
     { soundsphere::widget_init,     soundsphere::widget_exit },
     { _curl_init,                   curl_global_cleanup },
+    { soundsphere::addon_init,      soundsphere::addon_exit },
 };
 
 // Main code
@@ -94,6 +96,7 @@ int main(int, char**)
     soundsphere::backend_draw([](){
         soundsphere::runtime_loop();
         soundsphere::widget_draw();
+        soundsphere::addon_draw();
     });
 
     for (size_t i = ARRAY_SIZE(s_modules); i > 0; i--)

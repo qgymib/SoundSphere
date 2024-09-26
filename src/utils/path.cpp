@@ -1,3 +1,4 @@
+#include <ev.h>
 #include "path.hpp"
 
 std::string soundsphere::dirname(const std::string& path)
@@ -44,4 +45,21 @@ std::string soundsphere::extname(const std::string& path)
         return "";
     }
     return name.substr(first_dot);
+}
+
+std::string soundsphere::exepath(void)
+{
+    size_t buff_sz = 8192;
+    char* buff = (char*)ev_malloc(buff_sz);
+
+    ssize_t path_sz = ev_exepath(buff, buff_sz);
+    if (path_sz >= (ssize_t)buff_sz)
+    {
+        ev_free(buff);
+        return "";
+    }
+
+    std::string ret(buff);
+    ev_free(buff);
+    return ret;
 }

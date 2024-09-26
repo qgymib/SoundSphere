@@ -19,6 +19,10 @@ endfunction()
 ###############################################################################
 
 set(soundsphere_sources
+    "src/addons/__init__.cpp"
+    "src/addons/export_curl.cpp"
+    "src/addons/export_imgui.cpp"
+    "src/addons/export_libc.cpp"
 	"src/assets/icon.c"
     "src/backends/sdl2_sdlrenderer2.cpp"
     "src/config/__init__.cpp"
@@ -74,6 +78,9 @@ else()
 endif()
 
 target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )

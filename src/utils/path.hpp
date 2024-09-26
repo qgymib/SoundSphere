@@ -27,6 +27,12 @@ std::string basename(const std::string& path, bool with_ext);
  */
 std::string extname(const std::string& path);
 
+/**
+ * @brief Get the executable path.
+ * @return The executable path.
+ */
+std::string exepath(void);
+
 }
 
 #endif
