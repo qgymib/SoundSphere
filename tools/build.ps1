@@ -1,13 +1,21 @@
 $scriptPath = $MyInvocation.MyCommand.Path
 $scriptDir = Split-Path -Parent $scriptPath
 $projectDir = Split-Path -Parent $scriptDir
-$buildDir = "$projectDir/build.win32"
-$downloadDir = "$buildDir/download"
-$installDir = "$buildDir/install"
+$workDir = "$projectDir/build.win32"
+$buildDir = "$workDir/build"
+$cacheDir = "$workDir/cache"
+$downloadDir = "$workDir/download"
+$installDir = "$workDir/install"
 
 # Create necessary directories
+if (-Not (Test-Path "$workDir")) {
+    New-Item -ItemType Directory -Path $workDir
+}
 if (-Not (Test-Path "$buildDir")) {
     New-Item -ItemType Directory -Path $buildDir
+}
+if (-Not (Test-Path "$cacheDir")) {
+    New-Item -ItemType Directory -Path $cacheDir
 }
 if (-Not (Test-Path "$downloadDir")) {
     New-Item -ItemType Directory -Path $downloadDir
@@ -20,7 +28,7 @@ if (-Not (Test-Path "$installDir")) {
 # 7zr
 ###############################################################################
 $7zrUrl = "https://www.7-zip.org/a/7zr.exe"
-$7zrFile = "$installDir/7zr.exe"
+$7zrFile = "$downloadDir/7zr.exe"
 if (-Not (Test-Path "$7zrFile")) {
     Invoke-WebRequest -Uri $7zrUrl -OutFile "$7zrFile"
 }
@@ -45,20 +53,21 @@ $7z = "$7zInstallDir/7za.exe"
 $mbedtlsVersion = "3.6.1"
 $mbedtlsUrl = "https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-$mbedtlsVersion/mbedtls-$mbedtlsVersion.tar.bz2"
 $mbedtlsSaveFile = "$downloadDir/mbedtls-$mbedtlsVersion.tar.bz2"
-$mbedtlsUncompressDir = "$downloadDir/mbedtls-$mbedtlsVersion"
-$mbedtlsBuildDir = "$mbedtlsUncompressDir/build"
+$mbedtlsUncompressDir = "$cacheDir/mbedtls-$mbedtlsVersion"
+$mbedtlsBuildDir = "$buildDir/mbedtls-$mbedtlsVersion"
 $mbedtlsInstallDir = "$installDir/mbedtls-$mbedtlsVersion"
 if (-Not (Test-Path "$mbedtlsSaveFile")) {
     Invoke-WebRequest -Uri $mbedtlsUrl -OutFile "$mbedtlsSaveFile"
 }
 if (-Not (Test-Path "$mbedtlsUncompressDir")) {
-    & "$7z" x "$mbedtlsSaveFile"  -o"$downloadDir"
+    & "$7z" x "$mbedtlsSaveFile"  -o"$cacheDir"
+	& "$7z" x "$cacheDir/mbedtls-$mbedtlsVersion.tar"  -o"$cacheDir"
 }
 if (-Not (Test-Path "$mbedtlsBuildDir")) {
     New-Item -ItemType Directory -Path "$mbedtlsBuildDir"
 }
 Push-Location -Path "$mbedtlsBuildDir"
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$mbedtlsInstallDir" ..
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$mbedtlsInstallDir" "$mbedtlsUncompressDir"
 cmake --build . --config Release
 cmake --install .
 Pop-Location
@@ -69,14 +78,14 @@ Pop-Location
 $curlVersion = "8.10.1"
 $curlUrl = "https://curl.se/download/curl-$curlVersion.zip"
 $curlFile = "$downloadDir/curl-$curlVersion.zip"
-$curlUncompressDir = "$downloadDir/curl-$curlVersion"
-$curlBuildDir = "$curlUncompressDir/build"
+$curlUncompressDir = "$cacheDir/curl-$curlVersion"
+$curlBuildDir = "$buildDir/curl-$curlVersion"
 $curlInstallDir = "$installDir/curl-$curlVersion"
 if (-Not (Test-Path "$curlFile")) {
     Invoke-WebRequest -Uri $curlUrl -OutFile "$curlFile"
 }
 if (-Not (Test-Path "$curlUncompressDir")) {
-    & "$7z" x "$curlFile"  -o"$downloadDir"
+    & "$7z" x "$curlFile"  -o"$cacheDir"
 }
 if (-Not (Test-Path "$curlBuildDir")) {
     New-Item -ItemType Directory -Path "$curlBuildDir"
@@ -91,7 +100,7 @@ cmake -DCMAKE_BUILD_TYPE=Release `
     -DCURL_USE_MBEDTLS=ON `
     -DPC_MBEDTLS_INCLUDE_DIRS="$mbedtlsInstallDir/include" `
     -DPC_MBEDTLS_LIBRARY_DIRS="$mbedtlsInstallDir/lib" `
-    ..
+    "$curlUncompressDir"
 cmake --build . --config Release
 cmake --install .
 Pop-Location
@@ -102,14 +111,15 @@ Pop-Location
 $zlibVersion = "1.3.1"
 $zlibUrl = "https://www.zlib.net/zlib-$zlibVersion.tar.gz"
 $zlibFile = "$downloadDir/zlib-$zlibVersion.tar.gz"
-$zlibUncompressDir = "$downloadDir/zlib-$zlibVersion"
-$zlibBuildDir = "$zlibUncompressDir/build"
+$zlibUncompressDir = "$cacheDir/zlib-$zlibVersion"
+$zlibBuildDir = "$buildDir/zlib-$zlibVersion"
 $zlibInstallDir = "$installDir/zlib-$zlibVersion"
 if (-Not (Test-Path "$zlibFile")) {
     Invoke-WebRequest -Uri $zlibUrl -OutFile "$zlibFile"
 }
 if (-Not (Test-Path "$zlibUncompressDir")) {
-    & "$7z" x "$zlibFile"  -o"$downloadDir"
+    & "$7z" x "$zlibFile"  -o"$cacheDir"
+	& "$7z" x "$cacheDir/zlib-$zlibVersion.tar"  -o"$cacheDir"
 }
 if (-Not (Test-Path "$zlibBuildDir")) {
     New-Item -ItemType Directory -Path "$zlibBuildDir"
@@ -117,7 +127,7 @@ if (-Not (Test-Path "$zlibBuildDir")) {
 Push-Location -Path "$zlibBuildDir"
 cmake -DCMAKE_BUILD_TYPE=Release `
     -DCMAKE_INSTALL_PREFIX="$zlibInstallDir" `
-    ..
+    "$zlibUncompressDir"
 cmake --build . --config Release
 cmake --install .
 Pop-Location
@@ -128,14 +138,14 @@ Pop-Location
 $sdl2Version = "2.30.7"
 $sdl2Url = "https://github.com/libsdl-org/SDL/archive/refs/tags/release-$sdl2Version.zip"
 $sdl2File = "$downloadDir/SDL2-$sdl2Version.zip"
-$sdl2UncompressDir = "$downloadDir/SDL-release-$sdl2Version"
-$sdl2BuildDir = "$sdl2UncompressDir/build"
+$sdl2UncompressDir = "$cacheDir/SDL-release-$sdl2Version"
+$sdl2BuildDir = "$buildDir/SDL-$sdl2Version"
 $sdl2InstallDir = "$installDir/SDL-$sdl2Version"
 if (-Not (Test-Path "$sdl2File")) {
     Invoke-WebRequest -Uri $sdl2Url -OutFile "$sdl2File"
 }
 if (-Not (Test-Path "$sdl2UncompressDir")) {
-    & "$7z" x "$sdl2File"  -o"$downloadDir"
+    & "$7z" x "$sdl2File"  -o"$cacheDir"
 }
 if (-Not (Test-Path "$sdl2BuildDir")) {
     New-Item -ItemType Directory -Path "$sdl2BuildDir"
@@ -143,7 +153,7 @@ if (-Not (Test-Path "$sdl2BuildDir")) {
 Push-Location -Path "$sdl2BuildDir"
 cmake -DCMAKE_BUILD_TYPE=Release `
     -DCMAKE_INSTALL_PREFIX="$sdl2InstallDir" `
-    ..
+    "$sdl2UncompressDir"
 cmake --build . --config Release
 cmake --install .
 Pop-Location
@@ -153,10 +163,10 @@ Pop-Location
 ###############################################################################
 $SDLMixerVersion = "release-2.8.0"
 $SDLMixerUrl = "https://github.com/libsdl-org/SDL_mixer.git"
-$SDLMixerDir = "$downloadDir/SDL_mixer"
-$SDLMixerBuildDir = "$SDLMixerDir/build"
+$SDLMixerUncompressDir = "$downloadDir/SDL_mixer"
+$SDLMixerBuildDir = "$buildDir/SDL_mixer-$SDLMixerVersion"
 $SDLMixerInstallDir = "$installDir/SDL_mixer-$SDLMixerVersion"
-if (-Not (Test-Path "$SDLMixerDir")) {
+if (-Not (Test-Path "$SDLMixerUncompressDir")) {
     Push-Location -Path "$downloadDir"
     & git clone --recurse-submodules --depth 1 --branch "$SDLMixerVersion" "$SDLMixerUrl"
     Pop-Location
@@ -174,7 +184,7 @@ cmake -DCMAKE_BUILD_TYPE=Release `
     -DSDL2MIXER_SAMPLES:BOOL=OFF `
     -DSDL2_INCLUDE_DIR="$sdl2InstallDir/include/SDL2" `
     -DSDL2_LIBRARY="$sdl2InstallDir/lib/SDL2-static.lib" `
-    ..
+    "$SDLMixerUncompressDir"
 cmake --build . --config Release
 cmake --install .
 Pop-Location
@@ -190,15 +200,15 @@ $SDLMixerNewContent | Set-Content -Path "$SDLMixerInstallDir/cmake/SDL2_mixerCon
 $freetypeVersion = "2.13.3"
 $freetypeUrl = "https://download.savannah.gnu.org/releases/freetype/freetype-$freetypeVersion.tar.gz"
 $freetypeSaveFile = "$downloadDir/freetype-$freetypeVersion.tar.gz"
-$freetypeUncompressDir = "$downloadDir/freetype-$freetypeVersion"
-$freetypeBuildDir = "$freetypeUncompressDir/build"
+$freetypeUncompressDir = "$cacheDir/freetype-$freetypeVersion"
+$freetypeBuildDir = "$buildDir/freetype-$freetypeVersion"
 $freetypeInstallDir = "$installDir/freetype-$freetypeVersion"
 if (-Not (Test-Path "$freetypeSaveFile")) {
     Invoke-WebRequest -Uri $freetypeUrl -OutFile "$freetypeSaveFile"
 }
 if (-Not (Test-Path "$freetypeUncompressDir")) {
-    & "$7z" x "$freetypeSaveFile"  -o"$downloadDir"
-    & "$7z" x "$downloadDir/freetype-$freetypeVersion.tar"  -o"$downloadDir"
+    & "$7z" x "$freetypeSaveFile"  -o"$cacheDir"
+    & "$7z" x "$cacheDir/freetype-$freetypeVersion.tar"  -o"$cacheDir"
 }
 if (-Not (Test-Path "$freetypeBuildDir")) {
     New-Item -ItemType Directory -Path "$freetypeBuildDir"
@@ -206,7 +216,7 @@ if (-Not (Test-Path "$freetypeBuildDir")) {
 Push-Location -Path "$freetypeBuildDir"
 cmake -DCMAKE_BUILD_TYPE=Release `
     -DCMAKE_INSTALL_PREFIX="$freetypeInstallDir" `
-    ..
+    "$freetypeUncompressDir"
 cmake --build . --config Release
 cmake --install .
 Pop-Location
@@ -221,14 +231,12 @@ if (-Not (Test-Path "$soundshphereBuildDir")) {
 Push-Location -Path "$soundshphereBuildDir"
 $env:FREETYPE_DIR = "$freetypeInstallDir"
 cmake -DCMAKE_BUILD_TYPE=Release `
-    -DCMAKE_INSTALL_PREFIX="$freetypeInstallDir" `
     -DSDL2_DIR="$sdl2InstallDir/cmake" `
     -DSDL2_mixer_DIR="$SDLMixerInstallDir/cmake" `
-	-DSDL2MIXER_VENDORED=OFF `
-    -DCURL_DIR="$curlInstallDir/lib\cmake\CURL" `
+    -DCURL_DIR="$curlInstallDir/lib/cmake/CURL" `
     -DZLIB_ROOT="$zlibInstallDir" `
     -DZLIB_USE_STATIC_LIBS=ON `
-    ../..
+    "$projectDir"
 cmake --build . --config Release
 Remove-Item Env:\FREETYPE_DIR
 Pop-Location
