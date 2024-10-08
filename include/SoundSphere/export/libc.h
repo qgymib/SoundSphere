@@ -8,13 +8,20 @@ extern "C" {
 #endif
 
 typedef struct SS_LibC_Thread SS_LibC_Thread;
+typedef struct SS_LibC_Mutex SS_LibC_Mutex;
+
 
 typedef struct SS_LibC
 {
     /**
+     * @brief Thread
+     * @{
+     */
+
+    /**
      * @brief Create a thread.
      */
-    int (*thread_create)(SS_LibC_Thread** thread, void(*proc)(void*), void* arg);
+    void (*thread_create)(SS_LibC_Thread** thread, void(*proc)(void*), void* arg);
 
     /**
      * @brief Wait for thread exit.
@@ -24,6 +31,22 @@ typedef struct SS_LibC
      *   \p thread is not exit, you need to call this function again.
      */
     int (*thread_join)(SS_LibC_Thread* thread, uint32_t timeout);
+
+    /**
+     * @}
+     */
+
+    /**
+     * @brief Mutex
+     * @{
+     */
+    void (*mutex_create)(SS_LibC_Mutex** mutex, int recursive);
+    void (*mutex_destroy)(SS_LibC_Mutex* mutex);
+    void (*mutex_enter)(SS_LibC_Mutex* mutex);
+    void (*mutex_leave)(SS_LibC_Mutex* mutex);
+    /**
+     * @}
+     */
 } SS_LibC;
 
 #ifdef __cplusplus
