@@ -133,3 +133,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE cpp_base64)
 
 find_package(ZLIB REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE ZLIB::ZLIB)
+
+add_subdirectory(third_party/lua)
+target_link_libraries(${PROJECT_NAME} PRIVATE liblua)
