@@ -1,0 +1,10 @@
+﻿---
+BasedOnStyle: Microsoft
+AccessModifierOffset: '-4'
+SortIncludes: false
+AlignArrayOfStructures: Left
+Cpp11BracedListStyle: false
+IndentExternBlock: NoIndent
+BraceWrapping:
+    AfterExternBlock: false
+...

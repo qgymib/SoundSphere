@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+
+Name=SoundSphere
+Comment=Yet another music player
+Categories=AudioVideo;Player;
+
+Icon=icon_256
+Exec=soundsphere
+Terminal=false

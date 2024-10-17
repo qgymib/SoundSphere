@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.qgymib.soundsphere</id>
+  
+  <name>SoundSphere</name>
+  <summary>Yet another music player</summary>
+  <url type="homepage">https://github.com/qgymib/SoundSphere</url>
+  
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  
+  <description>
+    <p>
+      A local music player
+    </p>
+  </description>
+  
+  <launchable type="desktop-id">io.github.qgymib.soundsphere.desktop</launchable>
+</component>
+
