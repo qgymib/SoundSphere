@@ -9,6 +9,8 @@
 #include "dummy_player.hpp"
 #include "tool_tag_editor.hpp"
 
+using namespace soundsphere;
+
 /**
  * @brief Texture map.
  * The key is uid, the value is the texture.
@@ -47,8 +49,8 @@ typedef struct playlist_ctx
      * structures #texture_ts_map and #texture_uid_map to maintain GC.
      */
     TextureMap texture_table;
-    ev_map_t texture_ts_map;
-    ev_map_t texture_uid_map;
+    ev_map_t   texture_ts_map;
+    ev_map_t   texture_uid_map;
 } playlist_ctx_t;
 
 static playlist_ctx_t *s_playlist_ctx = nullptr;
@@ -210,13 +212,13 @@ static void _ui_playlist_draw_table_item(soundsphere::music_tags_t *obj, uint64_
     }
     if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
     {
-        soundsphere::dummy_player_resume_or_play();
+        widget_fast_req<DummyPlayerResumeOrPlay>(WIDGET_ID_DUMMY_PLAYER);
     }
     if (ImGui::BeginPopupContextItem("Tag Editor##435bf70d-067a-43ca-96aa-423071a6f817"))
     {
         if (ImGui::MenuItem(_T->tag_editor))
         {
-            soundsphere::tag_editor_open(obj->path);
+            soundsphere::widget_fast_req<soundsphere::TagEditorOpen>(soundsphere::WIDGET_ID_TOOL_TAG_EDITOR, obj->path);
         }
         ImGui::EndPopup();
     }
@@ -266,7 +268,7 @@ static void _ui_playlist_gc(void)
     const uint64_t ts = soundsphere::clock_time_ms();
     const uint64_t gc_timeout = (uint64_t)10 * 1000 * 1000 * 1000;
 
-    uint64_t gc_cnt = 0;
+    uint64_t       gc_cnt = 0;
     ev_map_node_t *it = ev_map_begin(&s_playlist_ctx->texture_ts_map);
     while (it != NULL)
     {
@@ -312,4 +314,5 @@ const soundsphere::widget_t soundsphere::ui_playlist = {
     _ui_playlist_init,
     _ui_playlist_exit,
     _ui_playlist_draw,
+    nullptr,
 };

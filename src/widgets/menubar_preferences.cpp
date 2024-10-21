@@ -163,4 +163,5 @@ const soundsphere::widget_t soundsphere::menubar_preferences = {
     _widget_preferences_init,
     _widget_preferences_exit,
     _widget_preferences_draw,
+    nullptr,
 };

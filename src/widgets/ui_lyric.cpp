@@ -281,4 +281,5 @@ const soundsphere::widget_t soundsphere::ui_lyric = {
     _ui_lyric_init,
     _ui_lyric_exit,
     _ui_lyric_draw,
+    nullptr,
 };

@@ -95,4 +95,5 @@ const soundsphere::widget_t soundsphere::ui_cover = {
     _ui_cover_init,
     _ui_cover_exit,
     _ui_cover_draw,
+    nullptr,
 };

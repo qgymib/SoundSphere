@@ -162,4 +162,5 @@ const soundsphere::widget_t soundsphere::menubar_about = {
     _widget_about_init,
     _widget_about_exit,
     _widget_about_draw,
+    nullptr,
 };

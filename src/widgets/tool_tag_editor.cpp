@@ -11,6 +11,8 @@
 #include "__init__.hpp"
 #include "tool_tag_editor.hpp"
 
+using namespace soundsphere;
+
 typedef struct lyric_search_item
 {
     std::string id;
@@ -22,8 +24,8 @@ typedef struct lyric_search_item
 } lyric_search_item_t;
 
 typedef std::shared_ptr<lyric_search_item_t> LyricSearchPtr;
-typedef std::vector<lyric_search_item_t> LyricSearchItemVec;
-typedef std::shared_ptr<LyricSearchItemVec> LyricSearchItemVecPtr;
+typedef std::vector<lyric_search_item_t>     LyricSearchItemVec;
+typedef std::shared_ptr<LyricSearchItemVec>  LyricSearchItemVecPtr;
 
 typedef struct tag_editor_ctx
 {
@@ -43,7 +45,7 @@ typedef struct tag_editor_ctx
     /**
      * @brief Tag information.
      */
-    soundsphere::MusicTagPtr tags;
+    MusicTagPtr tags;
 
     /**
      * @brief Working thread.
@@ -56,9 +58,45 @@ typedef struct tag_editor_ctx
     LyricSearchItemVecPtr lyric_search_ret;
 
     int selected_row;
+
+    Msg::Dispatch req_dispatcher;
 } tag_editor_ctx_t;
 
 static tag_editor_ctx_t *s_tag_editor = nullptr;
+const uint64_t           TagEditorOpen::ID;
+
+TagEditorOpen::Req::Req(const std::string &path)
+{
+    this->path = path;
+}
+
+static void _tool_tageditor_close(void)
+{
+    s_tag_editor->tags = std::make_shared<music_tags_t>();
+}
+
+/**
+ * @brief Open the tag editor with \p path.
+ */
+static void _tag_editor_open(const std::string &path)
+{
+    _tool_tageditor_close();
+
+    MusicTagPtr tags = std::make_shared<music_tags_t>();
+    tags->path = path;
+
+    music_read_tag(*tags);
+
+    s_tag_editor->tags = tags;
+    s_tag_editor->window_open = true;
+    s_tag_editor->selected_row = -1;
+}
+
+static void _on_open_music_file(Msg::Ptr msg)
+{
+    auto req = msg->get_req<TagEditorOpen>();
+    _tag_editor_open(req->path);
+}
 
 tag_editor_ctx::tag_editor_ctx()
 {
@@ -66,6 +104,9 @@ tag_editor_ctx::tag_editor_ctx()
     default_window_sz = ImVec2(640, 400);
     thread = EV_OS_THREAD_INVALID;
     selected_row = -1;
+
+    req_dispatcher.set_mode(Msg::TYPE_REQ);
+    req_dispatcher.register_handle<TagEditorOpen>(_on_open_music_file);
 }
 
 tag_editor_ctx::~tag_editor_ctx()
@@ -75,11 +116,6 @@ tag_editor_ctx::~tag_editor_ctx()
         ev_thread_exit(&thread, EV_INFINITE_TIMEOUT);
         thread = EV_OS_THREAD_INVALID;
     }
-}
-
-static void _tool_tageditor_close(void)
-{
-    s_tag_editor->tags = std::make_shared<soundsphere::music_tags_t>();
 }
 
 static void _tool_tageditor_init(void)
@@ -117,7 +153,7 @@ static void _lyric_search_thread(void *arg)
 {
     (void)arg;
 
-    soundsphere::EasyCurl::Ptr curl = std::make_shared<soundsphere::EasyCurl>();
+    EasyCurl::Ptr curl = std::make_shared<EasyCurl>();
 
     std::string artist = curl->escape(s_tag_editor->tags->info.artist);
     std::string title = curl->escape(s_tag_editor->tags->info.title);
@@ -126,7 +162,7 @@ static void _lyric_search_thread(void *arg)
     curl_easy_setopt(curl->get(), CURLOPT_URL, url.c_str());
 
     std::string body;
-    CURLcode ret = curl->perform(body);
+    CURLcode    ret = curl->perform(body);
     if (ret != CURLE_OK)
     {
         const char *errinfo = curl_easy_strerror(ret);
@@ -136,7 +172,7 @@ static void _lyric_search_thread(void *arg)
 
     LyricSearchItemVecPtr vec = std::make_shared<LyricSearchItemVec>();
 
-    nlohmann::json rsp = nlohmann::json::parse(body);
+    nlohmann::json  rsp = nlohmann::json::parse(body);
     nlohmann::json &candidates = rsp["candidates"];
     for (auto it = candidates.begin(); it != candidates.end(); it++)
     {
@@ -146,36 +182,36 @@ static void _lyric_search_thread(void *arg)
         item.artist = (*it)["singer"].get<std::string>();
         item.title = (*it)["song"].get<std::string>();
         double duration = (*it)["duration"].get<double>() / 1000;
-        item.duration = soundsphere::time_seconds_to_string(duration);
+        item.duration = time_seconds_to_string(duration);
         vec->push_back(item);
     }
 
-    soundsphere::runtime_call_in_ui<LyricSearchItemVec>(_update_lyric_search_result_ui, vec);
+    runtime_call_in_ui<LyricSearchItemVec>(_update_lyric_search_result_ui, vec);
 }
 
 static void _lyric_download_thread(void *arg)
 {
     lyric_search_item_t *info = static_cast<lyric_search_item_t *>(arg);
-    LyricSearchPtr item = std::make_shared<lyric_search_item_t>(*info);
+    LyricSearchPtr       item = std::make_shared<lyric_search_item_t>(*info);
     delete info;
 
-    soundsphere::EasyCurl::Ptr curl = std::make_shared<soundsphere::EasyCurl>();
-    std::string url = "https://lyrics.kugou.com/download?ver=1&client=pc&id=" + item->id +
+    EasyCurl::Ptr curl = std::make_shared<EasyCurl>();
+    std::string   url = "https://lyrics.kugou.com/download?ver=1&client=pc&id=" + item->id +
                       "&accesskey=" + item->accesskey + "&fmt=krc&charset=utf8";
     curl_easy_setopt(curl->get(), CURLOPT_URL, url.c_str());
 
     std::string body;
-    CURLcode ret = curl->perform(body);
+    CURLcode    ret = curl->perform(body);
     if (ret != CURLE_OK)
     {
         return;
     }
 
     nlohmann::json rsp = nlohmann::json::parse(body);
-    std::string lyric = rsp["content"];
-    item->lyric = soundsphere::krc_to_lyric(lyric);
+    std::string    lyric = rsp["content"];
+    item->lyric = krc_to_lyric(lyric);
 
-    soundsphere::runtime_call_in_ui<lyric_search_item_t>(_fill_lyric_result_ui, item);
+    runtime_call_in_ui<lyric_search_item_t>(_fill_lyric_result_ui, item);
 }
 
 static void _download_lyric(const lyric_search_item_t &info)
@@ -291,7 +327,7 @@ static void _tool_tageditor_draw_editor(void)
     if (ImGui::Button(_T->save))
     {
         std::string errinfo;
-        soundsphere::music_write_tag(*s_tag_editor->tags, errinfo);
+        music_write_tag(*s_tag_editor->tags, errinfo);
     }
 
     ImGui::EndGroup();
@@ -325,22 +361,14 @@ static void _tool_tageditor_draw(void)
     }
 }
 
+static void _tool_tageditor_message(Msg::Ptr msg)
+{
+    s_tag_editor->req_dispatcher.dispatch(msg);
+}
+
 const soundsphere::widget_t soundsphere::tool_tag_editor = {
     _tool_tageditor_init,
     _tool_tageditor_exit,
     _tool_tageditor_draw,
+    _tool_tageditor_message,
 };
-
-void soundsphere::tag_editor_open(const std::string &path)
-{
-    _tool_tageditor_close();
-
-    soundsphere::MusicTagPtr tags = std::make_shared<soundsphere::music_tags_t>();
-    tags->path = path;
-
-    music_read_tag(*tags);
-
-    s_tag_editor->tags = tags;
-    s_tag_editor->window_open = true;
-    s_tag_editor->selected_row = -1;
-}

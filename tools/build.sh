@@ -258,6 +258,8 @@ fi
         -DSDL2_mixer_DIR=$sdl_mixer_install_dir/lib/cmake/SDL2_mixer \
         -DCMAKE_MODULE_PATH=$sdl_mixer_install_dir/lib/cmake/SDL2_mixer \
         -DCURL_DIR=$curl_install_dir/lib/cmake/CURL \
+        -DZLIB_ROOT=$zlib_install_dir \
+        -DZLIB_USE_STATIC_LIBS=ON \
         $project_dir && \
     cmake --build .)
 if [ $? -ne 0 ]; then

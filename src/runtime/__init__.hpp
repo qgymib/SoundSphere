@@ -66,17 +66,18 @@ public:
     typedef std::shared_ptr<JobDataBase> JobPtr;
 
 public:
-    JobDataBase(){};
-    virtual ~JobDataBase(){};
+    JobDataBase() {};
+    virtual ~JobDataBase() {};
 
 public:
     virtual void call(void) = 0;
 };
 
-template <typename T> class JobData : public JobDataBase
+template <typename T>
+class JobData : public JobDataBase
 {
 public:
-    typedef std::shared_ptr<T> ObjPtr;
+    typedef std::shared_ptr<T>          ObjPtr;
     typedef std::function<void(ObjPtr)> Func;
 
 public:
@@ -86,7 +87,7 @@ public:
         m_obj = obj;
     }
 
-    virtual ~JobData(){};
+    virtual ~JobData() {};
 
 public:
     virtual void call(void)
@@ -95,7 +96,7 @@ public:
     }
 
 private:
-    Func m_func;
+    Func   m_func;
     ObjPtr m_obj;
 };
 
@@ -133,7 +134,8 @@ void runtime_submit_job(JobDataBase::JobPtr job);
  * @param[in] fn    Job callback.
  * @param[in] obj   Job parameter.
  */
-template <typename T> void runtime_call_in_ui(typename JobData<T>::Func fn, typename JobData<T>::ObjPtr obj)
+template <typename T>
+void runtime_call_in_ui(typename JobData<T>::Func fn, typename JobData<T>::ObjPtr obj)
 {
     JobDataBase::JobPtr ptr = std::make_shared<JobData<T>>(fn, obj);
     runtime_submit_job(ptr);

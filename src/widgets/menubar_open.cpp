@@ -9,6 +9,8 @@
 #include "ui_filter.hpp"
 #include "dummy_player.hpp"
 
+using namespace soundsphere;
+
 typedef struct menubar_open_ctx
 {
     menubar_open_ctx();
@@ -55,8 +57,8 @@ static void _handle_open_files_on_ui(soundsphere::MusicTagPtrVecPtr vec)
     /* Clear selected item. */
     soundsphere::_G.playlist.selected_id = (uint64_t)-1;
 
-    soundsphere::ui_filter_reset();
-    soundsphere::dummy_player_reload();
+    widget_fast_req<UiFilterReset>(WIDGET_ID_UI_FILTER);
+    widget_fast_req<DummyPlayerReload>(WIDGET_ID_DUMMY_PLAYER);
 }
 
 static void _handle_open_files(const soundsphere::StringVec &paths)
@@ -92,28 +94,28 @@ static void _start_open_folder_thread(void *arg)
     _handle_open_files(paths);
 }
 
-static void _handle_add_files_on_ui(soundsphere::MusicTagPtrVecPtr vec)
+static void _handle_add_files_on_ui(MusicTagPtrVecPtr vec)
 {
-    soundsphere::MusicTagPtrVecPtr songs = soundsphere::_G.media_list;
+    MusicTagPtrVecPtr songs = soundsphere::_G.media_list;
     songs->insert(songs->end(), vec->begin(), vec->end());
 
-    soundsphere::remove_duplicate<soundsphere::MusicTagPtr, uint64_t>(
-        *songs.get(), [](const soundsphere::MusicTagPtr &p) { return p->path_hash; });
+    soundsphere::remove_duplicate<MusicTagPtr, uint64_t>(*songs.get(),
+                                                         [](const MusicTagPtr &p) { return p->path_hash; });
 
-    soundsphere::ui_filter_reset();
+    widget_fast_req<UiFilterReset>(WIDGET_ID_UI_FILTER);
 }
 
-static void _handle_add_files(const soundsphere::StringVec &paths)
+static void _handle_add_files(const StringVec &paths)
 {
-    soundsphere::MusicTagPtrVecPtr vec = soundsphere::music_read_tag_v(paths);
-    soundsphere::runtime_call_in_ui<soundsphere::MusicTagPtrVec>(_handle_add_files_on_ui, vec);
+    MusicTagPtrVecPtr vec = music_read_tag_v(paths);
+    runtime_call_in_ui<MusicTagPtrVec>(_handle_add_files_on_ui, vec);
 }
 
 static void _start_add_file_thread(void *arg)
 {
     (void)arg;
-    soundsphere::StringVec paths;
-    if (!soundsphere::explorer_open_files(paths, s_filters, IM_ARRAYSIZE(s_filters)))
+    StringVec paths;
+    if (!explorer_open_files(paths, s_filters, IM_ARRAYSIZE(s_filters)))
     {
         return;
     }
@@ -176,4 +178,5 @@ const soundsphere::widget_t soundsphere::menubar_open = {
     _menubar_open_init,
     _menubar_open_exit,
     _menubar_open_draw,
+    nullptr,
 };

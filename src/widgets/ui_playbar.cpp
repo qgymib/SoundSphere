@@ -6,12 +6,45 @@
 #include "__init__.hpp"
 #include "dummy_player.hpp"
 
+using namespace soundsphere;
+
+typedef struct playbar_ctx
+{
+    playbar_ctx();
+    ~playbar_ctx();
+
+    DummyPlayerSetShuffleMode::shuffle_mode shuffle_mode;
+    Msg::Dispatch evt_dispatcher;
+} playbar_ctx_t;
+
+static playbar_ctx_t *s_playbar_ctx = nullptr;
+
+static void _on_shuffle_mode_event(Msg::Ptr msg)
+{
+    auto evt = msg->get_evt<DummyPlayerSetShuffleMode>();
+    s_playbar_ctx->shuffle_mode = evt->mode;
+}
+
+playbar_ctx::playbar_ctx()
+{
+    shuffle_mode = DummyPlayerSetShuffleMode::SHUFFLE_ORDER;
+    evt_dispatcher.set_mode(Msg::TYPE_EVT);
+    evt_dispatcher.register_handle<DummyPlayerSetShuffleMode>(_on_shuffle_mode_event);
+}
+
+playbar_ctx::~playbar_ctx()
+{
+}
+
 static void _widget_playbar_init(void)
 {
+    s_playbar_ctx = new playbar_ctx_t;
 }
 
 static void _widget_playbar_exit(void)
 {
+    delete s_playbar_ctx;
+    s_playbar_ctx = nullptr;
 }
 
 static void _widget_playbar_draw_backward_btn(void)
@@ -27,14 +60,14 @@ static void _widget_playbar_draw_play_btn(void)
     {
         if (ImGui::Button(ICON_FA_PAUSE))
         {
-            soundsphere::dummy_player_pause();
+            widget_fast_req<DummyPlayerPause>(WIDGET_ID_DUMMY_PLAYER);
         }
     }
     else
     {
         if (ImGui::Button(ICON_FA_PLAY))
         {
-            soundsphere::dummy_player_resume_or_play();
+            widget_fast_req<DummyPlayerResumeOrPlay>(WIDGET_ID_DUMMY_PLAYER);
         }
     }
 }
@@ -43,37 +76,40 @@ static void _widget_playbar_draw_forward_btn(void)
 {
     if (ImGui::Button(ICON_FA_FORWARD))
     {
-        soundsphere::dummy_player_next();
+        widget_fast_req<DummyPlayerNext>(WIDGET_ID_DUMMY_PLAYER);
     }
 }
 
 static void _widget_playbar_draw_shuffle_btn(void)
 {
-    soundsphere::shuffle_mode_t mode = soundsphere::dummy_player_get_shuffle_mode();
+    DummyPlayerSetShuffleMode::shuffle_mode mode = s_playbar_ctx->shuffle_mode;
 
-    if (mode == soundsphere::SHUFFLE_ORDER)
+    if (mode == DummyPlayerSetShuffleMode::SHUFFLE_ORDER)
     {
         if (ImGui::Button(ICON_FA_RIGHT_LEFT))
         {
-            soundsphere::dummy_player_set_shuffle(soundsphere::SHUFFLE_RANDOM);
+            widget_fast_req<DummyPlayerSetShuffleMode>(WIDGET_ID_DUMMY_PLAYER,
+                                                       DummyPlayerSetShuffleMode::SHUFFLE_RANDOM);
         }
         return;
     }
 
-    if (mode == soundsphere::SHUFFLE_RANDOM)
+    if (mode == DummyPlayerSetShuffleMode::SHUFFLE_RANDOM)
     {
         if (ImGui::Button(ICON_FA_SHUFFLE))
         {
-            soundsphere::dummy_player_set_shuffle(soundsphere::SHUFFLE_REPEAT);
+            widget_fast_req<DummyPlayerSetShuffleMode>(WIDGET_ID_DUMMY_PLAYER,
+                                                       DummyPlayerSetShuffleMode::SHUFFLE_REPEAT);
         }
         return;
     }
 
-    if (mode == soundsphere::SHUFFLE_REPEAT)
+    if (mode == DummyPlayerSetShuffleMode::SHUFFLE_REPEAT)
     {
         if (ImGui::Button(ICON_FA_ROTATE_RIGHT))
         {
-            soundsphere::dummy_player_set_shuffle(soundsphere::SHUFFLE_ORDER);
+            widget_fast_req<DummyPlayerSetShuffleMode>(WIDGET_ID_DUMMY_PLAYER,
+                                                       DummyPlayerSetShuffleMode::SHUFFLE_ORDER);
         }
         return;
     }
@@ -106,8 +142,7 @@ static void _widget_playbar_draw_processbar(void)
     uint64_t now_time = soundsphere::clock_time_ms();
     if (now_time - last_click_time > 100)
     {
-        double target_position = soundsphere::_G.playbar.music_duration * position_percentage;
-        soundsphere::dummy_player_set_position(target_position);
+        widget_fast_req<DummyPlayerSetPosition>(WIDGET_ID_DUMMY_PLAYER, position_percentage);
     }
 
     last_click_time = now_time;
@@ -153,16 +188,27 @@ static void _widget_playbar_draw(void)
         ImGui::SameLine();
 
         ImGui::SetNextItemWidth(-1);
-        if (ImGui::SliderInt("##PlayerBarVolume", &soundsphere::_config.volume, 0, 100, "", ImGuiSliderFlags_NoInput))
+        int old_volume = soundsphere::_config.volume;
+        if (ImGui::SliderInt("##PlayerBarVolume", &old_volume, 0, 100, "", ImGuiSliderFlags_NoInput))
         {
-            soundsphere::dummy_player_set_volume(soundsphere::_config.volume);
+            if (old_volume != soundsphere::_config.volume)
+            {
+                soundsphere::_config.volume = old_volume;
+                widget_fast_req<DummyPlayerSetVolume>(WIDGET_ID_DUMMY_PLAYER, soundsphere::_config.volume);
+            }
         }
     }
     ImGui::End();
+}
+
+static void _widget_playbar_message(Msg::Ptr msg)
+{
+    s_playbar_ctx->evt_dispatcher.dispatch(msg);
 }
 
 const soundsphere::widget_t soundsphere::ui_playbar = {
     _widget_playbar_init,
     _widget_playbar_exit,
     _widget_playbar_draw,
+    _widget_playbar_message,
 };

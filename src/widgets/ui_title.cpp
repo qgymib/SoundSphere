@@ -85,4 +85,5 @@ const soundsphere::widget_t soundsphere::ui_title = {
     _ui_title_init,
     _ui_title_exit,
     _ui_title_draw,
+    nullptr,
 };

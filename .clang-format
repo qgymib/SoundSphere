@@ -5,6 +5,11 @@ SortIncludes: false
 AlignArrayOfStructures: Left
 Cpp11BracedListStyle: false
 IndentExternBlock: NoIndent
+AlignEscapedNewlines: Right
+AlwaysBreakTemplateDeclarations: true
+AlignConsecutiveDeclarations:
+    Enabled: true
+    AcrossEmptyLines: false
 BraceWrapping:
     AfterExternBlock: false
 ...

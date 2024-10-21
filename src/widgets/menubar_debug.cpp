@@ -67,4 +67,5 @@ const soundsphere::widget_t soundsphere::menubar_debug = {
     _menubar_debug_init,
     _menubar_debug_exit,
     _menubar_debug_draw,
+    nullptr,
 };

@@ -95,4 +95,5 @@ const soundsphere::widget_t soundsphere::ui_statusbar = {
     _widget_statusbar_init,
     _widget_statusbar_exit,
     _widget_statusbar_draw,
+    nullptr,
 };

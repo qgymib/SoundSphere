@@ -191,4 +191,5 @@ const soundsphere::widget_t soundsphere::menubar_translations = {
     _menubar_translations_init,
     _menubar_translations_exit,
     _menubar_translations_draw,
+    nullptr,
 };

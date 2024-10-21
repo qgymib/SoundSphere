@@ -4,8 +4,9 @@
 #include <iterator>
 #include "i18n/__init__.h"
 #include "runtime/__init__.hpp"
-#include "__init__.hpp"
 #include "ui_filter.hpp"
+
+using namespace soundsphere;
 
 typedef struct ui_filter_ctx
 {
@@ -25,28 +26,12 @@ typedef struct ui_filter_ctx
      * @brief Search in artist.
      */
     bool search_artist;
+
+    Msg::Dispatch req_dispatcher;
 } ui_filter_ctx_t;
 
 static ui_filter_ctx_t *s_filter = nullptr;
-
-ui_filter_ctx::ui_filter_ctx()
-{
-    filter[0] = '\0';
-    search_title = true;
-    search_artist = true;
-}
-
-static void _ui_filter_init(void)
-{
-    s_filter = new ui_filter_ctx_t;
-    soundsphere::ui_filter_reset();
-}
-
-static void _ui_filter_exit(void)
-{
-    delete s_filter;
-    s_filter = nullptr;
-}
+const uint64_t          UiFilterReset::ID;
 
 static std::string toLower(const std::string &str)
 {
@@ -66,19 +51,19 @@ static bool _search_string(const std::string &str, const std::string &pat)
     return lower_str.find(lower_pat) != std::string::npos;
 }
 
-static soundsphere::MusicTagPtrVecPtr _filter(soundsphere::MusicTagPtrVecPtr vec, const std::string &filter)
+static MusicTagPtrVecPtr _filter(MusicTagPtrVecPtr vec, const std::string &filter)
 {
     if (filter.empty())
     {
         return vec;
     }
 
-    soundsphere::MusicTagPtrVecPtr ret = std::make_shared<soundsphere::MusicTagPtrVec>();
-    soundsphere::MusicTagPtrVec::iterator it = vec->begin();
+    MusicTagPtrVecPtr        ret = std::make_shared<MusicTagPtrVec>();
+    MusicTagPtrVec::iterator it = vec->begin();
 
     for (; it != vec->end(); it++)
     {
-        soundsphere::MusicTagPtr obj = *it;
+        MusicTagPtr obj = *it;
 
         if (s_filter->search_title && _search_string(obj->info.title, filter))
         {
@@ -100,6 +85,43 @@ static void _do_filter(void)
     soundsphere::_G.playlist.show_vec = _filter(soundsphere::_G.media_list, filter);
 }
 
+/**
+ * @brief Reset filter.
+ */
+static void _ui_filter_reset(void)
+{
+    s_filter->filter[0] = '\0';
+    _do_filter();
+}
+
+static void _on_ui_filter_reset_req(Msg::Ptr msg)
+{
+    _ui_filter_reset();
+    widget_fast_rsp<UiFilterReset>(msg);
+}
+
+ui_filter_ctx::ui_filter_ctx()
+{
+    filter[0] = '\0';
+    search_title = true;
+    search_artist = true;
+
+    req_dispatcher.set_mode(Msg::TYPE_REQ);
+    req_dispatcher.register_handle<UiFilterReset>(_on_ui_filter_reset_req);
+}
+
+static void _ui_filter_init(void)
+{
+    s_filter = new ui_filter_ctx_t;
+    _ui_filter_reset();
+}
+
+static void _ui_filter_exit(void)
+{
+    delete s_filter;
+    s_filter = nullptr;
+}
+
 static void _ui_filter_draw(void)
 {
     ImGui::SetNextWindowSize(soundsphere::_layout.filter.size);
@@ -118,7 +140,7 @@ static void _ui_filter_draw(void)
         ImGui::SameLine();
         if (ImGui::Button(ICON_FA_XMARK))
         {
-            soundsphere::ui_filter_reset();
+            _ui_filter_reset();
         }
 
         if (ImGui::Checkbox(_T->search_title, &s_filter->search_title))
@@ -133,14 +155,14 @@ static void _ui_filter_draw(void)
     ImGui::End();
 }
 
+static void _ui_filter_message(Msg::Ptr msg)
+{
+    s_filter->req_dispatcher.dispatch(msg);
+}
+
 const soundsphere::widget_t soundsphere::ui_filter = {
     _ui_filter_init,
     _ui_filter_exit,
     _ui_filter_draw,
+    _ui_filter_message,
 };
-
-void soundsphere::ui_filter_reset(void)
-{
-    s_filter->filter[0] = '\0';
-    _do_filter();
-}
