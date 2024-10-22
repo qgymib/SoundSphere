@@ -43,7 +43,7 @@ typedef struct statusbar_ctx
     /**
      * @brief Event dispatcher.
      */
-    Msg::Dispatch evt_dispatcher;
+    Msg::Dispatch dispatcher;
 } statusbar_ctx_t;
 
 static statusbar_ctx_t *s_statusbar_ctx = nullptr;
@@ -62,9 +62,8 @@ static void _on_evt_stop(Msg::Ptr msg)
 
 statusbar_ctx::statusbar_ctx()
 {
-    evt_dispatcher.set_mode(Msg::TYPE_EVT);
-    evt_dispatcher.register_handle<DummyPlayerResumeOrPlay>(_on_evt_play);
-    evt_dispatcher.register_handle<DummyPlayerPause>(_on_evt_stop);
+    dispatcher.register_handle<DummyPlayerResumeOrPlay>(Msg::TYPE_EVT, _on_evt_play);
+    dispatcher.register_handle<DummyPlayerPause>(Msg::TYPE_EVT, _on_evt_stop);
 }
 
 static void _reset_status(void)
@@ -128,7 +127,7 @@ static void _widget_statusbar_draw(void)
 
 static void _widget_statusbar_message(Msg::Ptr msg)
 {
-    s_statusbar_ctx->evt_dispatcher.dispatch(msg);
+    s_statusbar_ctx->dispatcher.dispatch(msg);
 }
 
 const soundsphere::widget_t soundsphere::ui_statusbar = {

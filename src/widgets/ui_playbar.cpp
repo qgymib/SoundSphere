@@ -18,7 +18,7 @@ typedef struct playbar_ctx
     double music_duration;
 
     DummyPlayerSetShuffleMode::shuffle_mode shuffle_mode;
-    Msg::Dispatch                           evt_dispatcher;
+    Msg::Dispatch                           dispatcher;
 } playbar_ctx_t;
 
 static playbar_ctx_t *s_playbar_ctx = nullptr;
@@ -45,10 +45,9 @@ playbar_ctx::playbar_ctx()
 {
     music_duration = 0.0;
     shuffle_mode = DummyPlayerSetShuffleMode::SHUFFLE_ORDER;
-    evt_dispatcher.set_mode(Msg::TYPE_EVT);
-    evt_dispatcher.register_handle<DummyPlayerResumeOrPlay>(_on_evt_play);
-    evt_dispatcher.register_handle<DummyPlayerPause>(_on_evt_stop);
-    evt_dispatcher.register_handle<DummyPlayerSetShuffleMode>(_on_shuffle_mode_event);
+    dispatcher.register_handle<DummyPlayerResumeOrPlay>(Msg::TYPE_EVT, _on_evt_play);
+    dispatcher.register_handle<DummyPlayerPause>(Msg::TYPE_EVT, _on_evt_stop);
+    dispatcher.register_handle<DummyPlayerSetShuffleMode>(Msg::TYPE_EVT, _on_shuffle_mode_event);
 }
 
 static void _widget_playbar_init(void)
@@ -134,10 +133,9 @@ static void _widget_playbar_draw_processbar(void)
 {
     static uint64_t last_click_time = 0;
 
-    float position_percentage =
-        (s_playbar_ctx->music_duration == 0.0)
-            ? 0.0f
-            : (float)(soundsphere::_G.playbar.music_position / s_playbar_ctx->music_duration);
+    float position_percentage = (s_playbar_ctx->music_duration == 0.0)
+                                    ? 0.0f
+                                    : (float)(soundsphere::_G.playbar.music_position / s_playbar_ctx->music_duration);
     if (!ImGui::SliderFloat("##playbar_slider", &position_percentage, 0, 1, "", ImGuiSliderFlags_NoInput))
     {
         return;
@@ -218,7 +216,7 @@ static void _widget_playbar_draw(void)
 
 static void _widget_playbar_message(Msg::Ptr msg)
 {
-    s_playbar_ctx->evt_dispatcher.dispatch(msg);
+    s_playbar_ctx->dispatcher.dispatch(msg);
 }
 
 const soundsphere::widget_t soundsphere::ui_playbar = {

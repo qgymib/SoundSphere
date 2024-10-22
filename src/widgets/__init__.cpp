@@ -130,33 +130,46 @@ Msg::Type Msg::type() const
 
 Msg::Dispatch::Dispatch()
 {
-    this->accept_type = Msg::TYPE_REQ;
 }
 
 Msg::Dispatch::~Dispatch()
 {
 }
 
+void Msg::Dispatch::register_handle(uint64_t id, Msg::Type type, MsgFn fn)
+{
+    HandleMap *p_map = nullptr;
+    switch (type)
+    {
+    case TYPE_REQ:
+        p_map = &req_handle_map;
+        break;
+    case TYPE_EVT:
+        p_map = &evt_handle_map;
+        break;
+    default:
+        abort();
+    }
+    p_map->insert(HandleMap::value_type(id, fn));
+}
+
 void Msg::Dispatch::dispatch(Msg::Ptr msg)
 {
-    if (msg->msg_type != accept_type)
+    Msg::Type msg_type = msg->type();
+    if (msg_type == TYPE_RSP)
     {
         return;
     }
 
     uint64_t            msg_id = msg->msg_id;
-    HandleMap::iterator it = handle_map.find(msg_id);
-    if (it == handle_map.end())
+    HandleMap          *p_map = (msg_type == TYPE_REQ) ? &req_handle_map : &evt_handle_map;
+    HandleMap::iterator it = p_map->find(msg_id);
+    if (it == p_map->end())
     {
         return;
     }
 
     (it->second)(msg);
-}
-
-void Msg::Dispatch::set_mode(Msg::Type type)
-{
-    this->accept_type = type;
 }
 
 static float _widget_get_main_menu_bar_height(void)

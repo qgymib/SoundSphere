@@ -183,6 +183,9 @@ public:
     class Dispatch
     {
     public:
+        typedef std::function<void(Msg::Ptr)> MsgFn;
+
+    public:
         Dispatch();
         virtual ~Dispatch();
 
@@ -191,9 +194,9 @@ public:
          * @brief Register event handle.
          */
         template <typename T>
-        void register_handle(std::function<void(Msg::Ptr)> fn)
+        void register_handle(Msg::Type type, MsgFn fn)
         {
-            handle_map.insert(HandleMap::value_type(T::ID, fn));
+            register_handle(T::ID, type, fn);
         }
 
         /**
@@ -201,16 +204,13 @@ public:
          */
         void dispatch(Ptr msg);
 
-        /**
-         * @brief Set message mode.
-         */
-        void set_mode(Msg::Type type);
+    private:
+        void register_handle(uint64_t id, Msg::Type type, MsgFn fn);
 
     private:
-        typedef std::function<void(Msg::Ptr)> MsgFn;
-        typedef std::map<int, MsgFn>          HandleMap;
-        HandleMap                             handle_map;
-        Msg::Type                             accept_type;
+        typedef std::map<uint64_t, MsgFn> HandleMap;
+        HandleMap                         req_handle_map;
+        HandleMap                         evt_handle_map;
     };
 
 public:

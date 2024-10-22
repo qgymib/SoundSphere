@@ -27,7 +27,7 @@ typedef struct ui_filter_ctx
      */
     bool search_artist;
 
-    Msg::Dispatch req_dispatcher;
+    Msg::Dispatch dispatcher;
 } ui_filter_ctx_t;
 
 static ui_filter_ctx_t *s_filter = nullptr;
@@ -106,8 +106,7 @@ ui_filter_ctx::ui_filter_ctx()
     search_title = true;
     search_artist = true;
 
-    req_dispatcher.set_mode(Msg::TYPE_REQ);
-    req_dispatcher.register_handle<UiFilterReset>(_on_ui_filter_reset_req);
+    dispatcher.register_handle<UiFilterReset>(Msg::TYPE_REQ, _on_ui_filter_reset_req);
 }
 
 static void _ui_filter_init(void)
@@ -157,7 +156,7 @@ static void _ui_filter_draw(void)
 
 static void _ui_filter_message(Msg::Ptr msg)
 {
-    s_filter->req_dispatcher.dispatch(msg);
+    s_filter->dispatcher.dispatch(msg);
 }
 
 const soundsphere::widget_t soundsphere::ui_filter = {

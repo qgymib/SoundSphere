@@ -38,7 +38,7 @@ typedef struct dummy_player
     /**
      * @brief Event dispatcher.
      */
-    Msg::Dispatch req_dispatcher;
+    Msg::Dispatch dispatcher;
 } dummy_player_t;
 
 static dummy_player_t *s_player = nullptr;
@@ -314,14 +314,13 @@ dummy_player::dummy_player()
     shuffle_mode = DummyPlayerSetShuffleMode::SHUFFLE_ORDER;
     music_duration = 0.0;
 
-    req_dispatcher.set_mode(Msg::TYPE_REQ);
-    req_dispatcher.register_handle<DummyPlayerReload>(_on_reload_req);
-    req_dispatcher.register_handle<DummyPlayerPause>(_on_pause_req);
-    req_dispatcher.register_handle<DummyPlayerNext>(_on_next_req);
-    req_dispatcher.register_handle<DummyPlayerSetVolume>(_on_set_volume_req);
-    req_dispatcher.register_handle<DummyPlayerSetPosition>(_on_set_position);
-    req_dispatcher.register_handle<DummyPlayerSetShuffleMode>(_on_set_shuffle_mode);
-    req_dispatcher.register_handle<DummyPlayerResumeOrPlay>(_on_resume_or_play);
+    dispatcher.register_handle<DummyPlayerReload>(Msg::TYPE_REQ, _on_reload_req);
+    dispatcher.register_handle<DummyPlayerPause>(Msg::TYPE_REQ, _on_pause_req);
+    dispatcher.register_handle<DummyPlayerNext>(Msg::TYPE_REQ, _on_next_req);
+    dispatcher.register_handle<DummyPlayerSetVolume>(Msg::TYPE_REQ, _on_set_volume_req);
+    dispatcher.register_handle<DummyPlayerSetPosition>(Msg::TYPE_REQ, _on_set_position);
+    dispatcher.register_handle<DummyPlayerSetShuffleMode>(Msg::TYPE_REQ, _on_set_shuffle_mode);
+    dispatcher.register_handle<DummyPlayerResumeOrPlay>(Msg::TYPE_REQ, _on_resume_or_play);
 }
 
 static void _dummy_player_init(void)
@@ -376,7 +375,7 @@ static void _dummy_player_draw(void)
 
 static void _dummy_player_message(Msg::Ptr msg)
 {
-    s_player->req_dispatcher.dispatch(msg);
+    s_player->dispatcher.dispatch(msg);
 }
 
 const soundsphere::widget_t soundsphere::dummy_player = {

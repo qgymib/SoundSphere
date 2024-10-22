@@ -59,7 +59,7 @@ typedef struct tag_editor_ctx
 
     int selected_row;
 
-    Msg::Dispatch req_dispatcher;
+    Msg::Dispatch dispatcher;
 } tag_editor_ctx_t;
 
 static tag_editor_ctx_t *s_tag_editor = nullptr;
@@ -105,8 +105,7 @@ tag_editor_ctx::tag_editor_ctx()
     thread = EV_OS_THREAD_INVALID;
     selected_row = -1;
 
-    req_dispatcher.set_mode(Msg::TYPE_REQ);
-    req_dispatcher.register_handle<TagEditorOpen>(_on_open_music_file);
+    dispatcher.register_handle<TagEditorOpen>(Msg::TYPE_REQ, _on_open_music_file);
 }
 
 tag_editor_ctx::~tag_editor_ctx()
@@ -363,7 +362,7 @@ static void _tool_tageditor_draw(void)
 
 static void _tool_tageditor_message(Msg::Ptr msg)
 {
-    s_tag_editor->req_dispatcher.dispatch(msg);
+    s_tag_editor->dispatcher.dispatch(msg);
 }
 
 const soundsphere::widget_t soundsphere::tool_tag_editor = {
