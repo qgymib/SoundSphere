@@ -30,6 +30,14 @@ typedef struct dummy_player
      */
     DummyPlayerSetShuffleMode::shuffle_mode shuffle_mode;
 
+    /**
+     * @brief Music duration, in seconds.
+     */
+    double music_duration;
+
+    /**
+     * @brief Event dispatcher.
+     */
     Msg::Dispatch req_dispatcher;
 } dummy_player_t;
 
@@ -62,12 +70,17 @@ DummyPlayerSetShuffleMode::Evt::Evt(shuffle_mode mode)
     this->mode = mode;
 }
 
+DummyPlayerResumeOrPlay::Evt::Evt(double music_duration)
+{
+    this->music_duration = music_duration;
+}
+
 /**
  * @brief Set current playing position.
  */
 static void _dummy_player_set_position(float position)
 {
-    double real_position = soundsphere::_G.playbar.music_duration * position;
+    double real_position = s_player->music_duration * position;
     Mix_SetMusicPosition(real_position);
 }
 
@@ -81,9 +94,11 @@ static void _stop_play(void)
 
     soundsphere::_G.playbar.is_playing = false;
     soundsphere::_G.playbar.music_position = 0.0;
-    soundsphere::_G.playbar.music_duration = 0.0;
+    s_player->music_duration = 0.0;
 
     _dummy_player_set_position(0);
+
+    widget_fast_evt<DummyPlayerPause>();
 }
 
 static MusicTagPtrVecPtr _shuffle_media(MusicTagPtrVecPtr vec)
@@ -148,8 +163,10 @@ static void _play(soundsphere::MusicTagPtr obj)
     Mix_PlayMusic(s_player->music_mix, 1);
 
     soundsphere::_G.playbar.is_playing = true;
-    soundsphere::_G.playbar.music_duration = Mix_MusicDuration(s_player->music_mix);
     soundsphere::_G.playbar.music_position = 0.0;
+
+    s_player->music_duration = Mix_MusicDuration(s_player->music_mix);
+    widget_fast_evt<DummyPlayerResumeOrPlay>(s_player->music_duration);
 }
 
 /**
@@ -295,6 +312,7 @@ dummy_player::dummy_player()
 {
     music_mix = NULL;
     shuffle_mode = DummyPlayerSetShuffleMode::SHUFFLE_ORDER;
+    music_duration = 0.0;
 
     req_dispatcher.set_mode(Msg::TYPE_REQ);
     req_dispatcher.register_handle<DummyPlayerReload>(_on_reload_req);

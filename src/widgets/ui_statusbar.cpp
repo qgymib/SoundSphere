@@ -1,10 +1,15 @@
 #include <imgui.h>
 #include "runtime/__init__.hpp"
 #include "utils/time.hpp"
+#include "dummy_player.hpp"
 #include "__init__.hpp"
+
+using namespace soundsphere;
 
 typedef struct statusbar_ctx
 {
+    statusbar_ctx();
+
     /**
      * @brief Hash of path.
      */
@@ -29,9 +34,38 @@ typedef struct statusbar_ctx
      * @brief The number of audio channels.
      */
     int channels;
+
+    /**
+     * @brief Music duration, in seconds.
+     */
+    double music_duration;
+
+    /**
+     * @brief Event dispatcher.
+     */
+    Msg::Dispatch evt_dispatcher;
 } statusbar_ctx_t;
 
 static statusbar_ctx_t *s_statusbar_ctx = nullptr;
+
+static void _on_evt_play(Msg::Ptr msg)
+{
+    auto evt = msg->get_evt<DummyPlayerResumeOrPlay>();
+    s_statusbar_ctx->music_duration = evt->music_duration;
+}
+
+static void _on_evt_stop(Msg::Ptr msg)
+{
+    (void)msg;
+    s_statusbar_ctx->music_duration = 0.0;
+}
+
+statusbar_ctx::statusbar_ctx()
+{
+    evt_dispatcher.set_mode(Msg::TYPE_EVT);
+    evt_dispatcher.register_handle<DummyPlayerResumeOrPlay>(_on_evt_play);
+    evt_dispatcher.register_handle<DummyPlayerPause>(_on_evt_stop);
+}
 
 static void _reset_status(void)
 {
@@ -40,6 +74,7 @@ static void _reset_status(void)
     s_statusbar_ctx->bitrate = 0;
     s_statusbar_ctx->samplerate = 0;
     s_statusbar_ctx->channels = 0;
+    s_statusbar_ctx->music_duration = 0.0;
 }
 
 static void _widget_statusbar_init(void)
@@ -82,7 +117,7 @@ static void _widget_statusbar_draw(void)
 
         const char *type = soundsphere::music_tag_format_name(s_statusbar_ctx->format);
         soundsphere::time_seconds_to_string(timebuf_pos, sizeof(timebuf_pos), soundsphere::_G.playbar.music_position);
-        soundsphere::time_seconds_to_string(timebuf_len, sizeof(timebuf_len), soundsphere::_G.playbar.music_duration);
+        soundsphere::time_seconds_to_string(timebuf_len, sizeof(timebuf_len), s_statusbar_ctx->music_duration);
 
         ImGui::Text("%s | %d kbps | %d Hz | %d Channel | %s / %s", type != NULL ? type : "---",
                     s_statusbar_ctx->bitrate, s_statusbar_ctx->samplerate, s_statusbar_ctx->channels, timebuf_pos,
@@ -91,9 +126,14 @@ static void _widget_statusbar_draw(void)
     ImGui::End();
 }
 
+static void _widget_statusbar_message(Msg::Ptr msg)
+{
+    s_statusbar_ctx->evt_dispatcher.dispatch(msg);
+}
+
 const soundsphere::widget_t soundsphere::ui_statusbar = {
     _widget_statusbar_init,
     _widget_statusbar_exit,
     _widget_statusbar_draw,
-    nullptr,
+    _widget_statusbar_message,
 };

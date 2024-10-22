@@ -30,6 +30,10 @@ struct DummyPlayerPause
     struct Rsp : public Msg::Rsp
     {
     };
+
+    struct Evt : public Msg::Evt
+    {
+    };
 };
 
 struct DummyPlayerNext
@@ -126,6 +130,16 @@ struct DummyPlayerResumeOrPlay
 
     struct Rsp : public Msg::Rsp
     {
+    };
+
+    struct Evt : public Msg::Evt
+    {
+        Evt(double music_duration);
+
+        /**
+         * @brief Music duration, in seconds.
+         */
+        double music_duration;
     };
 };
 

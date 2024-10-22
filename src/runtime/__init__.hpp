@@ -49,11 +49,6 @@ typedef struct runtime
         int is_playing;
 
         /**
-         * @brief Music duration, in seconds.
-         */
-        double music_duration;
-
-        /**
          * @brief Music position, in seconds.
          */
         double music_position;

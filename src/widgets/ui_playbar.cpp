@@ -11,10 +11,14 @@ using namespace soundsphere;
 typedef struct playbar_ctx
 {
     playbar_ctx();
-    ~playbar_ctx();
+
+    /**
+     * @brief Music duration, in seconds.
+     */
+    double music_duration;
 
     DummyPlayerSetShuffleMode::shuffle_mode shuffle_mode;
-    Msg::Dispatch evt_dispatcher;
+    Msg::Dispatch                           evt_dispatcher;
 } playbar_ctx_t;
 
 static playbar_ctx_t *s_playbar_ctx = nullptr;
@@ -25,15 +29,26 @@ static void _on_shuffle_mode_event(Msg::Ptr msg)
     s_playbar_ctx->shuffle_mode = evt->mode;
 }
 
-playbar_ctx::playbar_ctx()
+static void _on_evt_play(Msg::Ptr msg)
 {
-    shuffle_mode = DummyPlayerSetShuffleMode::SHUFFLE_ORDER;
-    evt_dispatcher.set_mode(Msg::TYPE_EVT);
-    evt_dispatcher.register_handle<DummyPlayerSetShuffleMode>(_on_shuffle_mode_event);
+    auto evt = msg->get_evt<DummyPlayerResumeOrPlay>();
+    s_playbar_ctx->music_duration = evt->music_duration;
 }
 
-playbar_ctx::~playbar_ctx()
+static void _on_evt_stop(Msg::Ptr msg)
 {
+    (void)msg;
+    s_playbar_ctx->music_duration = 0.0;
+}
+
+playbar_ctx::playbar_ctx()
+{
+    music_duration = 0.0;
+    shuffle_mode = DummyPlayerSetShuffleMode::SHUFFLE_ORDER;
+    evt_dispatcher.set_mode(Msg::TYPE_EVT);
+    evt_dispatcher.register_handle<DummyPlayerResumeOrPlay>(_on_evt_play);
+    evt_dispatcher.register_handle<DummyPlayerPause>(_on_evt_stop);
+    evt_dispatcher.register_handle<DummyPlayerSetShuffleMode>(_on_shuffle_mode_event);
 }
 
 static void _widget_playbar_init(void)
@@ -120,9 +135,9 @@ static void _widget_playbar_draw_processbar(void)
     static uint64_t last_click_time = 0;
 
     float position_percentage =
-        (soundsphere::_G.playbar.music_duration == 0.0)
+        (s_playbar_ctx->music_duration == 0.0)
             ? 0.0f
-            : (float)(soundsphere::_G.playbar.music_position / soundsphere::_G.playbar.music_duration);
+            : (float)(soundsphere::_G.playbar.music_position / s_playbar_ctx->music_duration);
     if (!ImGui::SliderFloat("##playbar_slider", &position_percentage, 0, 1, "", ImGuiSliderFlags_NoInput))
     {
         return;
@@ -176,7 +191,7 @@ static void _widget_playbar_draw(void)
 
         {
             static char buf[12];
-            soundsphere::time_seconds_to_string(buf, sizeof(buf), soundsphere::_G.playbar.music_duration);
+            soundsphere::time_seconds_to_string(buf, sizeof(buf), s_playbar_ctx->music_duration);
             ImGui::Text("%s", buf);
         }
         ImGui::SameLine();
